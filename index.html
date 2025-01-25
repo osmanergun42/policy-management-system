@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poliçe Yönetim Sistemi</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="sidebar">
+        <div class="logo">
+            <h2>Yönetim Paneli</h2>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#" id="home-link">Ana Sayfa</a></li>
+                <li><a href="#" id="my-customers-link">Müşterilerim</a></li>
+            </ul>
+        </nav>
+    </div>
+
+    <div id="toggle-sidebar-btn">☰</div>
+
+    <div class="main-content">
+        <header>
+            <h1>Yönetim Paneli</h1>
+        </header>
+
+        <!-- Müşteri Ekleme Formu -->
+        <div id="add-customer-section">
+            <h2>Yeni Müşteri Ekle</h2>
+            <form id="add-customer-form">
+                <input type="text" id="customer-name" placeholder="Müşteri Adı ve Soyadı" required>
+                <input type="text" id="customer-phone" placeholder="Telefon Numarası" required>
+                <input type="email" id="customer-email" placeholder="E-posta Adresi" required>
+                <input type="text" id="customer-address" placeholder="Adres" required>
+                <textarea id="customer-extra-info" placeholder="Ek Bilgi (Opsiyonel)" rows="4"></textarea>
+                <button type="submit">Müşteri Ekle</button>
+            </form>
+        </div>
+
+        <!-- Poliçe Ekleme Formu -->
+        <div id="add-policy-section" style="display: none;">
+            <h2 id="policy-customer-name"></h2>
+            <form id="add-policy-form">
+                <input type="text" id="policy-type" placeholder="Poliçe Tipi" required>
+                <input type="date" id="start-date" required>
+                <input type="date" id="end-date" required>
+                <input type="number" id="premium" placeholder="Prim Miktarı (TL)" min="0" required>
+                <input type="number" id="commission-rate" placeholder="Komisyon Oranı (%)" min="0" max="100" required>
+                <input type="text" id="calculated-commission" placeholder="Hesaplanan Komisyon (TL)" readonly>
+                <input type="text" id="policy-number" placeholder="Poliçe Numarası" required>
+                <input type="text" id="license-plate" placeholder="Plaka" required>
+                <input type="text" id="registration-number" placeholder="Tescil Numarası" required>
+
+                <!-- Şirket Dropdown -->
+                <select id="company-dropdown" required>
+                    <option value="" disabled selected>Şirket Seçin</option>
+                    <option value="Ak Sigorta">Ak Sigorta</option>
+                    <option value="Unico Sigorta">Unico Sigorta</option>
+                    <option value="Anadolu">Anadolu</option>
+                    <option value="Koru">Koru</option>
+                    <option value="Corpus">Corpus</option>
+                    <option value="Ankara">Ankara</option>
+                    <option value="Hepiyi">Hepiyi</option>
+                    <option value="Doğa">Doğa</option>
+                    <option value="Şeker">Şeker</option>
+                    <option value="Bereket">Bereket</option>
+                    <option value="Ray">Ray</option>
+                    <option value="Sompo">Sompo</option>
+                    <option value="Türkiye">Türkiye</option>
+                    <option value="AXA">AXA</option>
+                    <option value="Allianz">Allianz</option>
+                    <option value="HDI">HDI</option>
+                    <option value="Neova">Neova</option>
+                </select>
+
+                <!-- Dış Acente Dropdown -->
+                <select id="external-agency" required>
+                    <option value="" disabled selected>Dış Acente Seçin</option>
+                    <option value="SNR Sigorta">SNR Sigorta</option>
+                    <option value="Enes Sigorta">Enes Sigorta</option>
+                    <option value="Enter Sigorta">Enter Sigorta</option>
+                </select>
+
+                <button type="submit">Poliçe Ekle</button>
+            </form>
+
+            <!-- Poliçeler Tablosu -->
+            <h3>Müşteriye Ait Poliçeler</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tip</th>
+                        <th>Başlangıç</th>
+                        <th>Bitiş</th>
+                        <th>Prim</th>
+                        <th>Komisyon (%)</th>
+                        <th>Komisyon Tutarı</th>
+                        <th>Plaka</th>
+                        <th>Şirket</th>
+                        <th>Dış Acente</th>
+                        <th>Detay</th>
+                    </tr>
+                </thead>
+                <tbody id="customer-policies">
+                    <!-- Dinamik poliçeler buraya yüklenecek -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Poliçe Düzenleme Modal -->
+        <div id="edit-policy-modal" class="modal">
+            <div class="modal-content">
+                <span id="close-edit-policy-modal">X</span>
+                <h2>Poliçe Detaylarını Düzenle</h2>
+                <form id="edit-policy-form">
+                    <input type="text" id="edit-policy-type" placeholder="Poliçe Tipi" required>
+                    <input type="date" id="edit-start-date" required>
+                    <input type="date" id="edit-end-date" required>
+                    <input type="number" id="edit-premium" placeholder="Prim Miktarı (TL)" min="0" required>
+                    <input type="number" id="edit-commission-rate" placeholder="Komisyon Oranı (%)" min="0" max="100" required>
+                    <input type="text" id="edit-calculated-commission" placeholder="Hesaplanan Komisyon (TL)" readonly>
+                    <input type="text" id="edit-license-plate" placeholder="Plaka" required>
+                    <button type="submit">Güncelle</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
