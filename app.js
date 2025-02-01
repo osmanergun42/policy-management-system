@@ -64,6 +64,15 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // Sidebar'dan Müşteri Ekleme Linki
+    const addCustomerLink = document.getElementById("add-customer-link");
+    addCustomerLink.addEventListener("click", (event) => {
+        event.preventDefault();
+        document.getElementById("main-header").style.display = "none";
+        document.getElementById("add-customer-section").style.display = "block";
+        document.getElementById("add-policy-section").style.display = "none";
+    });
+
     // Müşteri Ekleme Formu
     addCustomerForm.addEventListener("submit", (event) => {
         event.preventDefault();
@@ -71,8 +80,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const newCustomer = {
             name: customerNameInput.value,
             phone: customerPhoneInput.value,
-            email: customerEmailInput.value,
-            address: customerAddressInput.value,
+            email: customerEmailInput.value || '',
+            address: customerAddressInput.value || '',
             extraInfo: customerExtraInfoInput.value || "Ek bilgi yok",
         };
 
@@ -109,6 +118,8 @@ document.addEventListener("DOMContentLoaded", () => {
     homeLink.addEventListener("click", (event) => {
         event.preventDefault();
         document.getElementById("main-header").style.display = "block";
+        document.getElementById("add-customer-section").style.display = "none";
+        document.getElementById("add-policy-section").style.display = "none";
         document.querySelector(".main-content").innerHTML = `
             <header>
                 <h1 id="main-header">Poliçe Takip Sistemi</h1>
@@ -121,6 +132,8 @@ document.addEventListener("DOMContentLoaded", () => {
     myCustomersLink.addEventListener("click", (event) => {
         event.preventDefault();
         document.getElementById("main-header").style.display = "none";
+        document.getElementById("add-customer-section").style.display = "none";
+        document.getElementById("add-policy-section").style.display = "none";
         renderCustomerList();
     });
 
