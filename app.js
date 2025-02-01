@@ -86,34 +86,6 @@ document.addEventListener("DOMContentLoaded", () => {
         history.back();
     });
 
-    // Sidebar'dan Müşteri Ekleme Linki
-    const addCustomerLink = document.getElementById("add-customer-link");
-    addCustomerLink.addEventListener("click", (event) => {
-        event.preventDefault();
-        backButton.style.display = "block"; // Geri butonunu göster
-        showSection('add-customer-section');
-    });
-
-    // Müşteri Ekleme Formu
-    addCustomerForm.addEventListener("submit", (event) => {
-        event.preventDefault();
-
-        const newCustomer = {
-            name: customerNameInput.value,
-            phone: customerPhoneInput.value,
-            email: customerEmailInput.value || '',
-            address: customerAddressInput.value || '',
-            extraInfo: customerExtraInfoInput.value || "Ek bilgi yok",
-        };
-
-        customers.push(newCustomer);
-        saveToLocalStorage("customers", customers);
-        addCustomerForm.reset();
-        alert("Müşteri başarıyla eklendi!");
-        renderCustomerList();
-        addCustomerModal.style.display = "none"; // Modalı kapat
-    });
-
     // Sidebar Arama Butonu
     sidebarSearchBtn.addEventListener("click", () => {
         performSearch(sidebarSearchInput.value.toLowerCase());
