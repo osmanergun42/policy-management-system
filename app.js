@@ -1,27 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-    const loginForm = document.getElementById("login-form");
-    const loginMessage = document.getElementById("login-message");
-    const appContainer = document.getElementById("app-container");
-    const loginContainer = document.getElementById("login-container");
-
-    const validUsername = "admin"; // Geçerli kullanıcı adı
-    const validPassword = "12345"; // Geçerli şifre
-
-    loginForm.addEventListener("submit", (event) => {
-        event.preventDefault();
-
-        const username = document.getElementById("username").value;
-        const password = document.getElementById("password").value;
-
-        if (username === validUsername && password === validPassword) {
-            loginMessage.textContent = "Giriş başarılı!";
-            loginContainer.style.display = "none";
-            appContainer.style.display = "block";
-        } else {
-            loginMessage.textContent = "Geçersiz kullanıcı adı veya şifre";
-        }
-    });
-
     const toggleSidebarBtn = document.getElementById("toggle-sidebar-btn");
     const sidebar = document.getElementById("sidebar");
 
@@ -52,6 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const registrationNumberInput = document.getElementById("registration-number");
     const companyDropdown = document.getElementById("company-dropdown");
     const externalAgencyDropdown = document.getElementById("external-agency");
+
     const sidebarSearchInput = document.getElementById("sidebar-search-input");
     const sidebarSearchBtn = document.getElementById("sidebar-search-btn");
     const searchSuggestions = document.getElementById("search-suggestions");
@@ -154,6 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
     backButtonAddPolicy.addEventListener("click", () => {
         addPolicyModal.style.display = "none";
     });
+
     // Müşteri Ekleme Formu Gönderme Etkinliği
     addCustomerForm.addEventListener("submit", (event) => {
         event.preventDefault(); // Formun varsayılan gönderme davranışını durdurma
