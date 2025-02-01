@@ -178,14 +178,16 @@ table td {
 
 .modal-content {
     background-color: #fefefe;
-    margin: 5% auto; /* Pencerenin dikeyde ortalanması için üst ve alt marjı azaltabiliriz */
+    margin: 5% auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 90%; /* Genişliği %80'den %90'a çıkarıyoruz */
-    max-width: 800px; /* Maksimum genişliği artırıyoruz */
-    box-sizing: border-box; /* İçerik kutusunun kenarlık ve dolgu ile birlikte hesaplanmasını sağlar */
-    word-wrap: break-word; /* Uzun kelimelerin taşmasını önler */
-    overflow: hidden; /* İçerik taşmasını gizler */
+    width: 90%;
+    max-width: 800px;
+    box-sizing: border-box;
+    word-wrap: break-word;
+    overflow: hidden;
+    max-height: 80vh; /* Modal pencerenin maksimum yüksekliği */
+    overflow-y: auto; /* Dikey kaydırma çubuğu */
 }
 
 .close-button {
