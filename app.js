@@ -23,6 +23,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const customerExtraInfoInput = document.getElementById("customer-extra-info");
 
     const sidebarSearchInput = document.getElementById("sidebar-search-input");
+    const sidebarSearchBtn = document.getElementById("sidebar-search-btn");
     const searchSuggestions = document.getElementById("search-suggestions");
 
     const addPolicyModal = document.getElementById("add-policy-modal");
@@ -114,6 +115,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // Sidebar Arama Butonu
+    sidebarSearchBtn.addEventListener("click", () => {
+        performSearch(sidebarSearchInput.value.toLowerCase());
+    });
+
     // Önerilere Tıklama Etkinliği
     searchSuggestions.addEventListener("click", (event) => {
         if (event.target.classList.contains("suggestion-item")) {
@@ -130,6 +136,23 @@ document.addEventListener("DOMContentLoaded", () => {
         searchSuggestions.innerHTML = suggestions.map(customer => `
             <div class="suggestion-item">${customer.name}</div>
         `).join('');
+    }
+
+    // Arama İşlevi (Büyük-Küçük Harf Hassasiyetini Kaldırdık)
+    function performSearch(searchTerm) {
+        const lowerCasedSearchTerm = searchTerm.toLowerCase();
+        const filteredCustomers = customers.filter(customer => 
+            customer.name.toLowerCase().includes(lowerCasedSearchTerm) || 
+            (policies[customer.name] && policies[customer.name].some(policy => 
+                policy.licensePlate.toLowerCase().includes(lowerCasedSearchTerm)
+            ))
+        );
+
+        if (filteredCustomers.length > 0) {
+            renderSearchResults(filteredCustomers);
+        } else {
+            alert("Müşteri veya plaka bulunamadı!");
+        }
     }
 
     // Ana Sayfa Linki
@@ -319,7 +342,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Poliçe Listesini Render Etme
     function renderPolicyList(customer) {
-        showSection('add-policy-section');
         const mainContent = document.querySelector(".main-content");
         const customerPolicies = policies[customer.name] || [];
 
