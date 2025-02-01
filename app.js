@@ -93,10 +93,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Arama İşlevi (Büyük-Küçük Harf Hassasiyetini Kaldırdık)
     function performSearch(searchTerm) {
+        const lowerCasedSearchTerm = searchTerm.toLowerCase();
         const filteredCustomers = customers.filter(customer => 
-            customer.name.toLowerCase().includes(searchTerm) || 
+            customer.name.toLowerCase().includes(lowerCasedSearchTerm) || 
             (policies[customer.name] && policies[customer.name].some(policy => 
-                policy.licensePlate.toLowerCase().includes(searchTerm)
+                policy.licensePlate.toLowerCase().includes(lowerCasedSearchTerm)
             ))
         );
 
