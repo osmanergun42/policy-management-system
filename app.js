@@ -17,6 +17,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const customerAddressInput = document.getElementById("customer-address");
     const customerExtraInfoInput = document.getElementById("customer-extra-info");
 
+    const addPolicyForm = document.getElementById("add-policy-form");
+    const policyTypeInput = document.getElementById("policy-type");
+    const startDateInput = document.getElementById("start-date");
+    const endDateInput = document.getElementById("end-date");
+    const premiumInput = document.getElementById("premium");
+    const commissionRateInput = document.getElementById("commission-rate");
+    const calculatedCommissionInput = document.getElementById("calculated-commission");
+    const policyNumberInput = document.getElementById("policy-number");
+    const licensePlateInput = document.getElementById("license-plate");
+    const registrationNumberInput = document.getElementById("registration-number");
+    const companyDropdown = document.getElementById("company-dropdown");
+    const externalAgencyDropdown = document.getElementById("external-agency");
+
     const sidebarSearchInput = document.getElementById("sidebar-search-input");
     const sidebarSearchBtn = document.getElementById("sidebar-search-btn");
     const searchSuggestions = document.getElementById("search-suggestions");
@@ -41,10 +54,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const addCustomerModal = document.getElementById("add-customer-modal");
     const closeAddCustomerModal = document.getElementById("close-add-customer-modal");
     const openAddCustomerModalBtn = document.getElementById("open-add-customer-modal");
-
-    const premiumInput = document.getElementById("premium");
-    const commissionRateInput = document.getElementById("commission-rate");
-    const calculatedCommissionInput = document.getElementById("calculated-commission");
 
     // Komisyon hesaplama işlevi
     function calculateCommission() {
@@ -152,6 +161,44 @@ document.addEventListener("DOMContentLoaded", () => {
         addCustomerModal.style.display = "none";
 
         alert("Müşteri başarıyla eklendi!");
+    });
+
+    // Poliçe Ekleme Formu Gönderme Etkinliği
+    addPolicyForm.addEventListener("submit", (event) => {
+        event.preventDefault(); // Formun varsayılan gönderme davranışını durdurma
+
+        const customerName = document.getElementById("policy-customer-name").innerText;
+        const newPolicy = {
+            type: policyTypeInput.value,
+            startDate: startDateInput.value,
+            endDate: endDateInput.value,
+            premium: parseFloat(premiumInput.value),
+            commissionRate: parseFloat(commissionRateInput.value),
+            calculatedCommission: parseFloat(calculatedCommissionInput.value),
+            policyNumber: policyNumberInput.value,
+            licensePlate: licensePlateInput.value,
+            registrationNumber: registrationNumberInput.value,
+            company: companyDropdown.value,
+            externalAgency: externalAgencyDropdown.value
+        };
+
+        if (!policies[customerName]) {
+            policies[customerName] = [];
+        }
+
+        // Yeni poliçeyi müşterinin poliçe listesine ekleyin
+        policies[customerName].push(newPolicy);
+
+        // Poliçeleri localStorage'a kaydedin
+        saveToLocalStorage("policies", policies);
+
+        // Poliçe ekleme formunu sıfırlayın
+        addPolicyForm.reset();
+
+        // Poliçe ekleme modal penceresini kapatın
+        addPolicyModal.style.display = "none";
+
+        alert("Poliçe başarıyla eklendi!");
     });
 
     // Arama Kutusu Etkinlikleri
