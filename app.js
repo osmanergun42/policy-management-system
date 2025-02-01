@@ -109,6 +109,36 @@ document.addEventListener("DOMContentLoaded", () => {
         addPolicyModal.style.display = "none";
     });
 
+    // Müşteri Ekleme Formu Gönderme Etkinliği
+    addCustomerForm.addEventListener("submit", (event) => {
+        event.preventDefault(); // Formun varsayılan gönderme davranışını durdurma
+
+        const newCustomer = {
+            name: customerNameInput.value,
+            phone: customerPhoneInput.value,
+            email: customerEmailInput.value,
+            address: customerAddressInput.value,
+            extraInfo: customerExtraInfoInput.value
+        };
+
+        // Yeni müşteriyi diziye ekleyin
+        customers.push(newCustomer);
+
+        // Müşterileri localStorage'a kaydedin
+        saveToLocalStorage("customers", customers);
+
+        // Müşteri listesini yeniden oluşturun
+        renderCustomerListModal();
+
+        // Müşteri ekleme formunu sıfırlayın
+        addCustomerForm.reset();
+
+        // Müşteri ekleme modal penceresini kapatın
+        addCustomerModal.style.display = "none";
+
+        alert("Müşteri başarıyla eklendi!");
+    });
+
     // Arama Kutusu Etkinlikleri
     sidebarSearchInput.addEventListener("input", () => {
         const searchTerm = sidebarSearchInput.value.toLowerCase();
@@ -294,6 +324,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             <td>
                                 <button class="add-policy-btn" data-index="${index}">Poliçe Ekle</button>
                                 <button class="view-policies-btn" data-index="${index}">Poliçeler</button>
+                                <button class="delete-customer-btn" data-index="${index}">Sil</button>
                             </td>
                         </tr>
                     `).join('')}
