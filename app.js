@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-    // Sidebar açma/kapatma
     const toggleSidebarBtn = document.getElementById("toggle-sidebar-btn");
     const sidebar = document.getElementById("sidebar");
 
@@ -8,11 +7,14 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelector(".main-content").classList.toggle("expanded");
     });
 
-    // Müşteriler ve poliçeler için LocalStorage verileri
     const customers = JSON.parse(localStorage.getItem("customers")) || [];
     const policies = JSON.parse(localStorage.getItem("policies")) || {};
 
-    // Müşteri Ekleme Formu
+    const companies = [
+        "Ak Sigorta", "Unico Sigorta", "Anadolu", "Koru", "Corpus", "Ankara", "Hepiyi", "Doğa", 
+        "Şeker", "Bereket", "Ray", "Sompo", "Türkiye", "AXA", "Allianz", "HDI", "Neova"
+    ];
+
     const addCustomerForm = document.getElementById("add-customer-form");
     const customerNameInput = document.getElementById("customer-name");
     const customerPhoneInput = document.getElementById("customer-phone");
@@ -20,7 +22,39 @@ document.addEventListener("DOMContentLoaded", () => {
     const customerAddressInput = document.getElementById("customer-address");
     const customerExtraInfoInput = document.getElementById("customer-extra-info");
 
-    // Müşteri ekleme işlevi
+    const searchInput = document.getElementById("search-input");
+    const searchBtn = document.getElementById("search-btn");
+
+    const addPolicyModal = document.getElementById("add-policy-modal");
+    const closeAddPolicyModal = document.getElementById("close-add-policy-modal");
+    const openAddPolicyModalBtn = document.getElementById("open-add-policy-modal");
+
+    const editPolicyModal = document.getElementById("edit-policy-modal");
+    const closeEditPolicyModal = document.getElementById("close-edit-policy-modal");
+
+    // Modal Açma ve Kapatma
+    openAddPolicyModalBtn.addEventListener("click", () => {
+        addPolicyModal.style.display = "flex";
+    });
+
+    closeAddPolicyModal.addEventListener("click", () => {
+        addPolicyModal.style.display = "none";
+    });
+
+    closeEditPolicyModal.addEventListener("click", () => {
+        editPolicyModal.style.display = "none";
+    });
+
+    window.addEventListener("click", (event) => {
+        if (event.target === addPolicyModal) {
+            addPolicyModal.style.display = "none";
+        }
+        if (event.target === editPolicyModal) {
+            editPolicyModal.style.display = "none";
+        }
+    });
+
+    // Müşteri Ekleme Formu
     addCustomerForm.addEventListener("submit", (event) => {
         event.preventDefault();
 
@@ -36,14 +70,173 @@ document.addEventListener("DOMContentLoaded", () => {
         saveToLocalStorage("customers", customers);
         addCustomerForm.reset();
         alert("Müşteri başarıyla eklendi!");
+        renderCustomerList();
     });
 
-    // LocalStorage kaydetme işlevi
+    // Arama Butonu (Ana içerik)
+    searchBtn.addEventListener("click", () => {
+        performSearch(searchInput.value.toLowerCase());
+    });
+
+    // Sidebar Arama Butonu
+    const sidebarSearchBtn = document.getElementById("sidebar-search-btn");
+    const sidebarSearchInput = document.getElementById("sidebar-search-input");
+
+    sidebarSearchBtn.addEventListener("click", () => {
+        performSearch(sidebarSearchInput.value.toLowerCase());
+    });
+
+    // Arama İşlevi
+    function performSearch(searchTerm) {
+        const filteredCustomers = customers.filter(customer => 
+            customer.name.toLowerCase().includes(searchTerm) || 
+            (policies[customer.name] && policies[customer.name].some(policy => 
+                policy.licensePlate.toLowerCase().includes(searchTerm)
+            ))
+        );
+
+        if (filteredCustomers.length > 0) {
+            renderSearchResults(filteredCustomers);
+        } else {
+            alert("Müşteri veya plaka bulunamadı!");
+        }
+    }
+
+    // Ana Sayfa Linki
+    const homeLink = document.getElementById("home-link");
+    homeLink.addEventListener("click", (event) => {
+        event.preventDefault();
+        document.getElementById("add-customer-section").style.display = "block";
+        document.getElementById("add-policy-section").style.display = "none";
+        renderCustomerList();
+    });
+
+    // Müşterilerim Linki
+    const myCustomersLink = document.getElementById("my-customers-link");
+    myCustomersLink.addEventListener("click", (event) => {
+        event.preventDefault();
+        renderCustomerList();
+    });
+
+    // Müşteri Listesini Render Etme
+    function renderCustomerList(filteredCustomers = customers) {
+        const mainContent = document.querySelector(".main-content");
+        mainContent.innerHTML = `
+            <header>
+                <h1>Müşterilerim</h1>
+            </header>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Müşteri Adı</th>
+                        <th>Telefon</th>
+                        <th>E-posta</th>
+                        <th>Adres</th>
+                        <th>İşlem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${filteredCustomers.map((customer, index) => `
+                        <tr>
+                            <td>${customer.name}</td>
+                            <td>${customer.phone}</td>
+                            <td>${customer.email}</td>
+                            <td>${customer.address}</td>
+                            <td>
+                                <button class="add-policy-btn" data-index="${index}">Poliçe Ekle</button>
+                                <button class="view-policies-btn" data-index="${index}">Poliçeler</button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+
+        document.querySelectorAll(".add-policy-btn").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                const customerIndex = e.target.getAttribute("data-index");
+                const customer = customers[customerIndex];
+                document.getElementById("policy-customer-name").innerText = customer.name;
+                document.getElementById("add-policy-section").style.display = "block";
+                openAddPolicyModalBtn.click();
+            });
+        });
+
+        document.querySelectorAll(".view-policies-btn").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                const customerIndex = e.target.getAttribute("data-index");
+                const customer = customers[customerIndex];
+                renderPolicyList(customer);
+            });
+        });
+    }
+
+    // Arama Sonuçlarını Render Etme
+    function renderSearchResults(filteredCustomers) {
+        const mainContent = document.querySelector(".main-content");
+        mainContent.innerHTML = `
+            <header>
+                <h1>Arama Sonuçları</h1>
+            </header>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Müşteri Adı</th>
+                        <th>Telefon</th>
+                        <th>E-posta</th>
+                        <th>Adres</th>
+                        <th>İşlem</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${filteredCustomers.map((customer, index) => `
+                        <tr>
+                            <td>${customer.name}</td>
+                            <td>${customer.phone}</td>
+                            <td>${customer.email}</td>
+                            <td>${customer.address}</td>
+                            <td>
+                                <button class="add-policy-btn" data-index="${index}">Poliçe Ekle</button>
+                                <button class="view-policies-btn" data-index="${index}">Poliçeler</button>
+                            </td>
+                        </tr>
+                    `).join('')}
+                </tbody>
+            </table>
+        `;
+
+        document.querySelectorAll(".add-policy-btn").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                const customerIndex = e.target.getAttribute("data-index");
+                const customer = customers[customerIndex];
+                document.getElementById("policy-customer-name").innerText = customer.name;
+                document.getElementById("add-policy-section").style.display = "block";
+                openAddPolicyModalBtn.click();
+            });
+        });
+
+        document.querySelectorAll(".view-policies-btn").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                const customerIndex = e.target.getAttribute("data-index");
+                const customer = customers[customerIndex];
+                renderPolicyList(customer);
+            });
+        });
+    }
+
+    // LocalStorage'a Kaydetme
     function saveToLocalStorage(key, data) {
         localStorage.setItem(key, JSON.stringify(data));
     }
 
-    // Poliçe ekleme arayüzünü oluşturma
+    // Otomatik Kaydetme
+    setInterval(() => {
+        saveToLocalStorage("customers", customers);
+        saveToLocalStorage("policies", policies);
+        console.log("Veriler otomatik olarak kaydedildi.");
+    }, 120000); // 2 dakika
+
+    // Poliçe Ekleme Bölümünü Render Etme
     function renderPolicyAddSection(customer) {
         const mainContent = document.querySelector(".main-content");
         mainContent.innerHTML = `
@@ -61,30 +254,10 @@ document.addEventListener("DOMContentLoaded", () => {
                     <input type="text" id="policy-number" placeholder="Poliçe Numarası" required>
                     <input type="text" id="license-plate" placeholder="Plaka" required>
                     <input type="text" id="registration-number" placeholder="Tescil Numarası" required>
-
-                    <!-- Şirket Dropdown -->
                     <select id="company-dropdown" required>
                         <option value="" disabled selected>Şirket Seçin</option>
-                        <option value="Ak Sigorta">Ak Sigorta</option>
-                        <option value="Unico Sigorta">Unico Sigorta</option>
-                        <option value="Anadolu">Anadolu</option>
-                        <option value="Koru">Koru</option>
-                        <option value="Corpus">Corpus</option>
-                        <option value="Ankara">Ankara</option>
-                        <option value="Hepiyi">Hepiyi</option>
-                        <option value="Doğa">Doğa</option>
-                        <option value="Şeker">Şeker</option>
-                        <option value="Bereket">Bereket</option>
-                        <option value="Ray">Ray</option>
-                        <option value="Sompo">Sompo</option>
-                        <option value="Türkiye">Türkiye</option>
-                        <option value="AXA">AXA</option>
-                        <option value="Allianz">Allianz</option>
-                        <option value="HDI">HDI</option>
-                        <option value="Neova">Neova</option>
+                        ${companies.map(company => `<option value="${company}">${company}</option>`).join('')}
                     </select>
-
-                    <!-- Dış Acente Dropdown -->
                     <select id="external-agency" required>
                         <option value="" disabled selected>Dış Acente Seçin</option>
                         <option value="SNR Sigorta">SNR Sigorta</option>
@@ -96,7 +269,6 @@ document.addEventListener("DOMContentLoaded", () => {
             </div>
         `;
 
-        // Komisyon hesaplama
         const premiumInput = document.getElementById("premium");
         const commissionRateInput = document.getElementById("commission-rate");
         const calculatedCommissionInput = document.getElementById("calculated-commission");
@@ -111,7 +283,6 @@ document.addEventListener("DOMContentLoaded", () => {
             calculatedCommissionInput.value = commission.toFixed(2) + " TL";
         }
 
-        // Poliçe ekleme işlemi
         const addPolicyForm = document.getElementById("add-policy-form");
         addPolicyForm.addEventListener("submit", (event) => {
             event.preventDefault();
@@ -136,11 +307,11 @@ document.addEventListener("DOMContentLoaded", () => {
             saveToLocalStorage("policies", policies);
 
             alert("Poliçe başarıyla eklendi!");
-            renderPolicyAddSection(customer);
+            renderPolicyList(customer);
         });
     }
 
-    // Poliçeler listesi gösterme
+    // Poliçe Listesini Render Etme
     function renderPolicyList(customer) {
         const mainContent = document.querySelector(".main-content");
         const customerPolicies = policies[customer.name] || [];
@@ -164,87 +335,24 @@ document.addEventListener("DOMContentLoaded", () => {
                     </tr>
                 </thead>
                 <tbody>
-                    ${customerPolicies
-                        .map(
-                            (policy) => `
+                    ${customerPolicies.map(policy => `
                         <tr>
                             <td>${policy.type}</td>
                             <td>${policy.startDate}</td>
                             <td>${policy.endDate}</td>
                             <td>${policy.premium} TL</td>
                             <td>${policy.commissionRate}%</td>
-                            <td>${policy.calculatedCommission} TL</td>
+                            <td>${policy.calculatedCommission.toFixed(2)} TL</td>
                             <td>${policy.licensePlate}</td>
                             <td>${policy.company}</td>
                             <td>${policy.externalAgency}</td>
                         </tr>
-                    `
-                        )
-                        .join("")}
+                    `).join('')}
                 </tbody>
             </table>
         `;
     }
 
-    // Müşteri listesi oluşturma
-    function renderCustomerList() {
-        const mainContent = document.querySelector(".main-content");
-        mainContent.innerHTML = `
-            <header>
-                <h1>Müşterilerim</h1>
-            </header>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Müşteri Adı</th>
-                        <th>Telefon</th>
-                        <th>E-posta</th>
-                        <th>Adres</th>
-                        <th>İşlem</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${customers
-                        .map(
-                            (customer, index) => `
-                            <tr>
-                                <td>${customer.name}</td>
-                                <td>${customer.phone}</td>
-                                <td>${customer.email}</td>
-                                <td>${customer.address}</td>
-                                <td>
-                                    <button class="add-policy-btn" data-index="${index}">Poliçe Ekle</button>
-                                    <button class="view-policies-btn" data-index="${index}">Poliçeler</button>
-                                </td>
-                            </tr>
-                        `
-                        )
-                        .join("")}
-                </tbody>
-            </table>
-        `;
-
-        document.querySelectorAll(".add-policy-btn").forEach((btn) => {
-            btn.addEventListener("click", (e) => {
-                const customerIndex = e.target.getAttribute("data-index");
-                const customer = customers[customerIndex];
-                renderPolicyAddSection(customer);
-            });
-        });
-
-        document.querySelectorAll(".view-policies-btn").forEach((btn) => {
-            btn.addEventListener("click", (e) => {
-                const customerIndex = e.target.getAttribute("data-index");
-                const customer = customers[customerIndex];
-                renderPolicyList(customer);
-            });
-        });
-    }
-
-    // Müşterilerim sayfasını göster
-    const myCustomersLink = document.getElementById("my-customers-link");
-    myCustomersLink.addEventListener("click", (event) => {
-        event.preventDefault();
-        renderCustomerList();
-    });
+    // Sayfa Yüklendiğinde Müşteri Listesini Göster
+    renderCustomerList();
 });
