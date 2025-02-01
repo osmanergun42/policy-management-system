@@ -1,197 +1,127 @@
-/* Genel Stiller */
-body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f9f9f9;
-    color: #333;
-    line-height: 1.6;
-}
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poliçe Yönetim Sistemi</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="sidebar">
+        <div class="logo">
+            <h2>Yönetim Paneli</h2>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#" id="home-link">Ana Sayfa</a></li>
+                <li><a href="#" id="my-customers-link">Müşterilerim</a></li>
+            </ul>
+        </nav>
+        <div id="sidebar-search-section">
+            <input type="text" id="sidebar-search-input" placeholder="Müşteri Adı veya Plaka Ara">
+            <button id="sidebar-search-btn">Ara</button>
+        </div>
+    </div>
 
-h1, h2, h3 {
-    margin: 0;
-    font-weight: bold;
-}
+    <div id="toggle-sidebar-btn">☰</div>
 
-button {
-    padding: 8px 15px;
-    border: none;
-    border-radius: 4px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
+    <div class="main-content">
+        <header>
+            <h1>Yönetim Paneli</h1>
+        </header>
 
-/* Sidebar */
-#sidebar {
-    width: 250px;
-    background-color: #333;
-    color: #fff;
-    height: 100vh;
-    position: fixed;
-    padding: 20px;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.2);
-    overflow-y: auto;
-    transition: width 0.3s ease;
-}
+        <!-- Müşteri Ekleme Formu -->
+        <div id="add-customer-section">
+            <h2>Yeni Müşteri Ekle</h2>
+            <form id="add-customer-form">
+                <input type="text" id="customer-name" placeholder="Müşteri Adı ve Soyadı" required>
+                <input type="text" id="customer-phone" placeholder="Telefon Numarası" required>
+                <input type="email" id="customer-email" placeholder="E-posta Adresi" required>
+                <input type="text" id="customer-address" placeholder="Adres" required>
+                <textarea id="customer-extra-info" placeholder="Ek Bilgi (Opsiyonel)" rows="4"></textarea>
+                <button type="submit">Müşteri Ekle</button>
+            </form>
+        </div>
 
-#sidebar.closed {
-    width: 0;
-    padding: 0;
-    overflow: hidden;
-}
+        <!-- Poliçe Ekleme Modal -->
+        <div id="add-policy-modal" class="modal">
+            <div class="modal-content">
+                <span id="close-add-policy-modal" class="close-button">X</span>
+                <h2>Poliçe Ekle</h2>
+                <form id="add-policy-form">
+                    <input type="text" id="policy-type" placeholder="Poliçe Tipi" required>
+                    <input type="date" id="start-date" required>
+                    <input type="date" id="end-date" required>
+                    <input type="number" id="premium" placeholder="Prim Miktarı (TL)" min="0" required>
+                    <input type="number" id="commission-rate" placeholder="Komisyon Oranı (%)" min="0" max="100" required>
+                    <input type="text" id="calculated-commission" placeholder="Hesaplanan Komisyon (TL)" readonly>
+                    <input type="text" id="policy-number" placeholder="Poliçe Numarası" required>
+                    <input type="text" id="license-plate" placeholder="Plaka" required>
+                    <input type="text" id="registration-number" placeholder="Tescil Numarası" required>
+                    <select id="company-dropdown" required>
+                        <option value="" disabled selected>Şirket Seçin</option>
+                        <option value="Ak Sigorta">Ak Sigorta</option>
+                        <option value="Unico Sigorta">Unico Sigorta</option>
+                        <option value="Anadolu">Anadolu</option>
+                        <option value="Koru">Koru</option>
+                        <option value="Corpus">Corpus</option>
+                        <option value="Ankara">Ankara</option>
+                        <option value="Hepiyi">Hepiyi</option>
+                        <option value="Doğa">Doğa</option>
+                        <option value="Şeker">Şeker</option>
+                        <option value="Bereket">Bereket</option>
+                        <option value="Ray">Ray</option>
+                        <option value="Sompo">Sompo</option>
+                        <option value="Türkiye">Türkiye</option>
+                        <option value="AXA">AXA</option>
+                        <option value="Allianz">Allianz</option>
+                        <option value="HDI">HDI</option>
+                        <option value="Neova">Neova</option>
+                    </select>
+                    <select id="external-agency" required>
+                        <option value="" disabled selected>Dış Acente Seçin</option>
+                        <option value="SNR Sigorta">SNR Sigorta</option>
+                        <option value="Enes Sigorta">Enes Sigorta</option>
+                        <option value="Enter Sigorta">Enter Sigorta</option>
+                    </select>
+                    <button type="submit">Poliçe Ekle</button>
+                </form>
+            </div>
+        </div>
 
-#sidebar ul {
-    padding: 0;
-    list-style: none;
-}
+        <div id="add-policy-section" style="display: none;">
+            <h2 id="policy-customer-name"></h2>
+            <button id="open-add-policy-modal">Poliçe Ekle</button>
+        </div>
 
-#sidebar ul li {
-    margin: 15px 0;
-}
+        <!-- Poliçe Düzenleme Modal -->
+        <div id="edit-policy-modal" class="modal">
+            <div class="modal-content">
+                <span id="close-edit-policy-modal" class="close-button">X</span>
+                <h2>Poliçe Detaylarını Düzenle</h2>
+                <form id="edit-policy-form">
+                    <input type="text" id="edit-policy-type" placeholder="Poliçe Tipi" required>
+                    <input type="date" id="edit-start-date" required>
+                    <input type="date" id="edit-end-date" required>
+                    <input type="number" id="edit-premium" placeholder="Prim Miktarı (TL)" min="0" required>
+                    <input type="number" id="edit-commission-rate" placeholder="Komisyon Oranı (%)" min="0" max="100" required>
+                    <input type="text" id="edit-calculated-commission" placeholder="Hesaplanan Komisyon (TL)" readonly>
+                    <input type="text" id="edit-license-plate" placeholder="Plaka" required>
+                    <button type="submit">Güncelle</button>
+                </form>
+            </div>
+        </div>
 
-#sidebar ul li a {
-    color: #fff;
-    text-decoration: none;
-    padding: 10px;
-    border-radius: 4px;
-    display: block;
-    background-color: #444;
-    transition: background-color 0.3s ease;
-}
+        <!-- Arama Sonuçları Modal -->
+        <div id="search-results-modal" class="modal">
+            <div class="modal-content">
+                <span id="close-search-results-modal" class="close-button">X</span>
+                <h2>Arama Sonuçları</h2>
+                <div id="search-results"></div>
+            </div>
+        </div>
+    </div>
 
-#sidebar ul li a:hover {
-    background-color: #555;
-}
-
-/* Sidebar Search */
-#sidebar-search-section {
-    margin-top: 20px;
-}
-
-#sidebar-search-input {
-    width: calc(100% - 20px);
-    padding: 10px;
-    margin-bottom: 10px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-#sidebar-search-btn {
-    width: calc(100% - 20px);
-    padding: 10px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-#sidebar-search-btn:hover {
-    background-color: #0056b3;
-}
-
-/* Sidebar Toggle Button */
-#toggle-sidebar-btn {
-    position: fixed;
-    top: 15px;
-    left: 15px;
-    background-color: #333;
-    color: #fff;
-    padding: 10px;
-    border-radius: 50%;
-    cursor: pointer;
-    z-index: 1000;
-}
-
-#toggle-sidebar-btn:hover {
-    background-color: #444;
-}
-
-/* Main Content */
-.main-content {
-    margin-left: 270px;
-    padding: 20px;
-    max-height: 100vh;
-    overflow-y: auto;
-    transition: margin-left 0.3s ease;
-}
-
-.main-content.expanded {
-    margin-left: 20px;
-}
-
-/* Modal Stilleri */
-.modal {
-    display: none; /* Gizli tut */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: rgba(0, 0, 0, 0.5);
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-}
-
-.modal-content {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    width: 60%;
-    max-height: 90%;
-    overflow-y: auto;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.close-button {
-    float: right;
-    font-size: 20px;
-    cursor: pointer;
-}
-
-/* Arama Butonu */
-.search-button {
-    padding: 10px 20px;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    background-color: #007bff;
-    color: #fff;
-    cursor: pointer;
-    transition: background-color 0.3s ease, box-shadow 0.3s ease;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.search-button:hover {
-    background-color: #0056b3;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-.search-button:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
-}
-
-/* Responsive Tasarım */
-@media screen and (max-width: 768px) {
-    #sidebar {
-        width: 200px;
-    }
-
-    .main-content {
-        margin-left: 220px;
-    }
-
-    .main-content.expanded {
-        margin-left: 20px;
-    }
-
-    .modal-content {
-        width: 90%;
-    }
-}
+    <script src="app.js"></script>
+</body>
+</html>
