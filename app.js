@@ -101,15 +101,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Sidebar Arama Butonu
     sidebarSearchBtn.addEventListener("click", () => {
-        performSearch(sidebarSearchInput.value.toLowerCase());
+        performSearch(sidebarSearchInput.value);
     });
 
     // Arama İşlevi
     function performSearch(searchTerm) {
         const filteredCustomers = customers.filter(customer => 
-            customer.name.toLowerCase().includes(searchTerm) || 
+            customer.name.includes(searchTerm) || 
             (policies[customer.name] && policies[customer.name].some(policy => 
-                policy.licensePlate.toLowerCase().includes(searchTerm)
+                policy.licensePlate.includes(searchTerm)
             ))
         );
 
@@ -229,24 +229,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 </tbody>
             </table>
         `;
-
-        document.querySelectorAll(".add-policy-btn").forEach(btn => {
-            btn.addEventListener("click", (e) => {
-                const customerIndex = e.target.getAttribute("data-index");
-                const customer = customers[customerIndex];
-                document.getElementById("policy-customer-name").innerText = customer.name;
-                document.getElementById("add-policy-section").style.display = "block";
-                openAddPolicyModalBtn.click();
-            });
-        });
-
-        document.querySelectorAll(".view-policies-btn").forEach(btn => {
-            btn.addEventListener("click", (e) => {
-                const customerIndex = e.target.getAttribute("data-index");
-                const customer = customers[customerIndex];
-                renderPolicyList(customer);
-            });
-        });
 
         searchResultsModal.style.display = "flex";
     }
