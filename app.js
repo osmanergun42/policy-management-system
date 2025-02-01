@@ -101,15 +101,15 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Sidebar Arama Butonu
     sidebarSearchBtn.addEventListener("click", () => {
-        performSearch(sidebarSearchInput.value);
+        performSearch(sidebarSearchInput.value.toLowerCase());
     });
 
-    // Arama İşlevi
+    // Arama İşlevi (Büyük-Küçük Harf Hassasiyetini Kaldırdık)
     function performSearch(searchTerm) {
         const filteredCustomers = customers.filter(customer => 
-            customer.name.includes(searchTerm) || 
+            customer.name.toLowerCase().includes(searchTerm) || 
             (policies[customer.name] && policies[customer.name].some(policy => 
-                policy.licensePlate.includes(searchTerm)
+                policy.licensePlate.toLowerCase().includes(searchTerm)
             ))
         );
 
