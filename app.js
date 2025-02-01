@@ -75,10 +75,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const addCustomerLink = document.getElementById("add-customer-link");
     addCustomerLink.addEventListener("click", (event) => {
         event.preventDefault();
-        document.getElementById("main-header").style.display = "none";
-        document.getElementById("add-customer-section").style.display = "block";
-        document.getElementById("add-policy-section").style.display = "none";
         backButton.style.display = "block"; // Geri butonunu göster
+        showSection('add-customer-section');
     });
 
     // Müşteri Ekleme Formu
@@ -126,32 +124,23 @@ document.addEventListener("DOMContentLoaded", () => {
     const homeLink = document.getElementById("home-link");
     homeLink.addEventListener("click", (event) => {
         event.preventDefault();
-        document.getElementById("main-header").style.display = "block";
-        document.getElementById("add-customer-section").style.display = "none";
-        document.getElementById("add-policy-section").style.display = "none";
         backButton.style.display = "none"; // Geri butonunu gizle
-        document.querySelector(".main-content").innerHTML = `
-            <header>
-                <h1 id="main-header">Poliçe Takip Sistemi</h1>
-            </header>
-        `;
+        showSection('main-header');
     });
 
     // Müşterilerim Linki
     const myCustomersLink = document.getElementById("my-customers-link");
     myCustomersLink.addEventListener("click", (event) => {
         event.preventDefault();
-        document.getElementById("main-header").style.display = "none";
-        document.getElementById("add-customer-section").style.display = "none";
-        document.getElementById("add-policy-section").style.display = "none";
         backButton.style.display = "block"; // Geri butonunu göster
         renderCustomerList();
     });
 
     // Müşteri Listesini Render Etme
     function renderCustomerList(filteredCustomers = customers) {
-        const mainContent = document.querySelector(".main-content");
-        mainContent.innerHTML = `
+        showSection('customer-list-section');
+        const customerListSection = document.getElementById('customer-list-section');
+        customerListSection.innerHTML = `
             <header>
                 <h1>Müşterilerim</h1>
             </header>
@@ -352,10 +341,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Poliçe Listesini Render Etme
     function renderPolicyList(customer) {
-        const mainContent = document.querySelector(".main-content");
+        showSection('policy-list-section');
+        const policyListSection = document.getElementById('policy-list-section');
         const customerPolicies = policies[customer.name] || [];
 
-        mainContent.innerHTML = `
+        policyListSection.innerHTML = `
             <header>
                 <h1>${customer.name} için Poliçeler</h1>
             </header>
@@ -392,10 +382,15 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
     }
 
+    // Bölüm Gösterme Fonksiyonu
+    function showSection(sectionId) {
+        const sections = document.querySelectorAll('.main-content > div');
+        sections.forEach((section) => {
+            section.style.display = 'none';
+        });
+        document.getElementById(sectionId).style.display = 'block';
+    }
+
     // Sayfa Yüklendiğinde Ana Sayfa İçeriğini Göster
-    document.querySelector(".main-content").innerHTML = `
-        <header>
-            <h1 id="main-header">Poliçe Takip Sistemi</h1>
-        </header>
-    `;
+    showSection('main-header');
 });
