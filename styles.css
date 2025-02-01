@@ -156,14 +156,14 @@ table td {
 
 .modal-content {
     background-color: #fefefe;
-    margin: 15% auto;
+    margin: 5% auto; /* Pencerenin dikeyde ortalanması için üst ve alt marjı azaltabiliriz */
     padding: 20px;
     border: 1px solid #888;
-    width: 80%;
-    max-width: 500px;
-    box-sizing: border-box; /* Eklendi: İçerik kutusunun kenarlık ve dolgu ile birlikte hesaplanmasını sağlar */
-    word-wrap: break-word; /* Eklendi: Uzun kelimelerin taşmasını önler */
-    overflow: hidden; /* Eklendi: İçerik taşmasını gizler */
+    width: 90%; /* Genişliği %80'den %90'a çıkarıyoruz */
+    max-width: 800px; /* Maksimum genişliği artırıyoruz */
+    box-sizing: border-box; /* İçerik kutusunun kenarlık ve dolgu ile birlikte hesaplanmasını sağlar */
+    word-wrap: break-word; /* Uzun kelimelerin taşmasını önler */
+    overflow: hidden; /* İçerik taşmasını gizler */
 }
 
 .close-button {
