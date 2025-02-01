@@ -22,8 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const customerAddressInput = document.getElementById("customer-address");
     const customerExtraInfoInput = document.getElementById("customer-extra-info");
 
-    const sidebarSearchBtn = document.getElementById("sidebar-search-btn");
     const sidebarSearchInput = document.getElementById("sidebar-search-input");
+    const searchSuggestions = document.getElementById("search-suggestions");
 
     const addPolicyModal = document.getElementById("add-policy-modal");
     const closeAddPolicyModal = document.getElementById("close-add-policy-modal");
@@ -86,26 +86,24 @@ document.addEventListener("DOMContentLoaded", () => {
         history.back();
     });
 
-    // Sidebar Arama Butonu
-    sidebarSearchBtn.addEventListener("click", () => {
-        performSearch(sidebarSearchInput.value.toLowerCase());
+    // Arama Kutusu Etkinlikleri
+    sidebarSearchInput.addEventListener("input", () => {
+        const searchTerm = sidebarSearchInput.value.toLowerCase();
+        if (searchTerm) {
+            const suggestions = customers.filter(customer =>
+                customer.name.toLowerCase().includes(searchTerm)
+            );
+            renderSuggestions(suggestions);
+        } else {
+            searchSuggestions.innerHTML = '';
+        }
     });
 
-    // Arama İşlevi (Büyük-Küçük Harf Hassasiyetini Kaldırdık)
-    function performSearch(searchTerm) {
-        const lowerCasedSearchTerm = searchTerm.toLowerCase();
-        const filteredCustomers = customers.filter(customer => 
-            customer.name.toLowerCase().includes(lowerCasedSearchTerm) || 
-            (policies[customer.name] && policies[customer.name].some(policy => 
-                policy.licensePlate.toLowerCase().includes(lowerCasedSearchTerm)
-            ))
-        );
-
-        if (filteredCustomers.length > 0) {
-            renderSearchResults(filteredCustomers);
-        } else {
-            alert("Müşteri veya plaka bulunamadı!");
-        }
+    // Önerileri Render Etme
+    function renderSuggestions(suggestions) {
+        searchSuggestions.innerHTML = suggestions.map(customer => `
+            <div class="suggestion-item">${customer.name}</div>
+        `).join('');
     }
 
     // Ana Sayfa Linki
