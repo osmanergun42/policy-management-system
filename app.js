@@ -22,8 +22,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const customerAddressInput = document.getElementById("customer-address");
     const customerExtraInfoInput = document.getElementById("customer-extra-info");
 
-    const searchInput = document.getElementById("search-input");
-    const searchBtn = document.getElementById("search-btn");
+    const sidebarSearchBtn = document.getElementById("sidebar-search-btn");
+    const sidebarSearchInput = document.getElementById("sidebar-search-input");
 
     const addPolicyModal = document.getElementById("add-policy-modal");
     const closeAddPolicyModal = document.getElementById("close-add-policy-modal");
@@ -83,15 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
         renderCustomerList();
     });
 
-    // Arama Butonu (Ana içerik)
-    searchBtn.addEventListener("click", () => {
-        performSearch(searchInput.value.toLowerCase());
-    });
-
     // Sidebar Arama Butonu
-    const sidebarSearchBtn = document.getElementById("sidebar-search-btn");
-    const sidebarSearchInput = document.getElementById("sidebar-search-input");
-
     sidebarSearchBtn.addEventListener("click", () => {
         performSearch(sidebarSearchInput.value.toLowerCase());
     });
@@ -116,14 +108,21 @@ document.addEventListener("DOMContentLoaded", () => {
     const homeLink = document.getElementById("home-link");
     homeLink.addEventListener("click", (event) => {
         event.preventDefault();
-        document.getElementById("add-customer-section").style.display = "block";
+        document.getElementById("main-header").style.display = "block";
+        document.getElementById("add-customer-section").style.display = "none";
         document.getElementById("add-policy-section").style.display = "none";
+        document.querySelector(".main-content").innerHTML = `
+            <header>
+                <h1 id="main-header">Poliçe Takip Sistemi</h1>
+            </header>
+        `;
     });
 
     // Müşterilerim Linki
     const myCustomersLink = document.getElementById("my-customers-link");
     myCustomersLink.addEventListener("click", (event) => {
         event.preventDefault();
+        document.getElementById("main-header").style.display = "none";
         document.getElementById("add-customer-section").style.display = "none";
         document.getElementById("add-policy-section").style.display = "none";
         renderCustomerList();
@@ -373,6 +372,13 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
     }
 
-    // Sayfa Yüklendiğinde Müşteri Listesini Göster
-    renderCustomerList();
+    // Sayfa Yüklendiğinde Ana Sayfa İçeriğini Göster
+    document.getElementById("main-header").style.display = "block";
+    document.getElementById("add-customer-section").style.display = "none";
+    document.getElementById("add-policy-section").style.display = "none";
+    document.querySelector(".main-content").innerHTML = `
+        <header>
+            <h1 id="main-header">Poliçe Takip Sistemi</h1>
+        </header>
+    `;
 });
