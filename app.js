@@ -138,9 +138,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Müşteri Listesini Render Etme
     function renderCustomerList(filteredCustomers = customers) {
-        showSection('customer-list-section');
-        const customerListSection = document.getElementById('customer-list-section');
-        customerListSection.innerHTML = `
+        const mainContent = document.querySelector(".main-content");
+        mainContent.innerHTML = `
             <header>
                 <h1>Müşterilerim</h1>
             </header>
@@ -341,11 +340,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Poliçe Listesini Render Etme
     function renderPolicyList(customer) {
-        showSection('policy-list-section');
-        const policyListSection = document.getElementById('policy-list-section');
+        const mainContent = document.querySelector(".main-content");
         const customerPolicies = policies[customer.name] || [];
 
-        policyListSection.innerHTML = `
+        mainContent.innerHTML = `
             <header>
                 <h1>${customer.name} için Poliçeler</h1>
             </header>
