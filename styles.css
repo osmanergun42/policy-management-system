@@ -85,7 +85,7 @@ body {
     color: black;
     position: absolute;
     width: calc(100% - 40px); /* Adjust to fit within the padding */
-    top: 50px;
+    top: 80px; /* Önerileri biraz daha aşağı çekmek için top değerini artırdık */
     left: 20px;
     border: 1px solid #ddd;
     border-radius: 4px;
