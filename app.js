@@ -109,8 +109,6 @@ document.addEventListener("DOMContentLoaded", () => {
     homeLink.addEventListener("click", (event) => {
         event.preventDefault();
         document.getElementById("main-header").style.display = "block";
-        document.getElementById("add-customer-section").style.display = "none";
-        document.getElementById("add-policy-section").style.display = "none";
         document.querySelector(".main-content").innerHTML = `
             <header>
                 <h1 id="main-header">Poliçe Takip Sistemi</h1>
@@ -123,8 +121,6 @@ document.addEventListener("DOMContentLoaded", () => {
     myCustomersLink.addEventListener("click", (event) => {
         event.preventDefault();
         document.getElementById("main-header").style.display = "none";
-        document.getElementById("add-customer-section").style.display = "none";
-        document.getElementById("add-policy-section").style.display = "none";
         renderCustomerList();
     });
 
@@ -373,9 +369,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Sayfa Yüklendiğinde Ana Sayfa İçeriğini Göster
-    document.getElementById("main-header").style.display = "block";
-    document.getElementById("add-customer-section").style.display = "none";
-    document.getElementById("add-policy-section").style.display = "none";
     document.querySelector(".main-content").innerHTML = `
         <header>
             <h1 id="main-header">Poliçe Takip Sistemi</h1>
