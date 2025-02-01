@@ -47,15 +47,44 @@ body {
 
 #sidebar-search-section {
     padding: 20px;
+    position: relative;
 }
 
-#sidebar-search-section input,
-#sidebar-search-section button {
+#sidebar-search-section input {
     width: 100%;
     padding: 10px;
     margin-top: 10px;
     border: none;
     border-radius: 4px;
+}
+
+.suggestions {
+    background-color: white;
+    color: black;
+    position: absolute;
+    width: calc(100% - 40px); /* Adjust to fit within the padding */
+    top: 50px;
+    left: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    z-index: 1000;
+    max-height: 200px;
+    overflow-y: auto;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+
+.suggestion-item {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    cursor: pointer;
+}
+
+.suggestion-item:last-child {
+    border-bottom: none;
+}
+
+.suggestion-item:hover {
+    background-color: #f0f0f0;
 }
 
 #toggle-sidebar-btn {
