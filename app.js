@@ -32,6 +32,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const editPolicyModal = document.getElementById("edit-policy-modal");
     const closeEditPolicyModal = document.getElementById("close-edit-policy-modal");
 
+    const searchResultsModal = document.getElementById("search-results-modal");
+    const closeSearchResultsModal = document.getElementById("close-search-results-modal");
+
     // Modal Açma ve Kapatma
     openAddPolicyModalBtn.addEventListener("click", () => {
         addPolicyModal.style.display = "flex";
@@ -45,12 +48,19 @@ document.addEventListener("DOMContentLoaded", () => {
         editPolicyModal.style.display = "none";
     });
 
+    closeSearchResultsModal.addEventListener("click", () => {
+        searchResultsModal.style.display = "none";
+    });
+
     window.addEventListener("click", (event) => {
         if (event.target === addPolicyModal) {
             addPolicyModal.style.display = "none";
         }
         if (event.target === editPolicyModal) {
             editPolicyModal.style.display = "none";
+        }
+        if (event.target === searchResultsModal) {
+            searchResultsModal.style.display = "none";
         }
     });
 
@@ -108,13 +118,14 @@ document.addEventListener("DOMContentLoaded", () => {
         event.preventDefault();
         document.getElementById("add-customer-section").style.display = "block";
         document.getElementById("add-policy-section").style.display = "none";
-        renderCustomerList();
     });
 
     // Müşterilerim Linki
     const myCustomersLink = document.getElementById("my-customers-link");
     myCustomersLink.addEventListener("click", (event) => {
         event.preventDefault();
+        document.getElementById("add-customer-section").style.display = "none";
+        document.getElementById("add-policy-section").style.display = "none";
         renderCustomerList();
     });
 
@@ -145,6 +156,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             <td>
                                 <button class="add-policy-btn" data-index="${index}">Poliçe Ekle</button>
                                 <button class="view-policies-btn" data-index="${index}">Poliçeler</button>
+                                <button class="delete-customer-btn" data-index="${index}">Sil</button>
                             </td>
                         </tr>
                     `).join('')}
@@ -169,15 +181,21 @@ document.addEventListener("DOMContentLoaded", () => {
                 renderPolicyList(customer);
             });
         });
+
+        document.querySelectorAll(".delete-customer-btn").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                const customerIndex = e.target.getAttribute("data-index");
+                customers.splice(customerIndex, 1);
+                saveToLocalStorage("customers", customers);
+                renderCustomerList();
+            });
+        });
     }
 
     // Arama Sonuçlarını Render Etme
     function renderSearchResults(filteredCustomers) {
-        const mainContent = document.querySelector(".main-content");
-        mainContent.innerHTML = `
-            <header>
-                <h1>Arama Sonuçları</h1>
-            </header>
+        const searchResultsContainer = document.getElementById("search-results");
+        searchResultsContainer.innerHTML = `
             <table>
                 <thead>
                     <tr>
@@ -222,6 +240,8 @@ document.addEventListener("DOMContentLoaded", () => {
                 renderPolicyList(customer);
             });
         });
+
+        searchResultsModal.style.display = "flex";
     }
 
     // LocalStorage'a Kaydetme
