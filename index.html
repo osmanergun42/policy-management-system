@@ -34,17 +34,42 @@
         <!-- Geri Butonu -->
         <button id="back-button" class="back-button" style="display: none;">Geri</button>
 
-        <!-- Müşteri Ekleme Formu -->
-        <div id="add-customer-section" style="display: none;">
-            <h2>Yeni Müşteri Ekle</h2>
-            <form id="add-customer-form">
-                <input type="text" id="customer-name" placeholder="Müşteri Adı ve Soyadı" required>
-                <input type="text" id="customer-phone" placeholder="Telefon Numarası" required>
-                <input type="email" id="customer-email" placeholder="E-posta Adresi">
-                <input type="text" id="customer-address" placeholder="Adres">
-                <textarea id="customer-extra-info" placeholder="Ek Bilgi (Opsiyonel)" rows="4"></textarea>
-                <button type="submit">Müşteri Ekle</button>
-            </form>
+        <!-- Müşterilerim Bölümü -->
+        <div id="customer-list-section" style="display: none;">
+            <header>
+                <h1>Müşterilerim</h1>
+                <button id="open-add-customer-modal" class="add-button">Müşteri Ekle</button>
+            </header>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Müşteri Adı</th>
+                        <th>Telefon</th>
+                        <th>E-posta</th>
+                        <th>Adres</th>
+                        <th>İşlem</th>
+                    </tr>
+                </thead>
+                <tbody id="customer-list-body">
+                    <!-- Müşteri listesi burada görüntülenecek -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Müşteri Ekleme Modal -->
+        <div id="add-customer-modal" class="modal">
+            <div class="modal-content">
+                <span id="close-add-customer-modal" class="close-button">X</span>
+                <h2>Yeni Müşteri Ekle</h2>
+                <form id="add-customer-form">
+                    <input type="text" id="customer-name" placeholder="Müşteri Adı ve Soyadı" required>
+                    <input type="text" id="customer-phone" placeholder="Telefon Numarası" required>
+                    <input type="email" id="customer-email" placeholder="E-posta Adresi">
+                    <input type="text" id="customer-address" placeholder="Adres">
+                    <textarea id="customer-extra-info" placeholder="Ek Bilgi (Opsiyonel)" rows="4"></textarea>
+                    <button type="submit">Müşteri Ekle</button>
+                </form>
+            </div>
         </div>
 
         <!-- Poliçe Ekleme Modal -->
