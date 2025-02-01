@@ -391,6 +391,34 @@ document.addEventListener("DOMContentLoaded", () => {
             </table>
         `;
 
+        // "Poliçe Ekle", "Poliçeler" ve "Sil" butonlarına tıklama olaylarını ekleyelim
+        document.querySelectorAll(".add-policy-btn").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                const customerIndex = e.target.getAttribute("data-index");
+                const customer = filteredCustomers[customerIndex];
+                document.getElementById("policy-customer-name").innerText = customer.name;
+                document.getElementById("add-policy-section").style.display = "block";
+                openAddPolicyModalBtn.click();
+            });
+        });
+
+        document.querySelectorAll(".view-policies-btn").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                const customerIndex = e.target.getAttribute("data-index");
+                const customer = filteredCustomers[customerIndex];
+                renderPolicyListModal(customer);
+            });
+        });
+
+        document.querySelectorAll(".delete-customer-btn").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                const customerIndex = e.target.getAttribute("data-index");
+                filteredCustomers.splice(customerIndex, 1);
+                saveToLocalStorage("customers", filteredCustomers);
+                renderSearchResults(filteredCustomers);
+            });
+        });
+
         searchResultsModal.style.display = "flex";
     }
 
