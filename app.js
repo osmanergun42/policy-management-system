@@ -35,6 +35,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const searchResultsModal = document.getElementById("search-results-modal");
     const closeSearchResultsModal = document.getElementById("close-search-results-modal");
 
+    const backButton = document.getElementById("back-button");
+
     // Modal Açma ve Kapatma
     openAddPolicyModalBtn.addEventListener("click", () => {
         addPolicyModal.style.display = "flex";
@@ -64,6 +66,11 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
+    // Geri Butonu
+    backButton.addEventListener("click", () => {
+        history.back();
+    });
+
     // Sidebar'dan Müşteri Ekleme Linki
     const addCustomerLink = document.getElementById("add-customer-link");
     addCustomerLink.addEventListener("click", (event) => {
@@ -71,6 +78,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("main-header").style.display = "none";
         document.getElementById("add-customer-section").style.display = "block";
         document.getElementById("add-policy-section").style.display = "none";
+        backButton.style.display = "block"; // Geri butonunu göster
     });
 
     // Müşteri Ekleme Formu
@@ -90,6 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
         addCustomerForm.reset();
         alert("Müşteri başarıyla eklendi!");
         renderCustomerList();
+        backButton.click(); // Geri butonuna tıklayarak bir önceki sayfaya dön
     });
 
     // Sidebar Arama Butonu
@@ -120,6 +129,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("main-header").style.display = "block";
         document.getElementById("add-customer-section").style.display = "none";
         document.getElementById("add-policy-section").style.display = "none";
+        backButton.style.display = "none"; // Geri butonunu gizle
         document.querySelector(".main-content").innerHTML = `
             <header>
                 <h1 id="main-header">Poliçe Takip Sistemi</h1>
@@ -134,6 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
         document.getElementById("main-header").style.display = "none";
         document.getElementById("add-customer-section").style.display = "none";
         document.getElementById("add-policy-section").style.display = "none";
+        backButton.style.display = "block"; // Geri butonunu göster
         renderCustomerList();
     });
 
