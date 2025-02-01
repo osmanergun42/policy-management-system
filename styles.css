@@ -260,3 +260,44 @@ table td {
 .delete-customer-btn:hover {
     background-color: #c0392b;
 }
+
+/* Modern input ve dropdown stilleri */
+.modal-content input[type="text"],
+.modal-content input[type="email"],
+.modal-content input[type="date"],
+.modal-content input[type="number"],
+.modal-content textarea,
+.modal-content select {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+    font-size: 16px;
+}
+
+/* Input odaklanma ve hover efekti */
+.modal-content input[type="text"]:focus,
+.modal-content input[type="email"]:focus,
+.modal-content input[type="date"]:focus,
+.modal-content input[type="number"]:focus,
+.modal-content textarea:focus,
+.modal-content select:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+    outline: none;
+}
+
+/* Dropdown menü stili */
+.modal-content select {
+    background-color: white;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="gray"><path d="M7 10l5 5 5-5z"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 16px;
+}
