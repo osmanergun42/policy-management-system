@@ -327,4 +327,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Sayfa Yüklendiğinde Ana Sayfa İçeriğini Göster
     showSection('main-header');
+
+    // Boşluğa tıklayınca önerileri kapatma
+    window.addEventListener("click", (event) => {
+        if (!sidebarSearchInput.contains(event.target) && !searchSuggestions.contains(event.target)) {
+            searchSuggestions.innerHTML = '';
+        }
+    });
 });
