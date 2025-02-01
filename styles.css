@@ -52,10 +52,28 @@ body {
 
 #sidebar-search-section input {
     width: 100%;
-    padding: 10px;
+    padding: 10px 40px 10px 20px; /* Add padding for icon */
     margin-top: 10px;
     border: none;
-    border-radius: 4px;
+    border-radius: 25px; /* Rounded corners */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    font-size: 16px; /* Larger font size */
+    transition: all 0.3s; /* Smooth transition */
+}
+
+#sidebar-search-section input:focus {
+    outline: none; /* Remove default outline */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); /* Stronger shadow on focus */
+}
+
+#sidebar-search-section .search-icon {
+    position: absolute;
+    top: 50%;
+    right: 30px; /* Adjust to fit within the padding */
+    transform: translateY(-50%);
+    font-size: 20px; /* Adjust icon size */
+    color: #aaa; /* Icon color */
+    cursor: pointer;
 }
 
 .suggestions {
