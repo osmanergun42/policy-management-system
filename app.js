@@ -36,6 +36,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const closeSearchResultsModal = document.getElementById("close-search-results-modal");
 
     const backButton = document.getElementById("back-button");
+    const backButtonAddCustomer = document.getElementById("back-button-add-customer");
+    const backButtonAddPolicy = document.getElementById("back-button-add-policy");
 
     const addCustomerModal = document.getElementById("add-customer-modal");
     const closeAddCustomerModal = document.getElementById("close-add-customer-modal");
@@ -86,16 +88,40 @@ document.addEventListener("DOMContentLoaded", () => {
         history.back();
     });
 
+    // Müşteri Ekleme Modal Geri Butonu
+    backButtonAddCustomer.addEventListener("click", () => {
+        addCustomerModal.style.display = "none";
+    });
+
+    // Poliçe Ekleme Modal Geri Butonu
+    backButtonAddPolicy.addEventListener("click", () => {
+        addPolicyModal.style.display = "none";
+    });
+
     // Arama Kutusu Etkinlikleri
     sidebarSearchInput.addEventListener("input", () => {
         const searchTerm = sidebarSearchInput.value.toLowerCase();
         if (searchTerm) {
             const suggestions = customers.filter(customer =>
-                customer.name.toLowerCase().includes(searchTerm)
+                customer.name.toLowerCase().includes(searchTerm) ||
+                (policies[customer.name] && policies[customer.name].some(policy =>
+                    policy.licensePlate.toLowerCase().includes(searchTerm)
+                ))
             );
             renderSuggestions(suggestions);
         } else {
             searchSuggestions.innerHTML = '';
+        }
+    });
+
+    // Önerilere Tıklama Etkinliği
+    searchSuggestions.addEventListener("click", (event) => {
+        if (event.target.classList.contains("suggestion-item")) {
+            const customerName = event.target.textContent;
+            const customer = customers.find(c => c.name === customerName);
+            if (customer) {
+                renderPolicyList(customer);
+            }
         }
     });
 
@@ -244,6 +270,8 @@ document.addEventListener("DOMContentLoaded", () => {
                     </select>
                     <button type="submit">Poliçe Ekle</button>
                 </form>
+                <!-- Geri Butonu -->
+                <button id="back-button-add-policy" class="back-button">Geri</button>
             </div>
         `;
 
@@ -291,6 +319,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Poliçe Listesini Render Etme
     function renderPolicyList(customer) {
+        showSection('add-policy-section');
         const mainContent = document.querySelector(".main-content");
         const customerPolicies = policies[customer.name] || [];
 
