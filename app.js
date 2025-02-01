@@ -10,11 +10,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const customers = JSON.parse(localStorage.getItem("customers")) || [];
     const policies = JSON.parse(localStorage.getItem("policies")) || {};
 
-    const companies = [
-        "Ak Sigorta", "Unico Sigorta", "Anadolu", "Koru", "Corpus", "Ankara", "Hepiyi", "Doğa", 
-        "Şeker", "Bereket", "Ray", "Sompo", "Türkiye", "AXA", "Allianz", "HDI", "Neova"
-    ];
-
     const addCustomerForm = document.getElementById("add-customer-form");
     const customerNameInput = document.getElementById("customer-name");
     const customerPhoneInput = document.getElementById("customer-phone");
@@ -128,7 +123,7 @@ document.addEventListener("DOMContentLoaded", () => {
         saveToLocalStorage("customers", customers);
 
         // Müşteri listesini yeniden oluşturun
-        renderCustomerListModal();
+        renderCustomerList();
 
         // Müşteri ekleme formunu sıfırlayın
         addCustomerForm.reset();
@@ -207,11 +202,12 @@ document.addEventListener("DOMContentLoaded", () => {
     const myCustomersLink = document.getElementById("my-customers-link");
     myCustomersLink.addEventListener("click", (event) => {
         event.preventDefault();
-        renderCustomerListModal();
+        renderCustomerList();
+        showSection('customer-list-section');
     });
 
-    // Müşterilerim Modal Penceresinde Gösterme
-    function renderCustomerListModal() {
+    // Müşteri Listesi Görüntüleme
+    function renderCustomerList() {
         const customerListBody = document.getElementById('customer-list-body');
         customerListBody.innerHTML = customers.map((customer, index) => `
             <tr>
@@ -250,13 +246,9 @@ document.addEventListener("DOMContentLoaded", () => {
                 const customerIndex = e.target.getAttribute("data-index");
                 customers.splice(customerIndex, 1);
                 saveToLocalStorage("customers", customers);
-                renderCustomerListModal();
+                renderCustomerList();
             });
         });
-
-        const customerListSection = document.getElementById('customer-list-section');
-        customerListSection.style.display = 'block';
-        backButton.style.display = "block"; // Geri butonunu göster
     }
 
     // Poliçeleri Modal Penceresinde Gösterme
@@ -365,4 +357,7 @@ document.addEventListener("DOMContentLoaded", () => {
             searchSuggestions.innerHTML = '';
         }
     });
+
+    // Müşteri listesi varsayılan olarak yüklendiğinde görüntülensin
+    renderCustomerList();
 });
