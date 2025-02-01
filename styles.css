@@ -64,6 +64,34 @@ button {
     background-color: #555;
 }
 
+/* Sidebar Search */
+#sidebar-search-section {
+    margin-top: 20px;
+}
+
+#sidebar-search-input {
+    width: calc(100% - 20px);
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+#sidebar-search-btn {
+    width: calc(100% - 20px);
+    padding: 10px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#sidebar-search-btn:hover {
+    background-color: #0056b3;
+}
+
 /* Sidebar Toggle Button */
 #toggle-sidebar-btn {
     position: fixed;
@@ -96,7 +124,7 @@ button {
 
 /* Modal Stilleri */
 .modal {
-    display: none;
+    display: none; /* Gizli tut */
     position: fixed;
     top: 0;
     left: 0;
@@ -118,36 +146,35 @@ button {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-.modal-content h2 {
-    margin-bottom: 20px;
+.close-button {
+    float: right;
     font-size: 20px;
-}
-
-.modal-content form input,
-.modal-content form button {
-    width: calc(100% - 20px);
-    padding: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-}
-
-.modal-content form button {
-    background-color: #28a745;
-    color: #fff;
     cursor: pointer;
 }
 
-.modal-content form button:hover {
-    background-color: #218838;
+/* Arama Butonu */
+.search-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    font-size: 16px;
+    background-color: #007bff;
+    color: #fff;
+    cursor: pointer;
+    transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
 }
 
-/* Komisyon Alanı */
-#calculated-commission {
-    background-color: #f4f4f4;
-    border: none;
-    font-weight: bold;
-    padding: 10px;
+.search-button:hover {
+    background-color: #0056b3;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.search-button:focus {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.5);
 }
 
 /* Responsive Tasarım */
