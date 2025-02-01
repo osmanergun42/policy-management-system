@@ -16,11 +16,11 @@ document.addEventListener("DOMContentLoaded", () => {
     ];
 
     const addCustomerForm = document.getElementById("add-customer-form");
-    const customerNameInput = document.getElementId("customer-name");
-    const customerPhoneInput = document.getElementId("customer-phone");
-    const customerEmailInput = document.getElementId("customer-email");
-    const customerAddressInput = document.getElementId("customer-address");
-    const customerExtraInfoInput = document.getElementId("customer-extra-info");
+    const customerNameInput = document.getElementById("customer-name");
+    const customerPhoneInput = document.getElementById("customer-phone");
+    const customerEmailInput = document.getElementById("customer-email");
+    const customerAddressInput = document.getElementById("customer-address");
+    const customerExtraInfoInput = document.getElementById("customer-extra-info");
 
     const sidebarSearchBtn = document.getElementById("sidebar-search-btn");
     const sidebarSearchInput = document.getElementById("sidebar-search-input");
@@ -37,6 +37,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const backButton = document.getElementById("back-button");
 
+    const addCustomerModal = document.getElementById("add-customer-modal");
+    const closeAddCustomerModal = document.getElementById("close-add-customer-modal");
+    const openAddCustomerModalBtn = document.getElementById("open-add-customer-modal");
+
     // Modal Açma ve Kapatma
     openAddPolicyModalBtn.addEventListener("click", () => {
         addPolicyModal.style.display = "flex";
@@ -44,6 +48,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     closeAddPolicyModal.addEventListener("click", () => {
         addPolicyModal.style.display = "none";
+    });
+
+    openAddCustomerModalBtn.addEventListener("click", () => {
+        addCustomerModal.style.display = "flex";
+    });
+
+    closeAddCustomerModal.addEventListener("click", () => {
+        addCustomerModal.style.display = "none";
     });
 
     closeEditPolicyModal.addEventListener("click", () => {
@@ -57,6 +69,9 @@ document.addEventListener("DOMContentLoaded", () => {
     window.addEventListener("click", (event) => {
         if (event.target === addPolicyModal) {
             addPolicyModal.style.display = "none";
+        }
+        if (event.target === addCustomerModal) {
+            addCustomerModal.style.display = "none";
         }
         if (event.target === editPolicyModal) {
             editPolicyModal.style.display = "none";
@@ -96,7 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
         addCustomerForm.reset();
         alert("Müşteri başarıyla eklendi!");
         renderCustomerList();
-        backButton.click(); // Geri butonuna tıklayarak bir önceki sayfaya dön
+        addCustomerModal.style.display = "none"; // Modalı kapat
     });
 
     // Sidebar Arama Butonu
@@ -138,38 +153,21 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Müşteri Listesini Render Etme
     function renderCustomerList(filteredCustomers = customers) {
-        const mainContent = document.querySelector(".main-content");
-        mainContent.innerHTML = `
-            <header>
-                <h1>Müşterilerim</h1>
-            </header>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Müşteri Adı</th>
-                        <th>Telefon</th>
-                        <th>E-posta</th>
-                        <th>Adres</th>
-                        <th>İşlem</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    ${filteredCustomers.map((customer, index) => `
-                        <tr>
-                            <td>${customer.name}</td>
-                            <td>${customer.phone}</td>
-                            <td>${customer.email}</td>
-                            <td>${customer.address}</td>
-                            <td>
-                                <button class="add-policy-btn" data-index="${index}">Poliçe Ekle</button>
-                                <button class="view-policies-btn" data-index="${index}">Poliçeler</button>
-                                <button class="delete-customer-btn" data-index="${index}">Sil</button>
-                            </td>
-                        </tr>
-                    `).join('')}
-                </tbody>
-            </table>
-        `;
+        showSection('customer-list-section');
+        const customerListBody = document.getElementById('customer-list-body');
+        customerListBody.innerHTML = filteredCustomers.map((customer, index) => `
+            <tr>
+                <td>${customer.name}</td>
+                <td>${customer.phone}</td>
+                <td>${customer.email}</td>
+                <td>${customer.address}</td>
+                <td>
+                    <button class="add-policy-btn" data-index="${index}">Poliçe Ekle</button>
+                    <button class="view-policies-btn" data-index="${index}">Poliçeler</button>
+                    <button class="delete-customer-btn" data-index="${index}">Sil</button>
+                </td>
+            </tr>
+        `).join('');
 
         document.querySelectorAll(".add-policy-btn").forEach(btn => {
             btn.addEventListener("click", (e) => {
