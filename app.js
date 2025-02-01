@@ -16,11 +16,11 @@ document.addEventListener("DOMContentLoaded", () => {
     ];
 
     const addCustomerForm = document.getElementById("add-customer-form");
-    const customerNameInput = document.getElementById("customer-name");
-    const customerPhoneInput = document.getElementById("customer-phone");
-    const customerEmailInput = document.getElementById("customer-email");
-    const customerAddressInput = document.getElementById("customer-address");
-    const customerExtraInfoInput = document.getElementById("customer-extra-info");
+    const customerNameInput = document.getElementId("customer-name");
+    const customerPhoneInput = document.getElementId("customer-phone");
+    const customerEmailInput = document.getElementId("customer-email");
+    const customerAddressInput = document.getElementId("customer-address");
+    const customerExtraInfoInput = document.getElementId("customer-extra-info");
 
     const sidebarSearchBtn = document.getElementById("sidebar-search-btn");
     const sidebarSearchInput = document.getElementById("sidebar-search-input");
