@@ -136,7 +136,7 @@ document.addEventListener("DOMContentLoaded", () => {
             const customerName = event.target.textContent;
             const customer = customers.find(c => c.name === customerName);
             if (customer) {
-                renderPolicyList(customer);
+                renderPolicyListModal(customer); // Poliçeler modal penceresinde gösterilecek
             }
         }
     });
@@ -144,7 +144,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Önerileri Render Etme
     function renderSuggestions(suggestions) {
         searchSuggestions.innerHTML = suggestions.map(customer => `
-            <div class="suggestion-item">${customer.name}</div>
+            <div class="suggestion-item" data-id="${customer.name}">${customer.name}</div>
         `).join('');
     }
 
