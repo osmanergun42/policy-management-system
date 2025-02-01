@@ -42,6 +42,26 @@ document.addEventListener("DOMContentLoaded", () => {
     const closeAddCustomerModal = document.getElementById("close-add-customer-modal");
     const openAddCustomerModalBtn = document.getElementById("open-add-customer-modal");
 
+    const premiumInput = document.getElementById("premium");
+    const commissionRateInput = document.getElementById("commission-rate");
+    const calculatedCommissionInput = document.getElementById("calculated-commission");
+
+    // Komisyon hesaplama işlevi
+    function calculateCommission() {
+        const premium = parseFloat(premiumInput.value);
+        const commissionRate = parseFloat(commissionRateInput.value);
+        if (!isNaN(premium) && !isNaN(commissionRate)) {
+            const commission = (premium * commissionRate) / 100;
+            calculatedCommissionInput.value = commission.toFixed(2); // Hesaplanan komisyonu iki ondalık basamakla göster
+        } else {
+            calculatedCommissionInput.value = ''; // Geçersiz girişler için komisyon alanını temizle
+        }
+    }
+
+    // Premium ve komisyon oranı girişlerine olay dinleyicileri ekleyin
+    premiumInput.addEventListener("input", calculateCommission);
+    commissionRateInput.addEventListener("input", calculateCommission);
+
     // Modal Açma ve Kapatma
     openAddPolicyModalBtn.addEventListener("click", () => {
         addPolicyModal.style.display = "flex";
