@@ -152,6 +152,21 @@ button {
     cursor: pointer;
 }
 
+/* Geri Butonu */
+.back-button {
+    margin-bottom: 20px;
+    background-color: #007bff;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+    background-color: #0056b3;
+}
+
 /* Arama Butonu */
 .search-button {
     padding: 10px 20px;
