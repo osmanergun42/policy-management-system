@@ -200,7 +200,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
         alert("Poliçe başarıyla eklendi!");
     });
-// Arama Kutusu Etkinlikleri
+
+    // Arama Kutusu Etkinlikleri
     sidebarSearchInput.addEventListener("input", () => {
         const searchTerm = sidebarSearchInput.value.toLowerCase();
         if (searchTerm) {
@@ -400,8 +401,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         policiesModal.style.display = "flex";
     }
-    });
-    }
 
     // Arama Sonuçlarını Render Etme
     function renderSearchResults(filteredCustomers) {
@@ -440,7 +439,8 @@ document.addEventListener("DOMContentLoaded", () => {
             btn.addEventListener("click", (e) => {
                 const customerIndex = e.target.getAttribute("data-index");
                 const customer = filteredCustomers[customerIndex];
-                document.getElementById("policy-customer-name").innerText = customer.name;
+                document.getElementById("policy-customer-name").inner
+                Text = customer.name;
                 document.getElementById("add-policy-section").style.display = "block";
                 openAddPolicyModalBtn.click();
             });
