@@ -48,13 +48,14 @@ body {
 #sidebar-search-section {
     padding: 20px;
     position: relative;
+    display: flex; /* Flexbox düzeni eklendi */
+    gap: 10px; /* Arama çubuğu ve buton arasına boşluk eklendi */
 }
 
 /* Arama Kutusu */
 #sidebar-search-section input {
-    width: 100%;
+    flex-grow: 1; /* Arama kutusunun kalan alanı kaplamasını sağlar */
     padding: 10px 15px; /* Sağ ve sol padding eklendi */
-    margin-top: 10px;
     border: none;
     border-radius: 4px;
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Hafif gölge eklendi */
@@ -63,9 +64,7 @@ body {
 
 /* Arama Butonu */
 #sidebar-search-btn {
-    width: 100%;
-    padding: 10px;
-    margin-top: 15px; /* Arama kutusunun altına biraz daha boşluk eklendi */
+    padding: 10px 20px; /* Buton boyutu ayarlandı */
     background-color: #3498db; /* Modern mavi renk */
     color: white;
     border: none;
@@ -181,8 +180,8 @@ table td {
     margin: 5% auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 100%; /* Modal genişliği artırıldı */
-    max-width: 12500px; /* Modal maksimum genişliği artırıldı */
+    width: 95%; /* Modal genişliği artırıldı */
+    max-width: 1000px; /* Modal maksimum genişliği artırıldı */
     box-sizing: border-box;
     word-wrap: break-word;
     overflow: hidden;
