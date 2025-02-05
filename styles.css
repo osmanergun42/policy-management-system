@@ -263,6 +263,22 @@ table td {
     background-color: #c0392b;
 }
 
+.edit-button {
+    background-color: #3498db;
+}
+
+.edit-button:hover {
+    background-color: #2980b9;
+}
+
+.update-button {
+    background-color: #8e44ad;
+}
+
+.update-button:hover {
+    background-color: #732d91;
+}
+
 /* Modern input ve dropdown stilleri */
 .modal-content input[type="text"],
 .modal-content input[type="email"],
