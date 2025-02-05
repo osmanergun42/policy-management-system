@@ -66,7 +66,25 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Komisyon oranı girişlerine olay dinleyicileri ekleyin
     commissionRateInput.addEventListener("input", calculateCommission);
-// Modal Açma ve Kapatma
+
+    // Özet bilgilerini güncelle
+    function updateSummary() {
+        const totalCustomers = customers.length;
+        let activePolicies = 0;
+        let totalPolicies = 0;
+
+        for (let customer in policies) {
+            if (policies.hasOwnProperty(customer)) {
+                totalPolicies += policies[customer].length;
+                activePolicies += policies[customer].filter(policy => new Date(policy.endDate) > new Date()).length;
+            }
+        }
+
+        document.getElementById('total-customers').textContent = totalCustomers;
+        document.getElementById('active-policies').textContent = activePolicies;
+        document.getElementById('total-policies').textContent = totalPolicies;
+    }
+    // Modal Açma ve Kapatma
     openAddPolicyModalBtn.addEventListener("click", () => {
         addPolicyModal.style.display = "flex";
     });
@@ -155,6 +173,9 @@ document.addEventListener("DOMContentLoaded", () => {
         // Müşteri ekleme modal penceresini kapatın
         addCustomerModal.style.display = "none";
 
+        // Özet bilgisini güncelle
+        updateSummary();
+
         alert("Müşteri başarıyla eklendi!");
     });
 
@@ -191,6 +212,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Poliçe ekleme modal penceresini kapatın
         addPolicyModal.style.display = "none";
+
+        // Özet bilgisini güncelle
+        updateSummary();
 
         alert("Poliçe başarıyla eklendi!");
     });
@@ -258,7 +282,7 @@ document.addEventListener("DOMContentLoaded", () => {
         backButton.style.display = "none"; // Geri butonunu gizle
         showSection('main-header');
     });
-// Müşterilerim Linki
+    // Müşterilerim Linki
     const myCustomersLink = document.getElementById("my-customers-link");
     myCustomersLink.addEventListener("click", (event) => {
         event.preventDefault();
@@ -308,6 +332,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 customers.splice(customerIndex, 1);
                 saveToLocalStorage("customers", customers);
                 renderCustomerList();
+                updateSummary(); // Özet bilgilerini güncelle
             });
         });
     }
@@ -451,6 +476,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 filteredCustomers.splice(customerIndex, 1);
                 saveToLocalStorage("customers", filteredCustomers);
                 renderSearchResults(filteredCustomers);
+                updateSummary(); // Özet bilgilerini güncelle
             });
         });
 
@@ -491,15 +517,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // Müşteri listesi varsayılan olarak yüklendiğinde görüntülensin
     renderCustomerList();
 
-    // API'den özet verileri çek ve güncelle
-    function updateSummary() {
-        fetch('/api/summary')
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('total-customers').textContent = data.total_customers;
-            document.getElementById('active-policies').textContent = data.active_policies;
-            document.getElementById('total-policies').textContent = data.total_policies;
-        })
-        .catch(error => console.error('Error fetching summary:', error));
-    }
+    // Özet bilgilerini güncelle
+    updateSummary();
 });
