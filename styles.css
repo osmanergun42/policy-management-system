@@ -7,7 +7,7 @@ body {
 }
 
 #sidebar {
-    width: 250px;
+    width: 300px; /* Sidebar genişliği artırıldı */
     background-color: #2c3e50;
     color: white;
     height: 100vh;
@@ -16,7 +16,7 @@ body {
 }
 
 #sidebar.closed {
-    width: 50px;
+    width: 60px; /* Kapalı durumda sidebar genişliği artırıldı */
 }
 
 #sidebar .logo {
@@ -112,24 +112,24 @@ body {
 #toggle-sidebar-btn {
     font-size: 2em;
     position: fixed;
-    left: 260px;
+    left: 310px; /* Kapalı durumda butonun konumunu güncelledik */
     top: 10px;
     cursor: pointer;
     transition: left 0.3s;
 }
 
 #sidebar.closed + #toggle-sidebar-btn {
-    left: 60px;
+    left: 70px; /* Kapalı durumda butonun konumunu güncelledik */
 }
 
 .main-content {
-    margin-left: 250px;
+    margin-left: 300px; /* Sidebar genişliği artırıldığı için margin-left güncellendi */
     padding: 20px;
     transition: margin-left 0.3s;
 }
 
 #sidebar.closed + #toggle-sidebar-btn + .main-content {
-    margin-left: 60px;
+    margin-left: 70px; /* Kapalı durumda margin-left güncellendi */
 }
 
 header {
