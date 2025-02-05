@@ -52,8 +52,9 @@ document.addEventListener("DOMContentLoaded", () => {
     const openAddCustomerModalBtn = document.getElementById("open-add-customer-modal");
 
     // Müşterilerim butonu
-    const myCustomersBtn = document.getElementById("my-customers-btn");
-    const customersList = document.getElementById("customers-list");
+    const myCustomersLink = document.getElementById("my-customers-link"); // my-customers-btn -> my-customers-link
+    const customerListSection = document.getElementById("customer-list-section");
+    const customerListBody = document.getElementById("customer-list-body");
 
     // Komisyon hesaplama işlevi
     function calculateCommission() {
@@ -120,16 +121,24 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Müşterilerim butonu olay dinleyici
-    myCustomersBtn.addEventListener("click", () => {
+    myCustomersLink.addEventListener("click", (event) => {
+        event.preventDefault();
         fetch('/api/customers')
         .then(response => response.json())
         .then(data => {
-            customersList.innerHTML = '';
+            customerListBody.innerHTML = '';
             data.forEach(customer => {
-                const customerItem = document.createElement("div");
-                customerItem.textContent = `${customer.name} - ${customer.phone} - ${customer.email}`;
-                customersList.appendChild(customerItem);
+                const customerItem = document.createElement("tr");
+                customerItem.innerHTML = `
+                    <td>${customer.name}</td>
+                    <td>${customer.phone}</td>
+                    <td>${customer.email}</td>
+                    <td>${customer.address}</td>
+                    <td><button class="delete-customer" data-id="${customer.id}">Sil</button></td>
+                `;
+                customerListBody.appendChild(customerItem);
             });
+            customerListSection.style.display = 'block';
         })
         .catch(error => console.error('Müşteri listesi alınırken hata oluştu:', error));
     });
