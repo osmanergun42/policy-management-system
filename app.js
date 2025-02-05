@@ -455,4 +455,14 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Müşteri listesi varsayılan olarak yüklendiğinde görüntülensin
     renderCustomerList();
+
+    // API'den özet verileri çek ve güncelle
+    fetch('/api/summary')
+        .then(response => response.json())
+        .then(data => {
+            document.getElementById('total-customers').textContent = data.total_customers;
+            document.getElementById('active-policies').textContent = data.active_policies;
+            document.getElementById('total-policies').textContent = data.total_policies;
+        })
+        .catch(error => console.error('Error fetching summary:', error));
 });
