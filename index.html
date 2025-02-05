@@ -31,24 +31,23 @@
             <h1 id="main-header">Poliçe Takip Sistemi</h1>
         </header>
 
+        <!-- Özet Bölümü -->
+        <div id="summary-section">
+            <h2>Özet</h2>
+            <p>Toplam Müşteriler: <span id="total-customers">0</span></p>
+            <p>Toplam Yaşayan Poliçe: <span id="active-policies">0</span></p>
+            <p>Toplam Poliçe: <span id="total-policies">0</span></p>
+        </div>
+
         <!-- Geri Butonu -->
         <button id="back-button" class="back-button" style="display: none;">Geri</button>
 
         <!-- Müşterilerim Bölümü -->
-        <div id="customer-list-section" class="hidden">
+        <div id="customer-list-section" style="display: none;">
             <header>
                 <h1>Müşterilerim</h1>
                 <button id="open-add-customer-modal" class="add-button">Müşteri Ekle</button>
             </header>
-            
-            <!-- Özet Bölümü -->
-            <div id="summary-section">
-                <h2>Özet</h2>
-                <p>Toplam Müşteriler: <span id="total-customers">0</span></p>
-                <p>Toplam Yaşayan Poliçe: <span id="active-policies">0</span></p>
-                <p>Toplam Poliçe: <span id="total-policies">0</span></p>
-            </div>
-
             <table>
                 <thead>
                     <tr>
@@ -89,8 +88,10 @@
                 <span id="close-add-policy-modal" class="close-button">X</span>
                 <h2>Poliçe Ekle</h2>
                 <form id="add-policy-form">
+                    <input type="text" id="policy-type" placeholder="Poliçe Tipi" required>
                     <input type="date" id="start-date" required>
                     <input type="date" id="end-date" required>
+                    <input type="number" id="premium" placeholder="Prim Miktarı (TL)" min="0" required>
                     <input type="number" id="commission-rate" placeholder="Komisyon Oranı (%)" min="0" max="100" required>
                     <input type="text" id="calculated-commission" placeholder="Hesaplanan Komisyon (TL)" readonly>
                     <input type="text" id="policy-number" placeholder="Poliçe Numarası" required>
@@ -142,11 +143,12 @@
                 <span id="close-edit-policy-modal" class="close-button">X</span>
                 <h2>Poliçe Detaylarını Düzenle</h2>
                 <form id="edit-policy-form">
+                    <input type="text" id="edit-policy-type" placeholder="Poliçe Tipi" required>
                     <input type="date" id="edit-start-date" required>
                     <input type="date" id="edit-end-date" required>
+                    <input type="number" id="edit-premium" placeholder="Prim Miktarı (TL)" min="0" required>
                     <input type="number" id="edit-commission-rate" placeholder="Komisyon Oranı (%)" min="0" max="100" required>
                     <input type="text" id="edit-calculated-commission" placeholder="Hesaplanan Komisyon (TL)" readonly>
-                    <input type="text" id="edit-policy-number" placeholder="Poliçe Numarası" required>
                     <input type="text" id="edit-license-plate" placeholder="Plaka" required>
                     <input type="text" id="edit-registration-number" placeholder="Tescil Numarası" required>
                     <button type="submit">Güncelle</button>
