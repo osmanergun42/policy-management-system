@@ -51,6 +51,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const closeAddCustomerModal = document.getElementById("close-add-customer-modal");
     const openAddCustomerModalBtn = document.getElementById("open-add-customer-modal");
 
+    // Müşterilerim butonu
+    const myCustomersBtn = document.getElementById("my-customers-btn");
+    const customersList = document.getElementById("customers-list");
+
     // Komisyon hesaplama işlevi
     function calculateCommission() {
         const commissionRate = parseFloat(commissionRateInput.value);
@@ -113,6 +117,21 @@ document.addEventListener("DOMContentLoaded", () => {
             addPolicyForm.reset();
         })
         .catch(error => console.error('Poliçe eklenirken hata oluştu:', error));
+    });
+
+    // Müşterilerim butonu olay dinleyici
+    myCustomersBtn.addEventListener("click", () => {
+        fetch('/api/customers')
+        .then(response => response.json())
+        .then(data => {
+            customersList.innerHTML = '';
+            data.forEach(customer => {
+                const customerItem = document.createElement("div");
+                customerItem.textContent = `${customer.name} - ${customer.phone} - ${customer.email}`;
+                customersList.appendChild(customerItem);
+            });
+        })
+        .catch(error => console.error('Müşteri listesi alınırken hata oluştu:', error));
     });
 
     // Özet bilgilerini güncelle
