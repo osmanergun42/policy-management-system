@@ -64,7 +64,7 @@ body {
 
 /* Arama Butonu */
 #sidebar-search-btn {
-    padding: 10px 20px; /* Buton boyutu ayarlandı */
+    padding: 10px 10px; /* Buton boyutu ayarlandı */
     background-color: #3498db; /* Modern mavi renk */
     color: white;
     border: none;
