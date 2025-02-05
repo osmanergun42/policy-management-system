@@ -303,3 +303,20 @@ table td {
     background-position: right 10px center;
     background-size: 16px;
 }
+
+/* Özet Bölümü Stilleri */
+#summary-section {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #ecf0f1;
+    border-radius: 8px;
+}
+
+#summary-section h2 {
+    margin-top: 0;
+}
+
+#summary-section p {
+    font-size: 18px;
+    margin: 10px 0;
+}
