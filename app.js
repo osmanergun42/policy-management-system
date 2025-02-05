@@ -132,7 +132,6 @@ document.addEventListener("DOMContentLoaded", () => {
     backButtonAddPolicy.addEventListener("click", () => {
         addPolicyModal.style.display = "none";
     });
-
     // Müşteri Ekleme Formu Gönderme Etkinliği
     addCustomerForm.addEventListener("submit", (event) => {
         event.preventDefault(); // Formun varsayılan gönderme davranışını durdurma
@@ -256,7 +255,6 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Müşteri veya plaka bulunamadı!");
         }
     }
-
     // Ana Sayfa Linki
     const homeLink = document.getElementById("home-link");
     homeLink.addEventListener("click", (event) => {
@@ -290,6 +288,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </tr>
         `).join('');
 
+        // "Poliçe Ekle", "Poliçeler" ve "Sil" butonlarına tıklama olaylarını ekleyelim
         document.querySelectorAll(".add-policy-btn").forEach(btn => {
             btn.addEventListener("click", (e) => {
                 const customerIndex = e.target.getAttribute("data-index");
@@ -331,30 +330,73 @@ document.addEventListener("DOMContentLoaded", () => {
                         <th>Başlangıç Tarihi</th>
                         <th>Bitiş Tarihi</th>
                         <th>Prim</th>
-                        <th>Komisyon (%)</th>
                         <th>Komisyon Tutarı</th>
                         <th>Plaka</th>
+                        <th>Tescil Numarası</th>
                         <th>Şirket</th>
                         <th>Dış Acente</th>
+                        <th>İşlem</th>
                     </tr>
                 </thead>
                 <tbody>
-                    ${customerPolicies.map(policy => `
+                    ${customerPolicies.map((policy, index) => `
                         <tr>
                             <td>${policy.type}</td>
                             <td>${policy.startDate}</td>
                             <td>${policy.endDate}</td>
                             <td>${policy.premium} TL</td>
-                            <td>${policy.commissionRate}%</td>
                             <td>${policy.calculatedCommission.toFixed(2)} TL</td>
                             <td>${policy.licensePlate}</td>
+                            <td>${policy.registrationNumber}</td>
                             <td>${policy.company}</td>
                             <td>${policy.externalAgency}</td>
+                            <td>
+                                <button class="edit-policy-btn" data-customer="${customer.name}" data-index="${index}">Düzenle</button>
+                            </td>
                         </tr>
                     `).join('')}
                 </tbody>
             </table>
         `;
+
+        document.querySelectorAll(".edit-policy-btn").forEach(btn => {
+            btn.addEventListener("click", (e) => {
+                const customerName = e.target.getAttribute("data-customer");
+                const policyIndex = e.target.getAttribute("data-index");
+                const policy = policies[customerName][policyIndex];
+
+                document.getElementById("edit-policy-type").value = policy.type;
+                document.getElementById("edit-start-date").value = policy.startDate;
+                document.getElementById("edit-end-date").value = policy.endDate;
+                document.getElementById("edit-premium").value = policy.premium;
+                document.getElementById("edit-commission-rate").value = policy.commissionRate;
+                document.getElementById("edit-calculated-commission").value = policy.calculatedCommission;
+                document.getElementById("edit-license-plate").value = policy.licensePlate;
+                document.getElementById("edit-registration-number").value = policy.registrationNumber;
+
+                editPolicyModal.style.display = "flex";
+
+                // Poliçe düzenleme formu gönderme etkinliği
+                document.getElementById("edit-policy-form").onsubmit = (event) => {
+                    event.preventDefault();
+
+                    policy.type = document.getElementById("edit-policy-type").value;
+                    policy.startDate = document.getElementById("edit-start-date").value;
+                    policy.endDate = document.getElementById("edit-end-date").value;
+                    policy.premium = parseFloat(document.getElementById("edit-premium").value);
+                    policy.commissionRate = parseFloat(document.getElementById("edit-commission-rate").value);
+                    policy.calculatedCommission = parseFloat(document.getElementById("edit-calculated-commission").value);
+                    policy.licensePlate = document.getElementById("edit-license-plate").value;
+                    policy.registrationNumber = document.getElementById("edit-registration-number").value;
+
+                    saveToLocalStorage("policies", policies);
+                    renderPolicyListModal(customer);
+
+                    editPolicyModal.style.display = "none";
+                    alert("Poliçe başarıyla güncellendi!");
+                };
+            });
+        });
 
         policiesModal.style.display = "flex";
     }
@@ -455,14 +497,4 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Müşteri listesi varsayılan olarak yüklendiğinde görüntülensin
     renderCustomerList();
-
-    // API'den özet verileri çek ve güncelle
-    fetch('/api/summary')
-        .then(response => response.json())
-        .then(data => {
-            document.getElementById('total-customers').textContent = data.total_customers;
-            document.getElementById('active-policies').textContent = data.active_policies;
-            document.getElementById('total-policies').textContent = data.total_policies;
-        })
-        .catch(error => console.error('Error fetching summary:', error));
 });
