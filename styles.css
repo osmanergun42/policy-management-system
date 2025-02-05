@@ -180,8 +180,8 @@ table td {
     margin: 5% auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 95%; /* Modal genişliği artırıldı */
-    max-width: 1000px; /* Modal maksimum genişliği artırıldı */
+    width: 100%; /* Modal genişliği artırıldı */
+    max-width: 1250px; /* Modal maksimum genişliği artırıldı */
     box-sizing: border-box;
     word-wrap: break-word;
     overflow: hidden;
