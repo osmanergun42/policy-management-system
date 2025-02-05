@@ -21,7 +21,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const policyTypeInput = document.getElementById("policy-type");
     const startDateInput = document.getElementById("start-date");
     const endDateInput = document.getElementById("end-date");
-    const premiumInput = document.getElementById("premium");
     const commissionRateInput = document.getElementById("commission-rate");
     const calculatedCommissionInput = document.getElementById("calculated-commission");
     const policyNumberInput = document.getElementById("policy-number");
@@ -57,21 +56,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Komisyon hesaplama işlevi
     function calculateCommission() {
-        const premium = parseFloat(premiumInput.value);
         const commissionRate = parseFloat(commissionRateInput.value);
-        if (!isNaN(premium) && !isNaN(commissionRate)) {
-            const commission = (premium * commissionRate) / 100;
-            calculatedCommissionInput.value = commission.toFixed(2); // Hesaplanan komisyonu iki ondalık basamakla göster
+        if (!isNaN(commissionRate)) {
+            calculatedCommissionInput.value = commissionRate.toFixed(2); // Hesaplanan komisyonu iki ondalık basamakla göster
         } else {
             calculatedCommissionInput.value = ''; // Geçersiz girişler için komisyon alanını temizle
         }
     }
 
-    // Premium ve komisyon oranı girişlerine olay dinleyicileri ekleyin
-    premiumInput.addEventListener("input", calculateCommission);
+    // Komisyon oranı girişlerine olay dinleyicileri ekleyin
     commissionRateInput.addEventListener("input", calculateCommission);
-
-    // Modal Açma ve Kapatma
+// Modal Açma ve Kapatma
     openAddPolicyModalBtn.addEventListener("click", () => {
         addPolicyModal.style.display = "flex";
     });
@@ -172,7 +167,6 @@ document.addEventListener("DOMContentLoaded", () => {
             type: policyTypeInput.value,
             startDate: startDateInput.value,
             endDate: endDateInput.value,
-            premium: parseFloat(premiumInput.value),
             commissionRate: parseFloat(commissionRateInput.value),
             calculatedCommission: parseFloat(calculatedCommissionInput.value),
             policyNumber: policyNumberInput.value,
@@ -264,13 +258,13 @@ document.addEventListener("DOMContentLoaded", () => {
         backButton.style.display = "none"; // Geri butonunu gizle
         showSection('main-header');
     });
-
-    // Müşterilerim Linki
+// Müşterilerim Linki
     const myCustomersLink = document.getElementById("my-customers-link");
     myCustomersLink.addEventListener("click", (event) => {
         event.preventDefault();
         renderCustomerList();
         showSection('customer-list-section');
+        updateSummary(); // Özet tablosunu güncelle
     });
 
     // Müşteri Listesi Görüntüleme
@@ -330,8 +324,8 @@ document.addEventListener("DOMContentLoaded", () => {
                         <th>Poliçe Tipi</th>
                         <th>Başlangıç Tarihi</th>
                         <th>Bitiş Tarihi</th>
-                        <th>Prim</th>
-                        <th>Komisyon Tutarı</th>
+                        <th>Komisyon Oranı (%)</th>
+                        <th>Komisyon Tutarı (TL)</th>
                         <th>Plaka</th>
                         <th>Tescil Numarası</th>
                         <th>Şirket</th>
@@ -345,8 +339,8 @@ document.addEventListener("DOMContentLoaded", () => {
                             <td>${policy.type}</td>
                             <td>${policy.startDate}</td>
                             <td>${policy.endDate}</td>
-                            <td>${policy.premium} TL</td>
-                            <td>${policy.calculatedCommission.toFixed(2)} TL</td>
+                            <td>${policy.commissionRate}</td>
+                            <td>${policy.calculatedCommission.toFixed(2)}</td>
                             <td>${policy.licensePlate}</td>
                             <td>${policy.registrationNumber}</td>
                             <td>${policy.company}</td>
@@ -369,7 +363,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 document.getElementById("edit-policy-type").value = policy.type;
                 document.getElementById("edit-start-date").value = policy.startDate;
                 document.getElementById("edit-end-date").value = policy.endDate;
-                document.getElementById("edit-premium").value = policy.premium;
                 document.getElementById("edit-commission-rate").value = policy.commissionRate;
                 document.getElementById("edit-calculated-commission").value = policy.calculatedCommission;
                 document.getElementById("edit-license-plate").value = policy.licensePlate;
@@ -384,7 +377,6 @@ document.addEventListener("DOMContentLoaded", () => {
                     policy.type = document.getElementById("edit-policy-type").value;
                     policy.startDate = document.getElementById("edit-start-date").value;
                     policy.endDate = document.getElementById("edit-end-date").value;
-                    policy.premium = parseFloat(document.getElementById("edit-premium").value);
                     policy.commissionRate = parseFloat(document.getElementById("edit-commission-rate").value);
                     policy.calculatedCommission = parseFloat(document.getElementById("edit-calculated-commission").value);
                     policy.licensePlate = document.getElementById("edit-license-plate").value;
@@ -439,8 +431,7 @@ document.addEventListener("DOMContentLoaded", () => {
             btn.addEventListener("click", (e) => {
                 const customerIndex = e.target.getAttribute("data-index");
                 const customer = filteredCustomers[customerIndex];
-                document.getElementById("policy-customer-name").inner
-Text = customer.name;
+                document.getElementById("policy-customer-name").innerText = customer.name;
                 document.getElementById("add-policy-section").style.display = "block";
                 openAddPolicyModalBtn.click();
             });
@@ -501,7 +492,8 @@ Text = customer.name;
     renderCustomerList();
 
     // API'den özet verileri çek ve güncelle
-    fetch('/api/summary')
+    function updateSummary() {
+        fetch('/api/summary')
         .then(response => response.json())
         .then(data => {
             document.getElementById('total-customers').textContent = data.total_customers;
@@ -509,4 +501,5 @@ Text = customer.name;
             document.getElementById('total-policies').textContent = data.total_policies;
         })
         .catch(error => console.error('Error fetching summary:', error));
+    }
 });
