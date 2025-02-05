@@ -132,8 +132,7 @@ document.addEventListener("DOMContentLoaded", () => {
     backButtonAddPolicy.addEventListener("click", () => {
         addPolicyModal.style.display = "none";
     });
-
-    // Müşteri Ekleme Formu Gönderme Etkinliği
+// Müşteri Ekleme Formu Gönderme Etkinliği
     addCustomerForm.addEventListener("submit", (event) => {
         event.preventDefault(); // Formun varsayılan gönderme davranışını durdurma
 
@@ -256,7 +255,6 @@ document.addEventListener("DOMContentLoaded", () => {
             alert("Müşteri veya plaka bulunamadı!");
         }
     }
-
     // Ana Sayfa Linki
     const homeLink = document.getElementById("home-link");
     homeLink.addEventListener("click", (event) => {
@@ -290,6 +288,7 @@ document.addEventListener("DOMContentLoaded", () => {
             </tr>
         `).join('');
 
+        // "Poliçe Ekle", "Poliçeler" ve "Sil" butonlarına tıklama olaylarını ekleyelim
         document.querySelectorAll(".add-policy-btn").forEach(btn => {
             btn.addEventListener("click", (e) => {
                 const customerIndex = e.target.getAttribute("data-index");
@@ -439,8 +438,7 @@ document.addEventListener("DOMContentLoaded", () => {
             btn.addEventListener("click", (e) => {
                 const customerIndex = e.target.getAttribute("data-index");
                 const customer = filteredCustomers[customerIndex];
-                document.getElementById("policy-customer-name").inner
-                Text = customer.name;
+                document.getElementById("policy-customer-name").innerText = customer.name;
                 document.getElementById("add-policy-section").style.display = "block";
                 openAddPolicyModalBtn.click();
             });
