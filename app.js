@@ -7,9 +7,6 @@ document.addEventListener("DOMContentLoaded", () => {
         document.querySelector(".main-content").classList.toggle("expanded");
     });
 
-    const customers = JSON.parse(localStorage.getItem("customers")) || [];
-    const policies = JSON.parse(localStorage.getItem("policies")) || {};
-
     const addCustomerForm = document.getElementById("add-customer-form");
     const customerNameInput = document.getElementById("customer-name");
     const customerPhoneInput = document.getElementById("customer-phone");
@@ -63,6 +60,25 @@ document.addEventListener("DOMContentLoaded", () => {
             calculatedCommissionInput.value = ''; // Geçersiz girişler için komisyon alanını temizle
         }
     }
+
+    // Komisyon oranı girişlerine olay dinleyicileri ekleyin
+    commissionRateInput.addEventListener("input", calculateCommission);
+
+    // Özet bilgilerini güncelle
+    function updateSummary() {
+        fetch('/api/summary')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('total-customers').textContent = data.total_customers;
+                document.getElementById('active-policies').textContent = data.active_policies;
+                document.getElementById('total-policies').textContent = data.total_policies;
+            })
+            .catch(error => console.error('Özet verilerini alırken hata oluştu:', error));
+    }
+
+    // Sayfa yüklendiğinde özet bilgilerini güncelle
+    updateSummary();
+});
 
     // Komisyon oranı girişlerine olay dinleyicileri ekleyin
     commissionRateInput.addEventListener("input", calculateCommission);
