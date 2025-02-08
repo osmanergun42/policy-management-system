@@ -117,7 +117,6 @@ document.addEventListener("DOMContentLoaded", () => {
             policiesModal.style.display = "none";
         }
     });
-
     // Geri Butonu
     backButton.addEventListener("click", () => {
         history.back();
@@ -161,7 +160,16 @@ document.addEventListener("DOMContentLoaded", () => {
         addCustomerModal.style.display = "none";
 
         alert("Müşteri başarıyla eklendi!");
+        updateCustomerCount();
     });
+
+    // Müşteri sayısını güncelleme işlevi
+    function updateCustomerCount() {
+        document.getElementById('total-customers').textContent = customers.length;
+    }
+
+    // Sayfa yüklendiğinde müşteri sayısını güncelle
+    updateCustomerCount();
 
     // Poliçe Ekleme Formu Gönderme Etkinliği
     addPolicyForm.addEventListener("submit", (event) => {
@@ -314,6 +322,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 customers.splice(customerIndex, 1);
                 saveToLocalStorage("customers", customers);
                 renderCustomerList();
+                updateCustomerCount();
             });
         });
     }
@@ -401,7 +410,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         policiesModal.style.display = "flex";
     }
-
     // Arama Sonuçlarını Render Etme
     function renderSearchResults(filteredCustomers) {
         const searchResultsContainer = document.getElementById("search-results");
@@ -439,8 +447,7 @@ document.addEventListener("DOMContentLoaded", () => {
             btn.addEventListener("click", (e) => {
                 const customerIndex = e.target.getAttribute("data-index");
                 const customer = filteredCustomers[customerIndex];
-                document.getElementById("policy-customer-name").inner
-                Text = customer.name;
+                document.getElementById("policy-customer-name").innerText = customer.name;
                 document.getElementById("add-policy-section").style.display = "block";
                 openAddPolicyModalBtn.click();
             });
@@ -460,6 +467,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 filteredCustomers.splice(customerIndex, 1);
                 saveToLocalStorage("customers", filteredCustomers);
                 renderSearchResults(filteredCustomers);
+                updateCustomerCount();
             });
         });
 
@@ -509,4 +517,95 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('total-policies').textContent = data.total_policies;
         })
         .catch(error => console.error('Error fetching summary:', error));
+
+    // Excel'e Aktar Butonu
+    const exportButton = document.getElementById("exportButton");
+    const dateRangeModal = document.getElementById("date-range-modal");
+    const closeDateRangeModal = document.getElementById("close-date-range-modal");
+    const dateRangeForm = document.getElementById("date-range-form");
+    const exportStartDate = document.getElementById("export-start-date");
+    const exportEndDate = document.getElementById("export-end-date");
+
+    exportButton.addEventListener("click", () => {
+        dateRangeModal.style.display = "flex";
+    });
+
+    closeDateRangeModal.addEventListener("click", () => {
+        dateRangeModal.style.display = "none";
+    });
+
+    dateRangeForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+
+        const startDate = new Date(exportStartDate.value);
+        const endDate = new Date(exportEndDate.value);
+
+        if (startDate > endDate) {
+            alert("Başlangıç tarihi bitiş tarihinden büyük olamaz.");
+            return;
+        }
+
+        const selectedPolicies = [];
+
+        Object.keys(policies).forEach(customerName => {
+            policies[customerName].forEach(policy => {
+                const policyStartDate = new Date(policy.startDate);
+                const policyEndDate = new Date(policy.endDate);
+
+                if (policyStartDate >= startDate && policyEndDate <= endDate) {
+                    selectedPolicies.push({
+                        müşteri: customerName,
+                        ...policy
+                    });
+                }
+            });
+        });
+
+        if (selectedPolicies.length === 0) {
+            alert("Belirtilen tarihler arasında poliçe bulunamadı.");
+            return;
+        }
+
+        const agencyName = selectedPolicies[0].externalAgency;
+        const data = [
+            ['Müşteri Adı', 'Poliçe Tipi', 'Başlangıç Tarihi', 'Bitiş Tarihi', 'Prim Miktarı', 'Komisyon Oranı', 'Hesaplanan Komisyon', 'Poliçe Numarası', 'Plaka', 'Tescil Numarası', 'Şirket', 'Dış Acente']
+        ];
+
+        selectedPolicies.forEach(policy => {
+            data.push([
+                policy.müşteri, policy.type, policy.startDate, policy.endDate, policy.premium, policy.commissionRate,
+                policy.calculatedCommission, policy.policyNumber, policy.licensePlate, policy.registrationNumber,
+                policy.company, policy.externalAgency
+            ]);
+        });
+
+        let filePath;
+        switch (agencyName) {
+            case "SNR Sigorta":
+                filePath = "C:\\Users\\User\\Desktop\\SNR SİGORTA.xlsx";
+                break;
+            case "Enes Sigorta":
+                filePath = "C:\\Users\\User\\Desktop\\ENES SİGORTA1.xlsx";
+                break;
+            case "Enter Sigorta":
+                filePath = "C:\\Users\\User\\Desktop\\ENTER SİGORTA.xlsx";
+                break;
+            case "Saygın Sigorta":
+                filePath = "C:\\Users\\User\\Desktop\\SAYGIN SİGORTA.xlsx";
+                break;
+            default:
+                alert("Geçersiz dış acente.");
+                return;
+        }
+
+        const xlsx = require('xlsx');
+        const wb = xlsx.utils.book_new();
+        const ws = xlsx.utils.aoa_to_sheet(data);
+
+        xlsx.utils.book_append_sheet(wb, ws, "Poliçeler");
+        xlsx.writeFile(wb, filePath);
+
+        alert(`${agencyName} acentesine ait poliçeler başarıyla ${filePath} dosyasına aktarıldı.`);
+        dateRangeModal.style.display = "none";
+    });
 });
