@@ -24,6 +24,11 @@
             padding: 5px;
             margin-right: 10px;
         }
+
+        /* Styling for cancelled policy */
+        .cancelled-policy {
+            background-color: red;
+        }
     </style>
 </head>
 <body>
@@ -158,6 +163,9 @@
                         <option value="Enter Sigorta">Enter Sigorta</option>
                         <option value="Saygın Sigorta">Saygın sigorta</option>
                     </select>
+                    <!-- Cancellation toggle -->
+                    <label for="cancel-policy">İptal:</label>
+                    <input type="checkbox" id="cancel-policy">
                     <button type="submit">Poliçe Ekle</button>
                 </form>
                 <!-- Geri Butonu -->
