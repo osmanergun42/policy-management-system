@@ -551,6 +551,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function saveToLocalStorage(key, data) {
         localStorage.setItem(key, JSON.stringify(data));
     }
+    
 
     // Otomatik Kaydetme
     setInterval(() => {
@@ -590,6 +591,81 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('total-policies').textContent = data.total_policies;
         })
         .catch(error => console.error('Error fetching summary:', error));
+  // Güncel ayın kazancını hesapla ve göster
+  function updateMonthlyEarnings() {
+    const policies = JSON.parse(localStorage.getItem("policies")) || {};
+    const currentDate = new Date();
+    const currentMonth = currentDate.getMonth();
+    const currentYear = currentDate.getFullYear();
+    let monthlyEarnings = 0;
+
+    Object.keys(policies).forEach(customerName => {
+        policies[customerName].forEach(policy => {
+            const policyStartDate = new Date(policy.startDate);
+
+            if (policyStartDate.getMonth() === currentMonth && policyStartDate.getFullYear() === currentYear) {
+                monthlyEarnings += policy.calculatedCommission;
+            }
+        });
+    });
+
+    document.getElementById("monthly-earnings-amount").textContent = `${monthlyEarnings.toFixed(2)} TL`;
+}
+
+// Sayfa yüklendiğinde ve poliçe eklendiğinde kazancı güncelle
+updateMonthlyEarnings();
+addPolicyForm.addEventListener("submit", () => {
+    updateMonthlyEarnings();
+});
+});
+const earningsBtn = document.getElementById("earnings-btn");
+    const earningsModal = document.getElementById("earnings-modal");
+    const closeEarningsModal = document.getElementById("close-earnings-modal");
+    const earningsTableBody = document.querySelector("#earnings-table tbody");
+
+    // Kazançları hesapla ve tabloya ekle
+    function updateEarningsTable() {
+        const policies = JSON.parse(localStorage.getItem("policies")) || {};
+        const earningsByMonth = {};
+
+        // Tüm poliçeleri dolaşarak aylık kazançları hesaplayalım
+        Object.keys(policies).forEach(customerName => {
+            policies[customerName].forEach(policy => {
+                const policyStartDate = new Date(policy.startDate);
+                const yearMonth = `${policyStartDate.getFullYear()}-${policyStartDate.getMonth() + 1}`;
+
+                if (!earningsByMonth[yearMonth]) {
+                    earningsByMonth[yearMonth] = 0;
+                }
+
+                earningsByMonth[yearMonth] += policy.calculatedCommission;
+            });
+        });
+
+        // Kazançları tabloya ekleyelim
+        earningsTableBody.innerHTML = "";
+        Object.keys(earningsByMonth).forEach(month => {
+            const row = document.createElement("tr");
+            row.innerHTML = `<td>${month}</td><td>${earningsByMonth[month].toFixed(2)} TL</td>`;
+            earningsTableBody.appendChild(row);
+        });
+    }
+
+    // Modal açma ve kapama işlemleri
+    earningsBtn.addEventListener("click", () => {
+        updateEarningsTable();
+        earningsModal.style.display = "block";
+    });
+
+    closeEarningsModal.addEventListener("click", () => {
+        earningsModal.style.display = "none";
+    });
+
+    window.addEventListener("click", (event) => {
+        if (event.target === earningsModal) {
+            earningsModal.style.display = "none";
+        }
+    });
 // İndir Butonu
 const exportButton = document.getElementById("exportButton");
 const dateRangeModal = document.getElementById("date-range-modal");
@@ -703,4 +779,4 @@ dateRangeForm.addEventListener("submit", (event) => {
     alert("Poliçeler başarıyla policies.xlsx dosyasına indirildi.");
     dateRangeModal.style.display = "none";
 });
-});
+
