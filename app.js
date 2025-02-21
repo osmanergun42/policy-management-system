@@ -622,9 +622,9 @@ dateRangeForm.addEventListener("submit", (event) => {
     Object.keys(policies).forEach(customerName => {
         policies[customerName].forEach(policy => {
             const policyStartDate = new Date(policy.startDate);
-            const policyEndDate = new Date(policy.endDate);
 
-            if (policyStartDate >= startDate && policyEndDate <= endDate) {
+            // Poliçe başlangıç tarihi seçilen tarihler arasındaysa
+            if (policyStartDate >= startDate && policyStartDate <= endDate) {
                 selectedPolicies.push({
                     müşteri: customerName,
                     ...policy
@@ -675,6 +675,24 @@ dateRangeForm.addEventListener("submit", (event) => {
     };
     data[0].forEach((header, index) => {
         ws[XLSX.utils.encode_cell({r: 0, c: index})].s = headerStyle;
+    });
+
+    // Negatif komisyon ve iptal durumu kontrolü ve stil uygulaması
+    selectedPolicies.forEach((policy, rowIndex) => {
+        if (policy.commissionRate < 0 || policy.isCancelled) {
+            const cellRange = {
+                s: { r: rowIndex + 1, c: 0 }, // Başlangıç hücresi
+                e: { r: rowIndex + 1, c: data[0].length - 1 } // Bitiş hücresi
+            };
+
+            for (let C = cellRange.s.c; C <= cellRange.e.c; ++C) {
+                const cellAddress = XLSX.utils.encode_cell({ r: cellRange.s.r, c: C });
+                if (!ws[cellAddress].s) ws[cellAddress].s = {};
+                ws[cellAddress].s.fill = {
+                    fgColor: { rgb: "FF0000" } // Kırmızı arka plan
+                };
+            }
+        }
     });
 
     const wb = XLSX.utils.book_new();
