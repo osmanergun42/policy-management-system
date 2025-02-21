@@ -41,7 +41,7 @@
     right: 0; /* Sağ kenara yasla */
     top: 10px; /* Üstten biraz boşluk bırak */
 }
-       table {
+table {
     width: 100%;
     border-collapse: collapse;
 }
@@ -110,6 +110,17 @@ th, td {
 
 .cancel-button {
     background-color: #f44336; /* Kırmızı renk */
+    color: white;
+}
+
+/* Kazanç ve Ay sütunlarındaki girdiler için özel stil */
+td.gain input, td.month input {
+    background-color: #000000;
+    color: white;
+}
+
+td.gain input:focus, td.month input:focus {
+    background-color: #0000FF;
     color: white;
 }
     </style>
