@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
+    <meta http-equiv="Content-Security-Policy" content="connect-src 'self' https://collector.githubapp.com;">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Poliçe Takip Sistemi</title>
@@ -119,6 +120,16 @@
                 <button id="back-button-add-customer" class="back-button">Geri</button>
             </div>
         </div>
+        <button id="exportButton">İndir</button>
+        <div id="date-range-modal" style="display: none;">
+            <!-- Modal İçeriği -->
+            <button id="close-date-range-modal">Kapat</button>
+            <form id="date-range-form">
+                <input type="date" id="export-start-date" required>
+                <input type="date" id="export-end-date" required>
+                <button type="submit">Verileri Aktar</button>
+            </form>
+        </div>
 
         <!-- Poliçe Ekleme Modal -->
         <div id="add-policy-modal" class="modal">
@@ -215,25 +226,10 @@
             </div>
         </div>
 
-        <!-- Verileri Excele Aktar Butonu -->
-        <button id="exportButton">Verileri Excele Aktar</button>
-        
-        <!-- Tarih Aralığı Girişi İçin Modal -->
-        <div id="date-range-modal" class="modal">
-            <div class="modal-content">
-                <span id="close-date-range-modal" class="close-button">X</span>
-                <h2>Tarih Aralığı Seçin</h2>
-                <form id="date-range-form">
-                    <label for="start-date">Başlangıç Tarihi:</label>
-                    <input type="date" id="export-start-date" required>
-                    <label for="end-date">Bitiş Tarihi:</label>
-                    <input type="date" id="export-end-date" required>
-                    <button type="submit">Verileri Aktar</button>
-                </form>
-            </div>
-        </div>
-    </div>
 
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
     <script src="app.js"></script>
 </body>
 </html>
