@@ -31,16 +31,86 @@
             background-color: red;
         }
         img[src="30.png"] {
-            width: 250px; /* Genişlik */
-            height: auto; /* Yükseklik otomatik olarak ayarlanır */
-            border: 2px solid #00bfff; /* DeepSkyBlue kenarlık */
-            border-radius: 8px; /* Köşeleri yuvarlar */
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Hafif gölge efekti */
-            margin: 10px; /* Dış boşluk */
-            position: absolute; /* Mutlak konumlandırma */
-            right: 0; /* Sağ kenara yasla */
-            top: 10px; /* Üstten biraz boşluk bırak */
+    width: 15vw; /* Genişlik, pencere genişliğinin %25'i */
+    height: auto; /* Yükseklik otomatik olarak ayarlanır */
+    border: 2px solid #00bfff; /* DeepSkyBlue kenarlık */
+    border-radius: 8px; /* Köşeleri yuvarlar */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Hafif gölge efekti */
+    margin: 10px; /* Dış boşluk */
+    position: absolute; /* Mutlak konumlandırma */
+    right: 0; /* Sağ kenara yasla */
+    top: 10px; /* Üstten biraz boşluk bırak */
+}
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
 
+        table, th, td {
+            border: 1px solid black;
+        }
+
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+
+        .editable {
+            background-color: #f9f9f9;
+        }
+
+        .modal {
+            display: none; /* Modal varsayılan olarak gizlenir */
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+        }
+
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+        }
+
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .modal-button {
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .confirm-button {
+            background-color: #4CAF50; /* Yeşil renk */
+            color: white;
+        }
+
+        .cancel-button {
+            background-color: #f44336; /* Kırmızı renk */
+            color: white;
         }
     </style>
 </head>
@@ -54,24 +124,24 @@
         </div>
         <button id="earnings-btn">Kazançlarım</button>
 
-<!-- Kazançlar Modal -->
-<div id="earnings-modal" class="modal">
-    <div class="modal-content">
-        <span id="close-earnings-modal" class="close-button">X</span>
-        <h2>Kazançlarım</h2>
-        <table id="earnings-table">
-            <thead>
-                <tr>
-                    <th>Ay</th>
-                    <th>Kazanç (TL)</th>
-                </tr>
-            </thead>
-            <tbody>
-                <!-- Kazançlar burada görüntülenecek -->
-            </tbody>
-        </table>
-    </div>
-</div>
+        <!-- Kazançlar Modal -->
+        <div id="earnings-modal" class="modal">
+            <div class="modal-content">
+                <span id="close-earnings-modal" class="close-button">X</span>
+                <h2>Kazançlarım</h2>
+                <table id="earnings-table">
+                    <thead>
+                        <tr>
+                            <th>Ay</th>
+                            <th>Kazanç (TL)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- Kazançlar burada görüntülenecek -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
         <div class="logo">
             <h2>Poliçe Takip Sistemi</h2>
         </div>
@@ -125,7 +195,7 @@
                 <h1>Müşterilerim</h1>
                 <button id="open-add-customer-modal" class="add-button">Müşteri Ekle</button>
             </header>
-            <table>
+            <table id="customer-table">
                 <thead>
                     <tr>
                         <th>Müşteri Adı</th>
@@ -135,8 +205,9 @@
                         <th>İşlem</th>
                     </tr>
                 </thead>
-                <tbody id="customer-list-body">
+                <tbody id="customer-list-body"> 
                     <!-- Müşteri listesi burada görüntülenecek -->
+                    <!-- Diğer müşteriler burada görüntülenecek -->
                 </tbody>
             </table>
         </div>
@@ -158,6 +229,7 @@
                 <button id="back-button-add-customer" class="back-button">Geri</button>
             </div>
         </div>
+
         <button id="exportButton">İndir</button>
         <div id="date-range-modal" style="display: none;">
             <!-- Modal İçeriği -->
@@ -264,10 +336,49 @@
             </div>
         </div>
 
-
-
-    
+       
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
     <script src="app.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const editableElements = document.querySelectorAll('.editable');
+            
+            editableElements.forEach(cell => {
+                cell.addEventListener('dblclick', function() {
+                    cell.contentEditable = true;
+                    cell.focus();
+                });
+
+                cell.addEventListener('blur', function() {
+                    cell.contentEditable = false;
+                    openChangeWarningModal(cell);
+                });
+            });
+
+            const changeWarningModal = document.getElementById('change-warning-modal');
+            const confirmChangeButton = document.getElementById('confirm-change');
+            const cancelChangeButton = document.getElementById('cancel-change');
+            const closeChangeWarningModalButton = document.getElementById('close-change-warning-modal');
+
+            function openChangeWarningModal(cell) {
+                changeWarningModal.style.display = 'block';
+
+                confirmChangeButton.onclick = function() {
+                    // Değişiklikleri kaydet
+                    // Buraya, değişiklikleri kaydetmek için gerekli kodları ekleyebilirsiniz.
+                    console.log('Değişiklik kaydedildi:', cell.innerText);
+                    changeWarningModal.style.display = 'none';
+                };
+
+                cancelChangeButton.onclick = function() {
+                    changeWarningModal.style.display = 'none';
+                };
+
+                closeChangeWarningModalButton.onclick = function() {
+                    changeWarningModal.style.display = 'none';
+                };
+            }
+        });
+    </script>
 </body>
 </html>
