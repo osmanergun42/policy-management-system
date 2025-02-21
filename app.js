@@ -124,7 +124,76 @@ document.addEventListener("DOMContentLoaded", () => {
     backButton.addEventListener("click", () => {
         history.back();
     });
-
+    
+    document.addEventListener("DOMContentLoaded", () => {
+        const exportButton = document.getElementById("exportButton");
+        const dateRangeModal = document.getElementById("date-range-modal");
+        const closeDateRangeModal = document.getElementById("close-date-range-modal");
+        const dateRangeForm = document.getElementById("date-range-form");
+        const exportStartDate = document.getElementById("export-start-date");
+        const exportEndDate = document.getElementById("export-end-date");
+    
+        exportButton.addEventListener("click", () => {
+            dateRangeModal.style.display = "flex";
+        });
+    
+        closeDateRangeModal.addEventListener("click", () => {
+            dateRangeModal.style.display = "none";
+        });
+    
+        dateRangeForm.addEventListener("submit", (event) => {
+            event.preventDefault();
+    
+            const startDate = new Date(exportStartDate.value);
+            const endDate = new Date(exportEndDate.value);
+    
+            if (startDate > endDate) {
+                alert("Başlangıç tarihi bitiş tarihinden büyük olamaz.");
+                return;
+            }
+    
+            const selectedPolicies = [];
+    
+            Object.keys(policies).forEach(customerName => {
+                policies[customerName].forEach(policy => {
+                    const policyStartDate = new Date(policy.startDate);
+    
+                    if (policyStartDate >= startDate && policyStartDate <= endDate) {
+                        selectedPolicies.push({
+                            müşteri: customerName,
+                            ...policy
+                        });
+                    }
+                });
+            });
+    
+            if (selectedPolicies.length === 0) {
+                alert("Belirtilen tarihler arasında poliçe bulunamadı.");
+                return;
+            }
+    
+            const data = [
+                ['Müşteri Adı', 'Poliçe Tipi', 'Başlangıç Tarihi', 'Bitiş Tarihi', 'Prim Miktarı', 'Komisyon Oranı', 'Hesaplanan Komisyon', 'Poliçe Numarası', 'Plaka', 'Tescil Numarası', 'Şirket', 'Dış Acente']
+            ];
+    
+            selectedPolicies.forEach(policy => {
+                data.push([
+                    policy.müşteri, policy.type, policy.startDate, policy.endDate, policy.premium, policy.commissionRate,
+                    policy.calculatedCommission, policy.policyNumber, policy.licensePlate, policy.registrationNumber,
+                    policy.company, policy.externalAgency
+                ]);
+            });
+    
+            const ws = XLSX.utils.aoa_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Poliçeler");
+    
+            XLSX.writeFile(wb, "policies.xlsx");
+    
+            alert("Poliçeler başarıyla policies.xlsx dosyasına aktarıldı.");
+            dateRangeModal.style.display = "none";
+        });
+    });
     // Müşteri Ekleme Modal Geri Butonu
     backButtonAddCustomer.addEventListener("click", () => {
         addCustomerModal.style.display = "none";
@@ -521,73 +590,99 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('total-policies').textContent = data.total_policies;
         })
         .catch(error => console.error('Error fetching summary:', error));
-    // Excel'e Aktar Butonu
-    const exportButton = document.getElementById("exportButton");
-    const dateRangeModal = document.getElementById("date-range-modal");
-    const closeDateRangeModal = document.getElementById("close-date-range-modal");
-    const dateRangeForm = document.getElementById("date-range-form");
-    const exportStartDate = document.getElementById("export-start-date");
-    const exportEndDate = document.getElementById("export-end-date");
+// İndir Butonu
+const exportButton = document.getElementById("exportButton");
+const dateRangeModal = document.getElementById("date-range-modal");
+const closeDateRangeModal = document.getElementById("close-date-range-modal");
+const dateRangeForm = document.getElementById("date-range-form");
+const exportStartDate = document.getElementById("export-start-date");
+const exportEndDate = document.getElementById("export-end-date");
 
-    exportButton.addEventListener("click", () => {
-        dateRangeModal.style.display = "flex";
-    });
+exportButton.addEventListener("click", () => {
+    dateRangeModal.style.display = "flex";
+});
 
-    closeDateRangeModal.addEventListener("click", () => {
-        dateRangeModal.style.display = "none";
-    });
+closeDateRangeModal.addEventListener("click", () => {
+    dateRangeModal.style.display = "none";
+});
 
-    dateRangeForm.addEventListener("submit", (event) => {
-        event.preventDefault();
+dateRangeForm.addEventListener("submit", (event) => {
+    event.preventDefault();
 
-        const startDate = new Date(exportStartDate.value);
-        const endDate = new Date(exportEndDate.value);
+    const startDate = new Date(exportStartDate.value);
+    const endDate = new Date(exportEndDate.value);
 
-        if (startDate > endDate) {
-            alert("Başlangıç tarihi bitiş tarihinden büyük olamaz.");
-            return;
-        }
+    if (startDate > endDate) {
+        alert("Başlangıç tarihi bitiş tarihinden büyük olamaz.");
+        return;
+    }
 
-        const selectedPolicies = [];
+    const selectedPolicies = [];
 
-        Object.keys(policies).forEach(customerName => {
-            policies[customerName].forEach(policy => {
-                const policyStartDate = new Date(policy.startDate);
-                const policyEndDate = new Date(policy.endDate);
+    Object.keys(policies).forEach(customerName => {
+        policies[customerName].forEach(policy => {
+            const policyStartDate = new Date(policy.startDate);
+            const policyEndDate = new Date(policy.endDate);
 
-                if (policyStartDate >= startDate && policyEndDate <= endDate) {
-                    selectedPolicies.push({
-                        müşteri: customerName,
-                        ...policy
-                    });
-                }
-            });
+            if (policyStartDate >= startDate && policyEndDate <= endDate) {
+                selectedPolicies.push({
+                    müşteri: customerName,
+                    ...policy
+                });
+            }
         });
-
-        if (selectedPolicies.length === 0) {
-            alert("Belirtilen tarihler arasında poliçe bulunamadı.");
-            return;
-        }
-
-        const data = [
-            ['Müşteri Adı', 'Poliçe Tipi', 'Başlangıç Tarihi', 'Bitiş Tarihi', 'Prim Miktarı', 'Komisyon Oranı', 'Hesaplanan Komisyon', 'Poliçe Numarası', 'Plaka', 'Tescil Numarası', 'Şirket', 'Dış Acente']
-        ];
-
-        selectedPolicies.forEach(policy => {
-            data.push([
-                policy.müşteri, policy.type, policy.startDate, policy.endDate, policy.premium, policy.commissionRate,
-                policy.calculatedCommission, policy.policyNumber, policy.licensePlate, policy.registrationNumber,
-                policy.company, policy.externalAgency
-            ]);
-        });
-
-        const ws = XLSX.utils.aoa_to_sheet(data);
-        const wb = XLSX.utils.book_new();
-        XLSX.utils.book_append_sheet(wb, ws, "Poliçeler");
-
-        XLSX.writeFile(wb, "policies.xlsx");
-
-        alert("Poliçeler başarıyla policies.xlsx dosyasına aktarıldı.");
-        dateRangeModal.style.display = "none";
     });
+
+    if (selectedPolicies.length === 0) {
+        alert("Belirtilen tarihler arasında poliçe bulunamadı.");
+        return;
+    }
+
+    const data = [
+        ['Müşteri Adı', 'Poliçe Tipi', 'Başlangıç Tarihi', 'Bitiş Tarihi', 'Prim Miktarı', 'Komisyon Oranı', 'Hesaplanan Komisyon', 'Poliçe Numarası', 'Plaka', 'Tescil Numarası', 'Şirket', 'Dış Acente']
+    ];
+
+    selectedPolicies.forEach(policy => {
+        data.push([
+            policy.müşteri, policy.type, policy.startDate, policy.endDate, policy.premium, policy.commissionRate,
+            policy.calculatedCommission, policy.policyNumber, policy.licensePlate, policy.registrationNumber,
+            policy.company, policy.externalAgency
+        ]);
+    });
+
+    const ws = XLSX.utils.aoa_to_sheet(data);
+
+    // Sütun genişliklerini ayarla
+    ws['!cols'] = [
+        { wch: 20 }, // Müşteri Adı
+        { wch: 15 }, // Poliçe Tipi
+        { wch: 15 }, // Başlangıç Tarihi
+        { wch: 15 }, // Bitiş Tarihi
+        { wch: 12 }, // Prim Miktarı
+        { wch: 18 }, // Komisyon Oranı
+        { wch: 20 }, // Hesaplanan Komisyon
+        { wch: 15 }, // Poliçe Numarası
+        { wch: 10 }, // Plaka
+        { wch: 20 }, // Tescil Numarası
+        { wch: 15 }, // Şirket
+        { wch: 20 }  // Dış Acente
+    ];
+
+    // Hücre stillerini ayarla
+    const headerStyle = {
+        font: { bold: true },
+        alignment: { horizontal: 'center' }
+    };
+    data[0].forEach((header, index) => {
+        ws[XLSX.utils.encode_cell({r: 0, c: index})].s = headerStyle;
+    });
+
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Poliçeler");
+
+    XLSX.writeFile(wb, "policies.xlsx");
+
+    alert("Poliçeler başarıyla policies.xlsx dosyasına indirildi.");
+    dateRangeModal.style.display = "none";
+});
 });
