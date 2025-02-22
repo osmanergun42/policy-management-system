@@ -440,6 +440,57 @@ document.addEventListener("DOMContentLoaded", () => {
                 </tbody>
             </table>
         `;
+        document.addEventListener("DOMContentLoaded", () => {
+            const filterNameInput = document.getElementById("filter-name");
+            const filterPlateInput = document.getElementById("filter-plate");
+            const filterStartDateInput = document.getElementById("filter-start-date");
+            const applyFilterButton = document.getElementById("apply-filter");
+            const policiesListContainer = document.getElementById("policies-list");
+        
+            applyFilterButton.addEventListener("click", () => {
+                const nameFilter = filterNameInput.value.trim().toLowerCase();
+                const plateFilter = filterPlateInput.value.trim().toLowerCase();
+                const startDateFilter = filterStartDateInput.value ? new Date(filterStartDateInput.value) : null;
+        
+                const policies = JSON.parse(localStorage.getItem("policies")) || {};
+                policiesListContainer.innerHTML = ""; // Listeyi temizle
+        
+                let foundPolicies = false;
+                Object.keys(policies).forEach(customerName => {
+                    policies[customerName].forEach(policy => {
+                        const policyStartDate = new Date(policy.startDate);
+                        const policyName = customerName.toLowerCase();
+                        const policyPlate = policy.licensePlate.toLowerCase();
+        
+                        const nameMatch = !nameFilter || policyName.includes(nameFilter);
+                        const plateMatch = !plateFilter || policyPlate.includes(plateFilter);
+                        const dateMatch = !startDateFilter || policyStartDate.toDateString() === startDateFilter.toDateString();
+        
+                        if (nameMatch && plateMatch && dateMatch) {
+                            foundPolicies = true;
+                            const row = document.createElement("tr");
+                            row.innerHTML = `
+                                <td>${customerName}</td>
+                                <td>${policy.type}</td>
+                                <td>${policy.startDate}</td>
+                                <td>${policy.endDate}</td>
+                                <td>${policy.premium.toFixed(2)} TL</td>
+                                <td>${policy.calculatedCommission.toFixed(2)} TL</td>
+                                <td>${policy.licensePlate}</td>
+                                <td>${policy.company}</td>
+                                <td>${policy.isCancelled ? "İptal Edildi" : "Aktif"}</td>
+                            `;
+                            policiesListContainer.appendChild(row);
+                        }
+                    });
+                });
+        
+                if (!foundPolicies) {
+                    policiesListContainer.innerHTML = `<tr><td colspan="9" style="text-align: center;">Eşleşen poliçe bulunamadı.</td></tr>`;
+                }
+            });
+        });
+        
 
         document.querySelectorAll(".edit-policy-btn").forEach(btn => {
             btn.addEventListener("click", (e) => {
@@ -591,13 +642,18 @@ document.addEventListener("DOMContentLoaded", () => {
             document.getElementById('total-policies').textContent = data.total_policies;
         })
         .catch(error => console.error('Error fetching summary:', error));
+  
+  function getValidNumber(value) {
+      return isNaN(parseFloat(value)) ? 0 : parseFloat(value);
+        }  
+
   // Güncel ayın kazancını hesapla ve göster
-  function updateMonthlyEarnings() {
+function updateMonthlyEarnings() {
     const policies = JSON.parse(localStorage.getItem("policies")) || {};
     const currentDate = new Date();
     const currentMonth = currentDate.getMonth();
     const currentYear = currentDate.getFullYear();
-    let monthlyEarnings = 0;
+    let monthlyEarnings = 0; // Initialize monthlyEarnings with 0
 
     Object.keys(policies).forEach(customerName => {
         policies[customerName].forEach(policy => {
@@ -694,6 +750,7 @@ dateRangeForm.addEventListener("submit", (event) => {
     }
 
     const selectedPolicies = [];
+    const policies = JSON.parse(localStorage.getItem("policies")) || {}; // Add this line to get policies from localStorage
 
     Object.keys(policies).forEach(customerName => {
         policies[customerName].forEach(policy => {
@@ -750,7 +807,7 @@ dateRangeForm.addEventListener("submit", (event) => {
         alignment: { horizontal: 'center' }
     };
     data[0].forEach((header, index) => {
-        ws[XLSX.utils.encode_cell({r: 0, c: index})].s = headerStyle;
+        ws[XLSX.utils.encode_cell({ r: 0, c: index })].s = headerStyle;
     });
 
     // Negatif komisyon ve iptal durumu kontrolü ve stil uygulaması
@@ -779,4 +836,9 @@ dateRangeForm.addEventListener("submit", (event) => {
     alert("Poliçeler başarıyla policies.xlsx dosyasına indirildi.");
     dateRangeModal.style.display = "none";
 });
-
+document.addEventListener("wheel", (event) => {
+    window.scrollBy({
+        top: event.deltaY, // Mouse wheel delta value determines scroll direction and amount
+        behavior: 'smooth'
+    });
+});
