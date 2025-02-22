@@ -299,16 +299,17 @@ table td {
 }
 
 /* Modern buton stilleri */
-.action-button {
-    background-color: #3498db;
-    color: white;
+/* Genel Buton Stili */
+.action-btn {
+    padding: 8px 12px;
     border: none;
-    padding: 10px 15px;
-    border-radius: 4px;
+    border-radius: 5px;
     cursor: pointer;
     font-size: 14px;
-    transition: background-color 0.3s, box-shadow 0.3s;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    text-align: center;
 }
 
 .action-button:hover {
@@ -316,29 +317,53 @@ table td {
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
 }
 
-/* Farklı buton stilleri */
+/* Poliçe Ekle Butonu (Yeşil) */
 .add-policy-btn {
-    background-color: #27ae60;
+    background-color: #27ae60; /* Yeşil */
+    color: white;
+    border-radius: 25px; /* Daha yuvarlak buton */
 }
 
 .add-policy-btn:hover {
-    background-color: #2ecc71;
+    background-color: #219150;
+    transform: scale(1.05);
+}
+.add-policy-btn:active {
+    background-color: #1a7a40;
+    transform: scale(0.95);
 }
 
+/* Poliçeler Butonu (Turuncu) */
 .view-policies-btn {
-    background-color: #f39c12;
+    background-color: #f39c12; /* Turuncu */
+    color: white;
+    border-radius: 25px; /* Daha yuvarlak buton */
 }
 
 .view-policies-btn:hover {
-    background-color: #e67e22;
+    background-color: #e08e0b;
+    transform: scale(1.05);
+}
+.view-policies-btn:active {
+    background-color: #c87d06;
+    transform: scale(0.95);
 }
 
+/* Sil Butonu (Kırmızı) */
 .delete-customer-btn {
-    background-color: #e74c3c;
+    background-color: #e74c3c; /* Kırmızı */
+    color: white;
+    border-radius: 25px; /* Daha yuvarlak buton */
 }
 
 .delete-customer-btn:hover {
     background-color: #c0392b;
+    transform: scale(1.05);
+}
+
+.delete-customer-btn:active {
+    background-color: #a93226;
+    transform: scale(0.95);
 }
 
 .edit-button {
@@ -644,4 +669,37 @@ table td {
 
 #my-policies-link:hover {
     background-color: #0056b3; /* Hover efekti */
+}
+/* Poliçe Durumlarına Göre Renkler */
+.policy-item.sari-arka-plan {
+    background-color: yellow;
+}
+
+.policy-item.yesil-arka-plan {
+    background-color: green;
+}
+/* Düzenle Butonu Stili */
+.edit-policy-btn {
+    background-color: #3498db; /* Mavi arka plan */
+    color: white; /* Beyaz yazı */
+    border: none; /* Kenarlık yok */
+    padding: 8px 12px; /* İç boşluk */
+    border-radius: 5px; /* Köşeleri yuvarlak */
+    cursor: pointer; /* İmleci el simgesi yap */
+    font-size: 14px; /* Yazı boyutu */
+    font-weight: bold; /* Yazıyı kalın yap */
+    transition: background-color 0.3s, transform 0.2s; /* Geçiş efekti */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Hafif gölge efekti */
+}
+
+/* Buton Hover (Üzerine Gelince) */
+.edit-policy-btn:hover {
+    background-color: #217dbb; /* Daha koyu mavi */
+    transform: scale(1.05); /* Hafif büyüme efekti */
+}
+
+/* Buton Aktif (Basıldığında) */
+.edit-policy-btn:active {
+    background-color: #1a5c91; /* Daha koyu mavi */
+    transform: scale(0.95); /* Hafif küçülme efekti */
 }
