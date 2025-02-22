@@ -32,7 +32,7 @@
             background-color: red;
         }
         img[src="30.png"] {
-    width: 15vw; /* Genişlik, pencere genişliğinin %25'i */
+    width: 20vw; /* Genişlik, pencere genişliğinin %25'i */
     height: auto; /* Yükseklik otomatik olarak ayarlanır */
     border: 2px solid #00bfff; /* DeepSkyBlue kenarlık */
     border-radius: 8px; /* Köşeleri yuvarlar */
@@ -40,7 +40,7 @@
     margin: 10px; /* Dış boşluk */
     position: absolute; /* Mutlak konumlandırma */
     right: 0; /* Sağ kenara yasla */
-    top: 500px; /* Üstten biraz boşluk bırak */
+    top: 10px; /* Üstten biraz boşluk bırak */
 }
 table {
     width: 100%;
@@ -567,7 +567,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Poliçeleri listeleme fonksiyonu
-    function renderPolicyList() {
+    function renderPolicyList() {    
         const policies = JSON.parse(localStorage.getItem("policies")) || {};
         policiesListContainer.innerHTML = ""; 
 
@@ -615,6 +615,29 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
     </script>
+    <script>
+        // Silme butonuna tıklandığında çalışacak fonksiyon
+        function deletePolicy(customerName, policyIndex) {
+    const confirmation = confirm("Bu poliçeyi silmek istediğinize emin misiniz?");
+    if (confirmation) {
+        let policies = JSON.parse(localStorage.getItem("policies")) || {};
+        
+        if (policies[customerName]) {
+            policies[customerName].splice(policyIndex, 1);
+            
+            if (policies[customerName].length === 0) {
+                delete policies[customerName];
+            }
+            
+            localStorage.setItem("policies", JSON.stringify(policies));
+            alert("Poliçe başarıyla silindi!");
+            location.reload();
+        }
+    }
+}
+
+    </script>
+    
     
         
 </body>
