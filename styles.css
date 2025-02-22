@@ -58,6 +58,20 @@ body {
     opacity: 0;
     pointer-events: none;
 }
+/* Arama Kutusu ve Butonu Ana Sayfanın Üstüne Taşı */
+#sidebar-search-section {
+    position: absolute; /* Sabit konumlandırma */
+    top: 416px; /* Sayfanın en üstüne hizala */
+    left: 50%; /* Sayfanın ortasına hizala */
+    transform: translateX(-50%); /* Ortalamak için */
+    display: flex;
+    gap: 10px; /* Arama kutusu ve buton arasında boşluk */
+    z-index: 1000; /* Üstte görünmesini sağla */
+    background-color: #f8f9fa; /* Açık arka plan */
+    padding: 10px;
+    border-radius: 16px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Hafif gölge efekti */
+}
 
 /* Arama Kutusu */
 #sidebar-search-section input {
@@ -170,31 +184,89 @@ table td {
     text-align: left;
 }
 
+/* Açılan Modal Pencereyi Büyütme */
 .modal {
     display: none;
     position: fixed;
-    z-index: 1;
+    z-index: 1000;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgba(0, 0, 0, 0.4);
+    background-color: rgba(0, 0, 0, 0.5);
 }
 
+/* Modal İçeriği */
 .modal-content {
-    background-color: #fefefe;
-    margin: 5% auto;
+    background-color: #ffffff;
+    width: 90%; /* Genişliği artır */
+    max-width: 1400px; /* Maksimum genişlik artırıldı */
+    height: 85vh; /* Yükseklik artırıldı */
+    max-height: 85vh; /* Maksimum yükseklik artırıldı */
+    margin: 5vh auto; /* Üst ve alt boşluk */
     padding: 20px;
-    border: 1px solid #888;
-    width: 100%; /* Modal genişliği artırıldı */
-    max-width: 1250px; /* Modal maksimum genişliği artırıldı */
-    box-sizing: border-box;
-    word-wrap: break-word;
-    overflow: hidden;
-    max-height: 80vh; /* Modal pencerenin maksimum yüksekliği */
-    overflow-y: auto; /* Dikey kaydırma çubuğu */
+    border-radius: 10px; /* Köşeleri yuvarlat */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+    overflow-y: auto; /* İçerik fazla olursa kaydırma çubuğu ekle */
 }
+
+/* Kapatma Butonu */
+.close {
+    font-size: 28px;
+    font-weight: bold;
+    color: #ff0000;
+    position: absolute;
+    right: 20px;
+    top: 10px;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: #cc0000;
+}
+
+/* İçerik Tablosunu Daha İyi Görüntüleme */
+#policies-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#policies-table th, #policies-table td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+/* Filtreleme Bölümü */
+#policy-filter-section {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    padding-bottom: 15px;
+}
+
+#policy-filter-section input,
+#policy-filter-section button {
+    padding: 12px;
+    font-size: 14px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+/* Filtreleme Butonu */
+#apply-filter {
+    background-color: #28a745; /* Yeşil renk */
+    color: white;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#apply-filter:hover {
+    background-color: #218838; /* Daha koyu yeşil */
+}
+
 
 .close-button {
     color: #aaa;
@@ -398,11 +470,14 @@ table td {
     padding: 12px 15px;
     border: 1px solid #ddd;
     text-align: center;
+    color: black !important; /* Yazı rengini siyah yap */
+    background-color: white !important; /* Arka planı beyaz yap */
 }
-
 #earnings-table th {
-    background-color: #00bfff;
-    color: white;
+    background: linear-gradient(to right, blue, red); /* Sol taraf mavi, sağ taraf kırmızı */
+    color: white !important; /* Yazı rengini beyaz yaparak belirginleştir */
+    font-weight: bold; /* Yazıyı kalın yap */
+    text-align: center; /* Metni ortala */
 }
 
 
@@ -552,4 +627,21 @@ table td {
 
 .hidden {
     display: none; /* .hidden sınıfını tanımladık */
+}
+/* Sidebar'daki Poliçelerim Butonu */
+#my-policies-link {
+    display: block;
+    padding: 10px 15px;
+    text-align: center;
+    font-size: 16px;
+    color: white;
+    background-color: #007bff; /* Mavi renk */
+    text-decoration: none;
+    border-radius: 5px;
+    margin: 10px auto;
+    transition: background-color 0.3s ease;
+}
+
+#my-policies-link:hover {
+    background-color: #0056b3; /* Hover efekti */
 }
