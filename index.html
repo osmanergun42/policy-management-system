@@ -7,6 +7,7 @@
     <title>Poliçe Takip Sistemi</title>
     <link rel="stylesheet" href="styles.css">
     <style>
+        
         /* Filter section styling */
         #filter-section {
             margin: 20px 0;
@@ -39,7 +40,7 @@
     margin: 10px; /* Dış boşluk */
     position: absolute; /* Mutlak konumlandırma */
     right: 0; /* Sağ kenara yasla */
-    top: 10px; /* Üstten biraz boşluk bırak */
+    top: 500px; /* Üstten biraz boşluk bırak */
 }
 table {
     width: 100%;
@@ -129,6 +130,8 @@ td.gain input:focus, td.month input:focus {
     <img src="30.png" alt="logo">
 
     <div id="sidebar">
+        <li><a href="#" id="my-policies-link">📜 Poliçelerim</a></li>
+   
         <div id="monthly-earnings">
             <h3>Bu Ay Kazancınız</h3>
             <p id="monthly-earnings-amount">0 TL</p>
@@ -168,8 +171,25 @@ td.gain input:focus, td.month input:focus {
             <div id="search-suggestions" class="suggestions"></div>
         </div>
     </div>
+    
+     <script>
+        
+        document.addEventListener("DOMContentLoaded", function() {
+            const sidebar = document.getElementById("sidebar");
+
+            sidebar.addEventListener("wheel", function(event) {
+                event.preventDefault();
+                sidebar.scrollBy({
+                    top: event.deltaY,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+    
 
     <div id="toggle-sidebar-btn">☰</div>
+    
 
     <div class="main-content">
         <header>
@@ -188,6 +208,37 @@ td.gain input:focus, td.month input:focus {
             </select>
             <button id="filterButton">Filtrele</button>
         </div>
+        <div id="policies-modal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="close-policies-modal">&times;</span>
+                <h2>Poliçelerim</h2>
+                <div id="policy-filter-section">
+                    <input type="text" id="filter-name" placeholder="İsim ile filtrele">
+                    <input type="text" id="filter-plate" placeholder="Plaka ile filtrele">
+                    <input type="date" id="filter-start-date">
+                    <button id="apply-filter">Filtrele</button>
+                </div>
+                <table id="policies-table">
+                    <thead>
+                        <tr>
+                            <th>Müşteri Adı</th>
+                            <th>Poliçe Tipi</th>
+                            <th>Başlangıç Tarihi</th>
+                            <th>Bitiş Tarihi</th>
+                            <th>Prim (TL)</th>
+                            <th>Komisyon (TL)</th>
+                            <th>Plaka</th>
+                            <th>Şirket</th>
+                            <th>İptal Durumu</th>
+                        </tr>
+                    </thead>
+                    <tbody id="policies-list">
+                        <!-- Poliçeler buraya eklenecek -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
 
         <!-- Özet Bölümü -->
         <div id="summary-section">
@@ -196,6 +247,8 @@ td.gain input:focus, td.month input:focus {
             <p>Toplam Yaşayan Poliçe: <span id="active-policies">0</span></p>
             <p>Toplam Poliçe: <span id="total-policies">0</span></p>
         </div>
+        
+        
 
         <!-- Geri Butonu -->
         <button id="back-button" class="back-button" style="display: none;">Geri</button>
@@ -240,6 +293,7 @@ td.gain input:focus, td.month input:focus {
                 <button id="back-button-add-customer" class="back-button">Geri</button>
             </div>
         </div>
+        
 
         <button id="exportButton">İndir</button>
         <div id="date-range-modal" style="display: none;">
@@ -251,6 +305,7 @@ td.gain input:focus, td.month input:focus {
                 <button type="submit">Verileri Aktar</button>
             </form>
         </div>
+        
 
         <!-- Poliçe Ekleme Modal -->
         <div id="add-policy-modal" class="modal">
@@ -328,6 +383,7 @@ td.gain input:focus, td.month input:focus {
                 </form>
             </div>
         </div>
+        
 
         <!-- Arama Sonuçları Modal -->
         <div id="search-results-modal" class="modal">
@@ -391,5 +447,175 @@ td.gain input:focus, td.month input:focus {
             }
         });
     </script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const myPoliciesLink = document.getElementById("my-policies-link");
+    
+        if (!myPoliciesLink) {
+            console.error("Poliçelerim butonu bulunamadı!");
+            return;
+        }
+    
+        myPoliciesLink.addEventListener("click", (event) => {
+            event.preventDefault(); // Sayfanın yenilenmesini engelle
+            showSection("policies-section"); // Poliçelerim sayfasını göster
+            renderPolicyList(); // Poliçeleri listele
+        });
+    
+        function renderPolicyList() {
+            const policiesListContainer = document.getElementById("policies-list");
+            const policies = JSON.parse(localStorage.getItem("policies")) || {}; // LocalStorage'dan poliçeleri al
+    
+            if (!policiesListContainer) {
+                console.error("policies-list ID'li eleman bulunamadı!");
+                return;
+            }
+    
+            policiesListContainer.innerHTML = ""; // Önce listeyi temizle
+    
+            let foundPolicies = false; // Poliçe olup olmadığını kontrol etmek için
+    
+            Object.keys(policies).forEach(customerName => {
+                policies[customerName].forEach(policy => {
+                    foundPolicies = true;
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${customerName}</td>
+                        <td>${policy.type}</td>
+                        <td>${policy.startDate}</td>
+                        <td>${policy.endDate}</td>
+                        <td>${policy.premium.toFixed(2)} TL</td>
+                        <td>${policy.calculatedCommission.toFixed(2)} TL</td>
+                        <td>${policy.licensePlate}</td>
+                        <td>${policy.company}</td>
+                        <td>${policy.isCancelled ? "İptal Edildi" : "Aktif"}</td>
+                    `;
+                    policiesListContainer.appendChild(row);
+                });
+            });
+    
+            if (!foundPolicies) {
+                policiesListContainer.innerHTML = `<tr><td colspan="9" style="text-align: center;">Kayıtlı poliçe bulunamadı.</td></tr>`;
+            }
+        }
+    
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.main-content > div');
+            sections.forEach((section) => {
+                section.style.display = 'none';
+            });
+    
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.style.display = 'block';
+            } else {
+                console.error(`${sectionId} ID'li bölüm bulunamadı.`);
+            }
+        }
+    });
+    </script>
+    <!-- Poliçeler Modal -->
+    <div id="policies-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="close-policies-modal">&times;</span>
+            <h2>Kayıtlı Poliçeler</h2>
+            <table id="policies-table">
+                <thead>
+                    <tr>
+                        <th>Müşteri Adı</th>
+                        <th>Poliçe Tipi</th>
+                        <th>Başlangıç Tarihi</th>
+                        <th>Bitiş Tarihi</th>
+                        <th>Prim (TL)</th>
+                        <th>Komisyon (TL)</th>
+                        <th>Plaka</th>
+                        <th>Şirket</th>
+                        <th>Poliçe Durumu</th>
+                    </tr>
+                </thead>
+                <tbody id="policies-list">
+                    <!-- Poliçeler buraya yüklenecek -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+document.addEventListener("DOMContentLoaded", () => {
+    const myPoliciesLink = document.getElementById("my-policies-link");
+    const policiesModal = document.getElementById("policies-modal");
+    const closePoliciesModal = document.getElementById("close-policies-modal");
+    const policiesListContainer = document.getElementById("policies-list");
+
+    // Poliçeler butonuna tıklandığında modalı aç
+    myPoliciesLink.addEventListener("click", (event) => {
+        event.preventDefault();
+        updatePolicyStatus(); // Poliçe durumlarını güncelleme fonksiyonunu çağır
+        renderPolicyList();
+        policiesModal.style.display = "block";
+    });
+
+    // Modal kapatma işlemi
+    closePoliciesModal.addEventListener("click", () => {
+        policiesModal.style.display = "none";
+    });
+
+    window.addEventListener("click", (event) => {
+        if (event.target === policiesModal) {
+            policiesModal.style.display = "none";
+        }
+    });
+
+    // Poliçeleri listeleme fonksiyonu
+    function renderPolicyList() {
+        const policies = JSON.parse(localStorage.getItem("policies")) || {};
+        policiesListContainer.innerHTML = ""; 
+
+        let foundPolicies = false;
+        Object.keys(policies).forEach(customerName => {
+            policies[customerName].forEach(policy => {
+                foundPolicies = true;
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${customerName}</td>
+                    <td>${policy.type}</td>
+                    <td>${policy.startDate}</td>
+                    <td>${policy.endDate}</td>
+                    <td>${policy.premium.toFixed(2)} TL</td>
+                    <td>${policy.calculatedCommission.toFixed(2)} TL</td>
+                    <td>${policy.licensePlate}</td>
+                    <td>${policy.company}</td>
+                    <td>${new Date(policy.endDate) < new Date() ? "Bitmiş" : "Aktif"}</td>
+                `;
+                policiesListContainer.appendChild(row);
+            });
+        });
+
+        if (!foundPolicies) {
+            policiesListContainer.innerHTML = `<tr><td colspan="9" style="text-align: center;">Kayıtlı poliçe bulunamadı.</td></tr>`;
+        }
+    }
+
+    // Poliçeleri güncelleme fonksiyonu
+    function updatePolicyStatus() {
+        const policies = JSON.parse(localStorage.getItem("policies")) || {};
+        const currentDate = new Date();
+
+        Object.keys(policies).forEach(customerName => {
+            policies[customerName].forEach(policy => {
+                const policyEndDate = new Date(policy.endDate);
+                if (policyEndDate < currentDate) {
+                    policy.isCancelled = true;
+                }
+            });
+        });
+
+        // Güncellenmiş poliçeleri localStorage'a kaydet
+        localStorage.setItem("policies", JSON.stringify(policies));
+    }
+});
+    </script>
+    
+        
 </body>
 </html>
