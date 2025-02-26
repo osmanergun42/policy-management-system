@@ -483,6 +483,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             policiesListContainer.appendChild(row);
                         }
                     });
+                    
                 });
         
                 if (!foundPolicies) {
@@ -558,7 +559,7 @@ document.addEventListener("DOMContentLoaded", () => {
                             <td>
                                 <button class="add-policy-btn" data-index="${index}">Poliçe Ekle</button>
                                 <button class="view-policies-btn" data-index="${index}">Poliçeler</button>
-                                <button class="delete-customer-btn" data-index="${index}">Sil</button>
+                                <button class="delete-policy-btn" onclick="deletePolicy('${customerName}', ${index})">Sil</button>
                             </td>
                         </tr>
                     `).join('')}
@@ -842,3 +843,21 @@ document.addEventListener("wheel", (event) => {
         behavior: 'smooth'
     });
 });
+function deletePolicy(customerName, policyIndex) {
+    const confirmation = confirm("Bu poliçeyi silmek istediğinize emin misiniz?");
+    if (confirmation) {
+        let policies = JSON.parse(localStorage.getItem("policies")) || {};
+        
+        if (policies[customerName]) {
+            policies[customerName].splice(policyIndex, 1);
+            
+            if (policies[customerName].length === 0) {
+                delete policies[customerName];
+            }
+            
+            localStorage.setItem("policies", JSON.stringify(policies));
+            alert("Poliçe başarıyla silindi!");
+            location.reload();
+        }
+    }
+}
