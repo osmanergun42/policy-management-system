@@ -82,7 +82,7 @@ body {
 
 #sidebar-search-section {
     position: absolute;
-    top: 227px;
+    top: 150px;
     left: 50%;
     transform: translateX(-50%);
     display: flex;
