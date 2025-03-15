@@ -9,35 +9,18 @@ document.addEventListener("DOMContentLoaded", () => {
 // Acenteler butonunu ekle
 const sidebarNav = document.querySelector("#sidebar nav ul");
 const agenciesLink = document.createElement("li");
-agenciesLink.innerHTML = '<a href="acenteler.html" id="agencies-link" target="_blank">🏢 Acenteler</a>';
+agenciesLink.innerHTML = '<a href="acenteler.html" id="agencies-link">🏢 Acenteler</a>';
 sidebarNav.appendChild(agenciesLink);
-
-// Acenteler butonuna tıklanınca yeni sekmede sayfa açılması
-agenciesLink.addEventListener("click", (event) => {
-    event.preventDefault(); // Sayfanın yenilenmesini engelle
-    window.open("acenteler.html", "_blank"); // Acenteler sayfasını yeni sekmede aç
-});
 
 // Muhasebe butonunu ekle
 const accountingLink = document.createElement("li");
-accountingLink.innerHTML = '<a href="muhasebe.html" id="accounting-link" target="_blank">💼 Muhasebe</a>';
+accountingLink.innerHTML = '<a href="muhasebe.html" id="accounting-link">💼 Muhasebe</a>';
 sidebarNav.appendChild(accountingLink);
 
-// Muhasebe butonuna tıklanınca yeni sekmede sayfa açılması
-accountingLink.addEventListener("click", (event) => {
-    event.preventDefault(); // Sayfanın yenilenmesini engelle
-    window.open("muhasebe.html", "_blank"); // Muhasebe sayfasını yeni sekmede aç
-});
 // Poliçelerim butonunu ekle
 const policiesLink = document.createElement("li");
-policiesLink.innerHTML = '<a href="policelerim.html" id="policies-link" target="_blank">📄 Poliçelerim</a>';
+policiesLink.innerHTML = '<a href="policelerim.html" id="policies-link">📄 Poliçelerim</a>';
 sidebarNav.appendChild(policiesLink);
-
-// Poliçelerim butonuna tıklanınca yeni sekmede sayfa açılması
-policiesLink.addEventListener("click", (event) => {
-    event.preventDefault(); // Sayfanın yenilenmesini engelle
-    window.open("policelerim.html", "_blank"); // Poliçelerim sayfasını yeni sekmede aç
-});
 
     
 
