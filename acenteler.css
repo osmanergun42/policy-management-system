@@ -1,75 +1,67 @@
-/* Genel stil ayarları */
+/* Genel Stil Ayarları */
 body {
-    font-family: 'Arial', sans-serif;
-    background-color: #f5f5f5;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 20px;
+    background-color: #f4f4f9;
     color: #333;
-    margin: 0;
-    padding: 0;
+}
+
+h1 {
+    color: #4CAF50;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Filtreleme Seçenekleri */
+.filter-container {
     display: flex;
     justify-content: center;
     align-items: center;
-    flex-direction: column;
-    height: 100vh;
-}
-
-/* Başlık stili */
-h1 {
-    font-size: 2.5em;
     margin-bottom: 20px;
-    color: #4CAF50;
 }
 
-/* Dropdown menü stili */
-label {
-    font-size: 1.2em;
-    margin-right: 10px;
-}
-
-select {
+.filter-container label, .filter-container select, .filter-container button {
+    margin: 0 10px;
     padding: 10px;
-    font-size: 1em;
-    border: 2px solid #4CAF50;
-    border-radius: 5px;
-    background-color: #fff;
-    color: #333;
-    transition: border-color 0.3s;
-    margin-bottom: 20px;
+    font-size: 16px;
 }
 
-select:hover, select:focus {
-    border-color: #388E3C;
+.filter-container select, .filter-container button {
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.filter-container select:focus, .filter-container button:focus {
+    border-color: #4CAF50;
     outline: none;
 }
 
-/* İndir butonu stili */
 #download-button {
-    padding: 10px 20px;
-    font-size: 1em;
-    color: #fff;
     background-color: #4CAF50;
-    border: none;
-    border-radius: 5px;
+    color: white;
     cursor: pointer;
-    transition: background-color 0.3s, transform 0.3s;
-    margin-bottom: 20px;
+    transition: background-color 0.3s ease;
 }
 
 #download-button:hover {
-    background-color: #388E3C;
-    transform: scale(1.05);
+    background-color: #45a049;
 }
 
-/* Tablo stili */
+/* Tablo Stil Ayarları */
 table {
-    width: 80%;
+    width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+table, th, td {
+    border: 1px solid #ddd;
 }
 
 th, td {
-    padding: 10px;
+    padding: 12px;
     text-align: left;
-    border: 1px solid #ddd;
 }
 
 th {
@@ -77,35 +69,37 @@ th {
     color: white;
 }
 
-tbody tr:nth-child(even) {
-    background-color: #f2f2f2;
+tr:nth-child(even) {
+    background-color: #f9f9f9;
 }
 
-tbody tr:hover {
-    background-color: #ddd;
+tr:hover {
+    background-color: #f1f1f1;
 }
 
-/* Modal stil */
+/* Modal Pencere Stil Ayarları */
 .modal {
-    display: none; 
-    position: fixed; 
-    z-index: 1; 
+    display: none;
+    position: fixed;
+    z-index: 1;
     left: 0;
     top: 0;
-    width: 100%; 
-    height: 100%; 
-    overflow: auto; 
-    background-color: rgb(0,0,0); 
-    background-color: rgba(0,0,0,0.4); 
-    padding-top: 60px;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
 }
 
 .modal-content {
     background-color: #fefefe;
-    margin: 5% auto; 
+    margin: 15% auto;
     padding: 20px;
     border: 1px solid #888;
-    width: 80%; 
+    width: 80%;
+    max-width: 500px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+    animation: fadeIn 0.5s;
 }
 
 .close-button {
@@ -113,6 +107,7 @@ tbody tr:hover {
     float: right;
     font-size: 28px;
     font-weight: bold;
+    cursor: pointer;
 }
 
 .close-button:hover,
@@ -122,19 +117,13 @@ tbody tr:hover {
     cursor: pointer;
 }
 
-#apply-date-range {
-    padding: 10px 20px;
-    font-size: 1em;
-    color: #fff;
-    background-color: #4CAF50;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background-color 0.3s, transform 0.3s;
-    margin-top: 10px;
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
 }
 
-#apply-date-range:hover {
-    background-color: #388E3C;
-    transform: scale(1.05);
+/* Daha iyi kaydırma deneyimi için stil */
+body {
+    overscroll-behavior: contain;
+    scroll-behavior: smooth;
 }
