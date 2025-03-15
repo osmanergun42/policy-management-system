@@ -78,7 +78,44 @@
             // Yerel depolamadan poliçe verilerini al
             const policies = JSON.parse(localStorage.getItem("policies")) || {};
 
-            calculateButton.addEventListener("click", () => {
+            function calculateCommission(policy) {
+                const agency = policy.externalAgency.toLowerCase();
+                let commissionRate = 0;
+
+                if (agency.includes("enter sigorta")) {
+                    commissionRate = 0.07;
+                } else if (agency.includes("enes sigorta")) {
+                    commissionRate = 0.04;
+                } else if (agency.includes("başakçı") || agency.includes("terlemez")) {
+                    commissionRate = 0.04;
+                } else if (agency.includes("srn")) {
+                    commissionRate = 0.04;
+                }
+
+                return policy.premium * commissionRate;
+            }
+
+            function renderPolicies(filteredPolicies) {
+                policyList.innerHTML = ""; // Önce listeyi temizle
+                filteredPolicies.forEach(policy => {
+                    const commission = calculateCommission(policy);
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${policy.customerName}</td>
+                        <td>${policy.type}</td>
+                        <td>${policy.startDate}</td>
+                        <td>${policy.endDate}</td>
+                        <td>${policy.premium.toFixed(2)} TL</td>
+                        <td>${commission.toFixed(2)} TL</td>
+                        <td>${policy.licensePlate}</td>
+                        <td>${policy.company}</td>
+                        <td>${policy.isCancelled ? "İptal Edildi" : "Aktif"}</td>
+                    `;
+                    policyList.appendChild(row);
+                });
+            }
+
+            function filterPolicies() {
                 const selectedAgency = agenciesDropdown.value;
                 const selectedMonth = monthDropdown.value;
                 const selectedYear = yearInput.value;
@@ -88,7 +125,6 @@
                     return;
                 }
 
-                // Seçilen acente, ay ve yıl için net primlerin toplamını ve poliçeleri hesapla
                 const filteredPolicies = Object.keys(policies)
                     .flatMap(customerName => policies[customerName].map(policy => ({ customerName, ...policy })))
                     .filter(policy => 
@@ -101,49 +137,15 @@
                 const commission = (totalNetPremium * 0.04).toFixed(2);
                 resultText.textContent = `${commission} TL`;
 
-                // Poliçeleri tabloya ekle
-                policyList.innerHTML = ""; // Önce listeyi temizle
-                filteredPolicies.forEach(policy => {
-                    const row = document.createElement("tr");
-                    row.innerHTML = `
-                        <td>${policy.customerName}</td>
-                        <td>${policy.type}</td>
-                        <td>${policy.startDate}</td>
-                        <td>${policy.endDate}</td>
-                        <td>${policy.premium.toFixed(2)} TL</td>
-                        <td>${policy.calculatedCommission.toFixed(2)} TL</td>
-                        <td>${policy.licensePlate}</td>
-                        <td>${policy.company}</td>
-                        <td>${policy.isCancelled ? "İptal Edildi" : "Aktif"}</td>
-                    `;
-                    policyList.appendChild(row);
-                });
-            });
+                renderPolicies(filteredPolicies);
+            }
+
+            calculateButton.addEventListener("click", filterPolicies);
 
             // Sayfa yüklendiğinde tüm poliçeleri göster
-            const filteredPolicies = Object.keys(policies)
+            const allPolicies = Object.keys(policies)
                 .flatMap(customerName => policies[customerName].map(policy => ({ customerName, ...policy })));
-
-            const totalNetPremium = filteredPolicies.reduce((total, policy) => total + policy.premium, 0);
-            const commission = (totalNetPremium * 0.04).toFixed(2);
-            resultText.textContent = `${commission} TL`;
-
-            policyList.innerHTML = ""; // Önce listeyi temizle
-            filteredPolicies.forEach(policy => {
-                const row = document.createElement("tr");
-                row.innerHTML = `
-                    <td>${policy.customerName}</td>
-                    <td>${policy.type}</td>
-                    <td>${policy.startDate}</td>
-                    <td>${policy.endDate}</td>
-                    <td>${policy.premium.toFixed(2)} TL</td>
-                    <td>${policy.calculatedCommission.toFixed(2)} TL</td>
-                    <td>${policy.licensePlate}</td>
-                    <td>${policy.company}</td>
-                    <td>${policy.isCancelled ? "İptal Edildi" : "Aktif"}</td>
-                `;
-                policyList.appendChild(row);
-            });
+            renderPolicies(allPolicies);
         });
     </script>
 </body>
