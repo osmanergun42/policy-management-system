@@ -1,18 +1,26 @@
 /* Genel Stil Ayarları */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    margin: 20px;
+    margin: 0;
     background-color: #f4f4f9;
     color: #333;
+}
+
+.header {
+    position: sticky;
+    top: 0;
+    background-color: #fff;
+    padding: 10px 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
 }
 
 h1 {
     color: #4CAF50;
     text-align: center;
-    margin-bottom: 20px;
+    margin: 0 0 20px 0;
 }
 
-/* Filtreleme Seçenekleri */
 .filter-container {
     display: flex;
     justify-content: center;
