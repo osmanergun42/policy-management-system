@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poliçelerim</title>
+    <link rel="stylesheet" href="policelerim.css">
+</head>
+<body>
+    <h1>Poliçelerim</h1>
+    
+    <!-- Filtreleme Seçenekleri -->
+    <div id="filters">
+        <label for="filter-name">Ad Soyad:</label>
+        <input type="text" id="filter-name" placeholder="Ad Soyad">
+
+        <label for="filter-license-plate">Plaka:</label>
+        <input type="text" id="filter-license-plate" placeholder="Plaka">
+
+        <label for="filter-start-date">Başlangıç Tarihi:</label>
+        <input type="date" id="filter-start-date">
+
+        <label for="filter-end-date">Bitiş Tarihi:</label>
+        <input type="date" id="filter-end-date">
+
+        <button id="filter-button">Filtrele</button>
+    </div>
+
+    <table id="policy-table">
+        <thead>
+            <tr>
+                <th>Müşteri Adı</th>
+                <th>Poliçe Tipi</th>
+                <th>Başlangıç Tarihi</th>
+                <th>Bitiş Tarihi</th>
+                <th>Prim (TL)</th>
+                <th>Komisyon (TL)</th>
+                <th>Plaka</th>
+                <th>Şirket</th>
+                <th>Durum</th>
+            </tr>
+        </thead>
+        <tbody id="policy-list">
+            <!-- Poliçeler burada listelenecek -->
+        </tbody>
+    </table>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const policyList = document.getElementById("policy-list");
+            const filterName = document.getElementById("filter-name");
+            const filterLicensePlate = document.getElementById("filter-license-plate");
+            const filterStartDate = document.getElementById("filter-start-date");
+            const filterEndDate = document.getElementById("filter-end-date");
+            const filterButton = document.getElementById("filter-button");
+
+            // Yerel depolamadan poliçe verilerini al
+            const policies = JSON.parse(localStorage.getItem("policies")) || {};
+
+            function renderPolicies(filteredPolicies) {
+                policyList.innerHTML = ""; // Önce listeyi temizle
+                filteredPolicies.forEach(policy => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${policy.customerName}</td>
+                        <td>${policy.type}</td>
+                        <td>${policy.startDate}</td>
+                        <td>${policy.endDate}</td>
+                        <td>${policy.premium.toFixed(2)} TL</td>
+                        <td>${policy.calculatedCommission.toFixed(2)} TL</td>
+                        <td>${policy.licensePlate}</td>
+                        <td>${policy.company}</td>
+                        <td>${policy.isCancelled ? "İptal Edildi" : "Aktif"}</td>
+                    `;
+                    policyList.appendChild(row);
+                });
+            }
+
+            function filterPolicies() {
+                const name = filterName.value.toLowerCase();
+                const licensePlate = filterLicensePlate.value.toLowerCase();
+                const startDate = filterStartDate.value ? new Date(filterStartDate.value) : null;
+                const endDate = filterEndDate.value ? new Date(filterEndDate.value) : null;
+
+                const filteredPolicies = Object.keys(policies)
+                    .flatMap(customerName => policies[customerName].map(policy => ({ customerName, ...policy })))
+                    .filter(policy => {
+                        const policyStartDate = new Date(policy.startDate);
+                        const policyEndDate = new Date(policy.endDate);
+                        return (
+                            (name === "" || policy.customerName.toLowerCase().includes(name)) &&
+                            (licensePlate === "" || policy.licensePlate.toLowerCase().includes(licensePlate)) &&
+                            (!startDate || policyStartDate >= startDate) &&
+                            (!endDate || policyEndDate <= endDate)
+                        );
+                    });
+
+                renderPolicies(filteredPolicies);
+            }
+
+            filterButton.addEventListener("click", filterPolicies);
+
+            // Sayfa yüklendiğinde tüm poliçeleri göster
+            const allPolicies = Object.keys(policies)
+                .flatMap(customerName => policies[customerName].map(policy => ({ customerName, ...policy })));
+            renderPolicies(allPolicies);
+        });
+    </script>
+</body>
+</html>

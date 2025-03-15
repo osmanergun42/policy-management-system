@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Muhasebe</title>
+    <link rel="stylesheet" href="muhasebe.css">
+</head>
+<body>
+    <h1>Muhasebe</h1>
+    <div>
+        <label for="agencies-dropdown">Dış Acente Seçin:</label>
+        <select id="agencies-dropdown" required>
+            <option value="" disabled selected>Dış Acente Seçin</option>
+            <option value="SNR Sigorta">SNR Sigorta</option>
+            <option value="Enes Sigorta">Enes Sigorta</option>
+            <option value="Enter Sigorta">Enter Sigorta</option>
+            <option value="Saygın Sigorta">Saygın Sigorta</option>
+            <option value="Başakçı">Başakçı</option>
+            <option value="Terlemez Sigorta">Terlemez Sigorta</option>
+        </select>
+    </div>
+    <div>
+        <label for="month-dropdown">Ay Seçin:</label>
+        <select id="month-dropdown">
+            <option value="" disabled selected>Ay Seçin</option>
+            <option value="1">Ocak</option>
+            <option value="2">Şubat</option>
+            <option value="3">Mart</option>
+            <option value="4">Nisan</option>
+            <option value="5">Mayıs</option>
+            <option value="6">Haziran</option>
+            <option value="7">Temmuz</option>
+            <option value="8">Ağustos</option>
+            <option value="9">Eylül</option>
+            <option value="10">Ekim</option>
+            <option value="11">Kasım</option>
+            <option value="12">Aralık</option>
+        </select>
+    </div>
+    <div>
+        <label for="year-input">Yıl Seçin:</label>
+        <input type="number" id="year-input" placeholder="Yıl Girin" min="2000" max="2100">
+    </div>
+    <button id="calculate-button">Hesapla</button>
+    <div>
+        <h2>Sonuç:</h2>
+        <p id="result">Seçilen acente için net primin %4'ü: <span id="calculated-commission">0 TL</span></p>
+        <table id="policy-table">
+            <thead>
+                <tr>
+                    <th>Müşteri Adı</th>
+                    <th>Poliçe Tipi</th>
+                    <th>Başlangıç Tarihi</th>
+                    <th>Bitiş Tarihi</th>
+                    <th>Prim (TL)</th>
+                    <th>Komisyon (TL)</th>
+                    <th>Plaka</th>
+                    <th>Şirket</th>
+                    <th>Durum</th>
+                </tr>
+            </thead>
+            <tbody id="policy-list">
+                <!-- Poliçeler burada listelenecek -->
+            </tbody>
+        </table>
+    </div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const agenciesDropdown = document.getElementById("agencies-dropdown");
+            const monthDropdown = document.getElementById("month-dropdown");
+            const yearInput = document.getElementById("year-input");
+            const resultText = document.getElementById("calculated-commission");
+            const calculateButton = document.getElementById("calculate-button");
+            const policyList = document.getElementById("policy-list");
+
+            // Yerel depolamadan poliçe verilerini al
+            const policies = JSON.parse(localStorage.getItem("policies")) || {};
+
+            calculateButton.addEventListener("click", () => {
+                const selectedAgency = agenciesDropdown.value;
+                const selectedMonth = monthDropdown.value;
+                const selectedYear = yearInput.value;
+
+                if (!selectedMonth || !selectedYear) {
+                    alert("Lütfen bir ay ve yıl seçin.");
+                    return;
+                }
+
+                // Seçilen acente, ay ve yıl için net primlerin toplamını ve poliçeleri hesapla
+                const filteredPolicies = Object.keys(policies)
+                    .flatMap(customerName => policies[customerName].map(policy => ({ customerName, ...policy })))
+                    .filter(policy => 
+                        (selectedAgency === "Hepsi" || policy.externalAgency === selectedAgency) &&
+                        new Date(policy.startDate).getMonth() + 1 === parseInt(selectedMonth) &&
+                        new Date(policy.startDate).getFullYear() === parseInt(selectedYear)
+                    );
+
+                const totalNetPremium = filteredPolicies.reduce((total, policy) => total + policy.premium, 0);
+                const commission = (totalNetPremium * 0.04).toFixed(2);
+                resultText.textContent = `${commission} TL`;
+
+                // Poliçeleri tabloya ekle
+                policyList.innerHTML = ""; // Önce listeyi temizle
+                filteredPolicies.forEach(policy => {
+                    const row = document.createElement("tr");
+                    row.innerHTML = `
+                        <td>${policy.customerName}</td>
+                        <td>${policy.type}</td>
+                        <td>${policy.startDate}</td>
+                        <td>${policy.endDate}</td>
+                        <td>${policy.premium.toFixed(2)} TL</td>
+                        <td>${policy.calculatedCommission.toFixed(2)} TL</td>
+                        <td>${policy.licensePlate}</td>
+                        <td>${policy.company}</td>
+                        <td>${policy.isCancelled ? "İptal Edildi" : "Aktif"}</td>
+                    `;
+                    policyList.appendChild(row);
+                });
+            });
+
+            // Sayfa yüklendiğinde tüm poliçeleri göster
+            const filteredPolicies = Object.keys(policies)
+                .flatMap(customerName => policies[customerName].map(policy => ({ customerName, ...policy })));
+
+            const totalNetPremium = filteredPolicies.reduce((total, policy) => total + policy.premium, 0);
+            const commission = (totalNetPremium * 0.04).toFixed(2);
+            resultText.textContent = `${commission} TL`;
+
+            policyList.innerHTML = ""; // Önce listeyi temizle
+            filteredPolicies.forEach(policy => {
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${policy.customerName}</td>
+                    <td>${policy.type}</td>
+                    <td>${policy.startDate}</td>
+                    <td>${policy.endDate}</td>
+                    <td>${policy.premium.toFixed(2)} TL</td>
+                    <td>${policy.calculatedCommission.toFixed(2)} TL</td>
+                    <td>${policy.licensePlate}</td>
+                    <td>${policy.company}</td>
+                    <td>${policy.isCancelled ? "İptal Edildi" : "Aktif"}</td>
+                `;
+                policyList.appendChild(row);
+            });
+        });
+    </script>
+</body>
+</html>
