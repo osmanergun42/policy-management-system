@@ -6,9 +6,44 @@ document.addEventListener("DOMContentLoaded", () => {
         sidebar.classList.toggle("closed");
         document.querySelector(".main-content").classList.toggle("expanded");
     });
+// Acenteler butonunu ekle
+const sidebarNav = document.querySelector("#sidebar nav ul");
+const agenciesLink = document.createElement("li");
+agenciesLink.innerHTML = '<a href="acenteler.html" id="agencies-link" target="_blank">🏢 Acenteler</a>';
+sidebarNav.appendChild(agenciesLink);
+
+// Acenteler butonuna tıklanınca yeni sekmede sayfa açılması
+agenciesLink.addEventListener("click", (event) => {
+    event.preventDefault(); // Sayfanın yenilenmesini engelle
+    window.open("acenteler.html", "_blank"); // Acenteler sayfasını yeni sekmede aç
+});
+
+// Muhasebe butonunu ekle
+const accountingLink = document.createElement("li");
+accountingLink.innerHTML = '<a href="muhasebe.html" id="accounting-link" target="_blank">💼 Muhasebe</a>';
+sidebarNav.appendChild(accountingLink);
+
+// Muhasebe butonuna tıklanınca yeni sekmede sayfa açılması
+accountingLink.addEventListener("click", (event) => {
+    event.preventDefault(); // Sayfanın yenilenmesini engelle
+    window.open("muhasebe.html", "_blank"); // Muhasebe sayfasını yeni sekmede aç
+});
+// Poliçelerim butonunu ekle
+const policiesLink = document.createElement("li");
+policiesLink.innerHTML = '<a href="policelerim.html" id="policies-link" target="_blank">📄 Poliçelerim</a>';
+sidebarNav.appendChild(policiesLink);
+
+// Poliçelerim butonuna tıklanınca yeni sekmede sayfa açılması
+policiesLink.addEventListener("click", (event) => {
+    event.preventDefault(); // Sayfanın yenilenmesini engelle
+    window.open("policelerim.html", "_blank"); // Poliçelerim sayfasını yeni sekmede aç
+});
+
+    
 
     const customers = JSON.parse(localStorage.getItem("customers")) || [];
     const policies = JSON.parse(localStorage.getItem("policies")) || {};
+    
 
     const addCustomerForm = document.getElementById("add-customer-form");
     const customerNameInput = document.getElementById("customer-name");
@@ -66,6 +101,7 @@ document.addEventListener("DOMContentLoaded", () => {
             calculatedCommissionInput.value = ''; // Geçersiz girişler için komisyon alanını temizle
         }
     }
+    
 
     // Premium ve komisyon oranı girişlerine olay dinleyicileri ekleyin
     premiumInput.setAttribute('min', '-Infinity');
@@ -297,21 +333,165 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-    // Sidebar Arama Butonu
-    sidebarSearchBtn.addEventListener("click", () => {
-        performSearch(sidebarSearchInput.value.toLowerCase());
+  // Sidebar Arama Butonu
+sidebarSearchBtn.addEventListener("click", () => {
+    const searchTerm = sidebarSearchInput.value.toLowerCase();
+    if (searchTerm) {
+        performSearch(searchTerm);
+    } else {
+        searchSuggestions.innerHTML = '';
+    }
+});
+
+// Arama İşlevi (Büyük-Küçük Harf Hassasiyetini Kaldırdık)
+function performSearch(searchTerm) {
+    const lowerCasedSearchTerm = searchTerm.toLowerCase();
+    const filteredCustomers = customers.filter(customer => 
+        customer.name.toLowerCase().includes(lowerCasedSearchTerm) || 
+        (policies[customer.name] && policies[customer.name].some(policy => 
+            policy.licensePlate.toLowerCase().includes(lowerCasedSearchTerm)
+        ))
+    );
+
+    if (filteredCustomers.length > 0) {
+        renderSearchResults(filteredCustomers);
+        searchResultsModal.style.display = "flex"; // Arama sonuçları modal penceresini göster
+    } else {
+        alert("Müşteri veya plaka bulunamadı!");
+    }
+}
+
+// Arama Sonuçlarını Render Etme
+function renderSearchResults(filteredCustomers) {
+    const searchResultsContainer = document.getElementById("search-results");
+    searchResultsContainer.innerHTML = `
+        <table>
+            <thead>
+                <tr>
+                    <th>Müşteri Adı</th>
+                    <th>Telefon</th>
+                    <th>E-posta</th>
+                    <th>Adres</th>
+                    <th>İşlem</th>
+                </tr>
+            </thead>
+            <tbody>
+                ${filteredCustomers.map((customer, index) => `
+                    <tr>
+                        <td>${customer.name}</td>
+                        <td>${customer.phone}</td>
+                        <td>${customer.email}</td>
+                        <td>${customer.address}</td>
+                        <td>
+                            <button class="add-policy-btn" data-index="${index}">Poliçe Ekle</button>
+                            <button class="view-policies-btn" data-index="${index}">Poliçeler</button>
+                            <button class="delete-policy-btn" onclick="deletePolicy('${customer.name}', ${index})">Sil</button>
+                        </td>
+                    </tr>
+                `).join('')}
+            </tbody>
+        </table>
+    `;
+
+    // "Poliçe Ekle", "Poliçeler" ve "Sil" butonlarına tıklama olaylarını ekleyelim
+    document.querySelectorAll(".add-policy-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            const customerIndex = e.target.getAttribute("data-index");
+            const customer = filteredCustomers[customerIndex];
+            document.getElementById("policy-customer-name").innerText = customer.name;
+            document.getElementById("add-policy-section").style.display = "block";
+            openAddPolicyModalBtn.click();
+        });
     });
 
-    // Önerilere Tıklama Etkinliği
-    searchSuggestions.addEventListener("click", (event) => {
-        if (event.target.classList.contains("suggestion-item")) {
-            const customerName = event.target.textContent;
-            const customer = customers.find(c => c.name === customerName);
-            if (customer) {
-                renderPolicyListModal(customer); // Poliçeler modal penceresinde gösterilecek
-            }
-        }
+    document.querySelectorAll(".view-policies-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            const customerIndex = e.target.getAttribute("data-index");
+            const customer = filteredCustomers[customerIndex];
+            renderPolicyListModal(customer);
+        });
     });
+
+    document.querySelectorAll(".delete-customer-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            const customerIndex = e.target.getAttribute("data-index");
+            filteredCustomers.splice(customerIndex, 1);
+            saveToLocalStorage("customers", filteredCustomers);
+            renderSearchResults(filteredCustomers);
+            updateCustomerCount();
+        });
+    });
+
+    searchResultsModal.style.display = "flex";
+}
+
+   // Önerilere Tıklama Etkinliği
+searchSuggestions.addEventListener("click", (event) => {
+    if (event.target.classList.contains("suggestion-item")) {
+        const customerName = event.target.dataset.id;
+        const customer = customers.find(c => c.name === customerName);
+        if (customer) {
+            renderCustomerDetails(customer);
+        }
+    }
+});
+
+// Müşteri Detaylarını Gösteren İşlev
+function renderCustomerDetails(customer) {
+    const customerListBody = document.getElementById('customer-list-body');
+    customerListBody.innerHTML = `
+        <tr>
+            <td>${customer.name}</td>
+            <td>${customer.phone}</td>
+            <td>${customer.email}</td>
+            <td>${customer.address}</td>
+            <td>
+                <button class="add-policy-btn" data-index="${customers.indexOf(customer)}">Poliçe Ekle</button>
+                <button class="view-policies-btn" data-index="${customers.indexOf(customer)}">Poliçeler</button>
+                <button class="delete-customer-btn" data-index="${customers.indexOf(customer)}">Sil</button>
+            </td>
+        </tr>
+    `;
+
+    document.querySelectorAll(".add-policy-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            const customerIndex = e.target.getAttribute("data-index");
+            const customer = customers[customerIndex];
+            document.getElementById("policy-customer-name").innerText = customer.name;
+            document.getElementById("add-policy-section").style.display = "block";
+            openAddPolicyModalBtn.click();
+        });
+    });
+
+    document.querySelectorAll(".view-policies-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            const customerIndex = e.target.getAttribute("data-index");
+            const customer = customers[customerIndex];
+            renderPolicyListModal(customer);
+        });
+    });
+
+    document.querySelectorAll(".delete-customer-btn").forEach(btn => {
+        btn.addEventListener("click", (e) => {
+            const customerIndex = e.target.getAttribute("data-index");
+            customers.splice(customerIndex, 1);
+            saveToLocalStorage("customers", customers);
+            renderCustomerList();
+            updateCustomerCount();
+        });
+    });
+
+    showSection('customer-list-section'); // Müşteri detaylarını içeren bölümü göster
+}
+
+// Bölüm Gösterme Fonksiyonu
+function showSection(sectionId) {
+    const sections = document.querySelectorAll('.main-content > div');
+    sections.forEach((section) => {
+        section.style.display = 'none';
+    });
+    document.getElementById(sectionId).style.display = 'block';
+}
 
     // Önerileri Render Etme
     function renderSuggestions(suggestions) {
@@ -320,22 +500,7 @@ document.addEventListener("DOMContentLoaded", () => {
         `).join('');
     }
 
-    // Arama İşlevi (Büyük-Küçük Harf Hassasiyetini Kaldırdık)
-    function performSearch(searchTerm) {
-        const lowerCasedSearchTerm = searchTerm.toLowerCase();
-        const filteredCustomers = customers.filter(customer => 
-            customer.name.toLowerCase().includes(lowerCasedSearchTerm) || 
-            (policies[customer.name] && policies[customer.name].some(policy => 
-                policy.licensePlate.toLowerCase().includes(lowerCasedSearchTerm)
-            ))
-        );
-
-        if (filteredCustomers.length > 0) {
-            renderSearchResults(filteredCustomers);
-        } else {
-            alert("Müşteri veya plaka bulunamadı!");
-        }
-    }
+   
 
     // Ana Sayfa Linki
     const homeLink = document.getElementById("home-link");
