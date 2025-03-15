@@ -1,13 +1,15 @@
 /* Genel stiller */
 body {
-    font-family: Arial, sans-serif;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
     margin: 0;
     padding: 0;
     display: flex;
+    background-color: #f4f6f9;
+    color: #333;
 }
 
 #sidebar {
-    width: 300px; /* Sidebar genişliği artırıldı */
+    width: 300px;
     background-color: #2c3e50;
     color: white;
     height: 100vh;
@@ -16,19 +18,22 @@ body {
 }
 
 #sidebar.closed {
-    width: 60px; /* Kapalı durumda sidebar genişliği azaltıldı */
+    width: 60px;
     transform: translateX(-240px);
 }
 
 #sidebar .logo {
     text-align: center;
     padding: 20px;
-    font-size: 1.5em;
+    font-size: 1.8em;
+    font-weight: bold;
+    background-color: #1a252f;
 }
 
 #sidebar nav ul {
     list-style: none;
     padding: 0;
+    margin: 0;
 }
 
 #sidebar nav ul li {
@@ -40,17 +45,33 @@ body {
     text-decoration: none;
     display: block;
     padding: 10px 20px;
+    font-size: 1.1em;
+    transition: background-color 0.3s ease;
 }
 
 #sidebar nav ul li a:hover {
     background-color: #34495e;
 }
 
+#sidebar nav ul li a#agencies-link {
+    color: white;
+    text-decoration: none;
+    display: block;
+    padding: 10px 20px;
+    font-size: 1.1em;
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Geçiş efektleri eklendi */
+}
+
+#sidebar nav ul li a#agencies-link:hover {
+    background-color: #34495e;
+    transform: scale(1.05); /* Hover durumunda hafif büyüme efekti */
+}
+
 #sidebar-search-section {
     padding: 20px;
     position: relative;
-    display: flex; /* Flexbox düzeni eklendi */
-    gap: 10px; /* Arama çubuğu ve buton arasına boşluk eklendi */
+    display: flex;
+    gap: 10px;
     transition: opacity 0.3s ease;
 }
 
@@ -58,67 +79,71 @@ body {
     opacity: 0;
     pointer-events: none;
 }
-/* Arama Kutusu ve Butonu Ana Sayfanın Üstüne Taşı */
+
 #sidebar-search-section {
-    position: absolute; /* Sabit konumlandırma */
-    top: 416px; /* Sayfanın en üstüne hizala */
-    left: 50%; /* Sayfanın ortasına hizala */
-    transform: translateX(-50%); /* Ortalamak için */
+    position: absolute;
+    top: 227px;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
-    gap: 10px; /* Arama kutusu ve buton arasında boşluk */
-    z-index: 1000; /* Üstte görünmesini sağla */
-    background-color: #f8f9fa; /* Açık arka plan */
+    gap: 0px;
+    z-index: 1000;
+    background-color: #fff;
     padding: 10px;
-    border-radius: 16px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Hafif gölge efekti */
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* Arama Kutusu */
 #sidebar-search-section input {
-    flex-grow: 1; /* Arama kutusunun kalan alanı kaplamasını sağlar */
-    padding: 10px 15px; /* Sağ ve sol padding eklendi */
-    border: none;
+    flex-grow: 1;
+    padding: 10px 15px;
+    border: 1px solid #ddd;
     border-radius: 4px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Hafif gölge eklendi */
-    font-size: 16px; /* Yazı tipi boyutu artırıldı */
+    font-size: 16px;
+    transition: border-color 0.3s;
 }
 
-/* Arama Butonu */
+#sidebar-search-section input:focus {
+    border-color: #3498db;
+    outline: none;
+}
+
 #sidebar-search-btn {
-    padding: 10px 10px; /* Buton boyutu ayarlandı */
-    background-color: #3498db; /* Modern mavi renk */
+    padding: 10px 15px;
+    background-color: #3498db;
     color: white;
     border: none;
     border-radius: 4px;
     cursor: pointer;
-    font-size: 16px; /* Yazı tipi boyutu artırıldı */
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2); /* Hafif gölge eklendi */
-    transition: background-color 0.3s; /* Arka plan rengi geçişi eklendi */
+    font-size: 16px;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 #sidebar-search-btn:hover {
-    background-color: #2980b9; /* Hover durumunda renk değişimi */
+    background-color: #2980b9;
+    transform: scale(1.05);
 }
 
 .suggestions {
     background-color: white;
     color: black;
     position: absolute;
-    width: calc(100% - 40px); /* Adjust to fit within the padding */
-    top: 80px; /* Önerileri biraz daha aşağı çekmek için top değerini artırdık */
+    width: calc(100% - 40px);
+    top: 80px;
     left: 20px;
     border: 1px solid #ddd;
     border-radius: 4px;
     z-index: 1000;
     max-height: 200px;
     overflow-y: auto;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .suggestion-item {
     padding: 10px;
     border-bottom: 1px solid #ddd;
     cursor: pointer;
+    transition: background-color 0.3s;
 }
 
 .suggestion-item:last-child {
@@ -132,30 +157,36 @@ body {
 #toggle-sidebar-btn {
     font-size: 2em;
     position: fixed;
-    left: 310px; /* Kapalı durumda butonun konumunu güncelledik */
+    left: 310px;
     top: 10px;
     cursor: pointer;
-    transition: left 0.3s;
+    color: #3498db;
+    transition: left 0.3s ease;
 }
 
 #sidebar.closed + #toggle-sidebar-btn {
-    left: 70px; /* Kapalı durumda butonun konumunu güncelledik */
+    left: 70px;
 }
 
 .main-content {
-    margin-left: 300px; /* Sidebar genişliği artırıldığı için margin-left güncellendi */
+    margin-left: 300px;
     padding: 20px;
-    transition: margin-left 0.3s;
+    transition: margin-left 0.3s ease;
+    background-color: #f4f6f9;
+    flex-grow: 1;
 }
 
 #sidebar.closed + #toggle-sidebar-btn + .main-content {
-    margin-left: 70px; /* Kapalı durumda margin-left güncellendi */
+    margin-left: 70px;
 }
 
 header {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    padding: 20px;
+    background-color: #ffffff;
+    border-bottom: 1px solid #ddd;
 }
 
 .add-button {
@@ -165,26 +196,37 @@ header {
     padding: 10px 20px;
     border-radius: 4px;
     cursor: pointer;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 .add-button:hover {
     background-color: #2ecc71;
+    transform: scale(1.05);
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+    overflow: hidden;
 }
 
 table th,
 table td {
-    padding: 10px;
+    padding: 15px;
     border: 1px solid #ddd;
     text-align: left;
 }
 
-/* Açılan Modal Pencereyi Büyütme */
+table th {
+    background-color: #3498db;
+    color: white;
+    font-weight: bold;
+}
+
 .modal {
     display: none;
     position: fixed;
@@ -195,24 +237,24 @@ table td {
     height: 100%;
     overflow: auto;
     background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
 }
 
-/* Modal İçeriği */
 .modal-content {
     background-color: #ffffff;
-    width: 90%; /* Genişliği artır */
-    max-width: 1400px; /* Maksimum genişlik artırıldı */
-    height: 85vh; /* Yükseklik artırıldı */
-    max-height: 85vh; /* Maksimum yükseklik artırıldı */
-    margin: 5vh auto; /* Üst ve alt boşluk */
+    width: 90%;
+    max-width: 1200px;
+    height: 85vh;
+    max-height: 85vh;
+    margin: 5vh auto;
     padding: 20px;
-    border-radius: 10px; /* Köşeleri yuvarlat */
+    border-radius: 10px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
-    overflow-y: auto; /* İçerik fazla olursa kaydırma çubuğu ekle */
+    overflow-y: auto;
+    position: relative;
 }
 
-/* Kapatma Butonu */
-.close {
+.close-button {
     font-size: 28px;
     font-weight: bold;
     color: #ff0000;
@@ -220,13 +262,13 @@ table td {
     right: 20px;
     top: 10px;
     cursor: pointer;
+    transition: color 0.3s;
 }
 
-.close:hover {
+.close-button:hover {
     color: #cc0000;
 }
 
-/* İçerik Tablosunu Daha İyi Görüntüleme */
 #policies-table {
     width: 100%;
     border-collapse: collapse;
@@ -238,7 +280,6 @@ table td {
     border: 1px solid #ddd;
 }
 
-/* Filtreleme Bölümü */
 #policy-filter-section {
     display: flex;
     flex-wrap: wrap;
@@ -253,33 +294,25 @@ table td {
     font-size: 14px;
     border-radius: 5px;
     border: 1px solid #ccc;
+    transition: border-color 0.3s;
 }
 
-/* Filtreleme Butonu */
+#policy-filter-section input:focus,
+#policy-filter-section button:focus {
+    border-color: #3498db;
+    outline: none;
+}
+
 #apply-filter {
-    background-color: #28a745; /* Yeşil renk */
+    background-color: #28a745;
     color: white;
     cursor: pointer;
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 #apply-filter:hover {
-    background-color: #218838; /* Daha koyu yeşil */
-}
-
-
-.close-button {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.close-button:hover,
-.close-button:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
+    background-color: #218838;
+    transform: scale(1.05);
 }
 
 .back-button {
@@ -292,14 +325,14 @@ table td {
     position: fixed;
     right: 20px;
     top: 20px;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 .back-button:hover {
     background-color: #2980b9;
+    transform: scale(1.05);
 }
 
-/* Modern buton stilleri */
-/* Genel Buton Stili */
 .action-btn {
     padding: 8px 12px;
     border: none;
@@ -312,77 +345,43 @@ table td {
     text-align: center;
 }
 
-.action-button:hover {
-    background-color: #2980b9;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+.action-btn:hover {
+    transform: scale(1.05);
 }
 
-/* Poliçe Ekle Butonu (Yeşil) */
 .add-policy-btn {
-    background-color: #27ae60; /* Yeşil */
+    background-color: #27ae60;
     color: white;
-    border-radius: 25px; /* Daha yuvarlak buton */
+}
+
+.view-policies-btn {
+    background-color: #f39c12;
+    color: white;
+}
+
+.delete-customer-btn {
+    background-color: #e74c3c;
+    color: white;
 }
 
 .add-policy-btn:hover {
     background-color: #219150;
-    transform: scale(1.05);
-}
-.add-policy-btn:active {
-    background-color: #1a7a40;
-    transform: scale(0.95);
-}
-
-/* Poliçeler Butonu (Turuncu) */
-.view-policies-btn {
-    background-color: #f39c12; /* Turuncu */
-    color: white;
-    border-radius: 25px; /* Daha yuvarlak buton */
 }
 
 .view-policies-btn:hover {
     background-color: #e08e0b;
-    transform: scale(1.05);
-}
-.view-policies-btn:active {
-    background-color: #c87d06;
-    transform: scale(0.95);
-}
-
-/* Sil Butonu (Kırmızı) */
-.delete-customer-btn {
-    background-color: #e74c3c; /* Kırmızı */
-    color: white;
-    border-radius: 25px; /* Daha yuvarlak buton */
 }
 
 .delete-customer-btn:hover {
     background-color: #c0392b;
-    transform: scale(1.05);
 }
 
+.add-policy-btn:active,
+.view-policies-btn:active,
 .delete-customer-btn:active {
-    background-color: #a93226;
     transform: scale(0.95);
 }
 
-.edit-button {
-    background-color: #3498db;
-}
-
-.edit-button:hover {
-    background-color: #2980b9;
-}
-
-.update-button {
-    background-color: #8e44ad;
-}
-
-.update-button:hover {
-    background-color: #732d91;
-}
-
-/* Modern input ve dropdown stilleri */
 .modal-content input[type="text"],
 .modal-content input[type="email"],
 .modal-content input[type="date"],
@@ -396,9 +395,9 @@ table td {
     border-radius: 4px;
     box-sizing: border-box;
     font-size: 16px;
+    transition: border-color 0.3s;
 }
 
-/* Input odaklanma ve hover efekti */
 .modal-content input[type="text"]:focus,
 .modal-content input[type="email"]:focus,
 .modal-content input[type="date"]:focus,
@@ -406,30 +405,31 @@ table td {
 .modal-content textarea:focus,
 .modal-content select:focus {
     border-color: #3498db;
-    box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
     outline: none;
 }
+
 #monthly-earnings {
-    background-color: #f0f8ff; /* AliceBlue arka plan rengi */
-    border: 1px solid #00bfff; /* DeepSkyBlue kenarlık rengi */
-    border-radius: 8px; /* Köşeleri yuvarla */
-    padding: 16px;
+    background-color: #f0f8ff;
+    border: 1px solid #00bfff;
+    border-radius: 8px;
+    padding: 20px;
     margin-top: 20px;
-    text-align: center; /* Metni ortala */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Hafif gölge efekti */
+    text-align: center;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 #monthly-earnings h3 {
-    color: #00bfff; /* DeepSkyBlue başlık rengi */
+    color: #00bfff;
     font-size: 24px;
     margin-bottom: 8px;
 }
 
 #monthly-earnings-amount {
-    color: #333; /* Koyu gri metin rengi */
+    color: #333;
     font-size: 20px;
     font-weight: bold;
 }
+
 #earnings-btn {
     background-color: #00bfff;
     color: white;
@@ -441,122 +441,16 @@ table td {
     margin-top: 10px;
     width: 100%;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    transition: background-color 0.3s;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 #earnings-btn:hover {
     background-color: #009acd;
+    transform: scale(1.05);
 }
 
-.modal {
-    display: none; 
-    position: fixed;
-    z-index: 1; 
-    left: 0;
-    top: 0;
-    width: 100%; 
-    height: 100%; 
-    overflow: auto; 
-    background-color: rgb(0,0,0);
-    background-color: rgba(0,0,0,0.4); 
-}
-
-.modal-content {
-    background-color: #fefefe;
-    margin: 15% auto; 
-    padding: 20px;
-    border: 1px solid #888;
-    border-radius: 8px;
-    width: 80%; 
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-}
-
-.close-button {
-    color: #aaa;
-    float: right;
-    font-size: 28px;
-    font-weight: bold;
-}
-
-.close-button:hover,
-.close-button:focus {
-    color: black;
-    text-decoration: none;
-    cursor: pointer;
-}
-
-#earnings-table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
-}
-
-#earnings-table th, #earnings-table td {
-    padding: 12px 15px;
-    border: 1px solid #ddd;
-    text-align: center;
-    color: black !important; /* Yazı rengini siyah yap */
-    background-color: white !important; /* Arka planı beyaz yap */
-}
-#earnings-table th {
-    background: linear-gradient(to right, blue, red); /* Sol taraf mavi, sağ taraf kırmızı */
-    color: white !important; /* Yazı rengini beyaz yaparak belirginleştir */
-    font-weight: bold; /* Yazıyı kalın yap */
-    text-align: center; /* Metni ortala */
-}
-
-
-/* Dropdown menü stili */
-.modal-content select {
-    background-color: white;
-    cursor: pointer;
-    appearance: none;
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="gray"><path d="M7 10l5 5 5-5z"/></svg>');
-    background-repeat: no-repeat;
-    background-position: right 10px center;
-    background-size: 16px;
-}
-
-/* Özet Bölümü Stilleri */
-#summary-section {
-    margin-top: 20px;
-    padding: 20px;
-    background-color: #ecf0f1;
-    border-radius: 8px;
-}
-#exportButton {
-    display: inline-block;
-    padding: 10px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    color: #ffffff;
-    background-color: #4CAF50;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    text-align: center;
-    text-decoration: none;
-    transition: background-color 0.3s ease, transform 0.2s ease;
-}
-
-#exportButton:hover {
-    background-color: #45a049;
-    transform: translateY(-2px);
-}
-
-#exportButton:active {
-    background-color: #3e8e41;
-    transform: translateY(0);
-}
-
-#exportButton:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px rgba(72, 180, 97, 0.5);
-}
 #date-range-modal {
-    display: none; /* Başlangıçta gizli */
+    display: none;
     position: fixed;
     z-index: 1000;
     left: 0;
@@ -564,7 +458,8 @@ table td {
     width: 100%;
     height: 100%;
     overflow: auto;
-    background-color: rgba(0, 0, 0, 0.5); /* Siyah arka plan, şeffaf */
+    background-color: rgba(0, 0, 0, 0.5);
+    backdrop-filter: blur(5px);
 }
 
 #date-range-modal .modal-content {
@@ -585,13 +480,12 @@ table td {
     font-size: 28px;
     font-weight: bold;
     cursor: pointer;
+    transition: color 0.3s;
 }
 
 #date-range-modal .close-button:hover,
 #date-range-modal .close-button:focus {
     color: #000;
-    text-decoration: none;
-    cursor: pointer;
 }
 
 #date-range-modal form {
@@ -605,6 +499,12 @@ table td {
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+#date-range-modal input[type="date"]:focus {
+    border-color: #3498db;
+    outline: none;
 }
 
 #date-range-modal button[type="submit"] {
@@ -617,18 +517,17 @@ table td {
     border-radius: 4px;
     cursor: pointer;
     text-align: center;
-    text-decoration: none;
-    transition: background-color 0.3s ease, transform 0.2s ease;
+    transition: background-color 0.3s, transform 0.2s;
 }
 
 #date-range-modal button[type="submit"]:hover {
     background-color: #45a049;
-    transform: translateY(-2px);
+    transform: scale(1.05);
 }
 
 #date-range-modal button[type="submit"]:active {
     background-color: #3e8e41;
-    transform: translateY(0);
+    transform: scale(0.95);
 }
 
 #date-range-modal button[type="submit"]:focus {
@@ -641,6 +540,14 @@ table td {
     to { opacity: 1; }
 }
 
+#summary-section {
+    margin-top: 20px;
+    padding: 20px;
+    background-color: #ffffff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+}
+
 #summary-section h2 {
     margin-top: 0;
 }
@@ -651,16 +558,16 @@ table td {
 }
 
 .hidden {
-    display: none; /* .hidden sınıfını tanımladık */
+    display: none;
 }
-/* Sidebar'daki Poliçelerim Butonu */
+
 #my-policies-link {
     display: block;
     padding: 10px 15px;
     text-align: center;
     font-size: 16px;
     color: white;
-    background-color: #007bff; /* Mavi renk */
+    background-color: #007bff;
     text-decoration: none;
     border-radius: 5px;
     margin: 10px auto;
@@ -668,9 +575,9 @@ table td {
 }
 
 #my-policies-link:hover {
-    background-color: #0056b3; /* Hover efekti */
+    background-color: #0056b3;
 }
-/* Poliçe Durumlarına Göre Renkler */
+
 .policy-item.sari-arka-plan {
     background-color: yellow;
 }
@@ -678,28 +585,55 @@ table td {
 .policy-item.yesil-arka-plan {
     background-color: green;
 }
-/* Düzenle Butonu Stili */
+
 .edit-policy-btn {
-    background-color: #3498db; /* Mavi arka plan */
-    color: white; /* Beyaz yazı */
-    border: none; /* Kenarlık yok */
-    padding: 8px 12px; /* İç boşluk */
-    border-radius: 5px; /* Köşeleri yuvarlak */
-    cursor: pointer; /* İmleci el simgesi yap */
-    font-size: 14px; /* Yazı boyutu */
-    font-weight: bold; /* Yazıyı kalın yap */
-    transition: background-color 0.3s, transform 0.2s; /* Geçiş efekti */
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Hafif gölge efekti */
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: bold;
+    transition: background-color 0.3s, transform 0.2s;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* Buton Hover (Üzerine Gelince) */
 .edit-policy-btn:hover {
-    background-color: #217dbb; /* Daha koyu mavi */
-    transform: scale(1.05); /* Hafif büyüme efekti */
+    background-color: #217dbb;
+    transform: scale(1.05);
 }
 
-/* Buton Aktif (Basıldığında) */
 .edit-policy-btn:active {
-    background-color: #1a5c91; /* Daha koyu mavi */
-    transform: scale(0.95); /* Hafif küçülme efekti */
+    background-color: #1a5c91;
+    transform: scale(0.95);
+}
+/* Muhasebe butonu stili */
+#accounting-link-wrapper {
+    position: absolute;
+    top: 50%;
+    width: 100%;
+    padding: 20px 0;
+    text-align: center;
+}
+
+#accounting-link {
+    display: inline-block;
+    padding: 10px 20px;
+    font-size: 16px;
+    color: #fff;
+    background-color: #4CAF50; /* Yeşil renk */
+    border: none;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: background-color 0.3s, transform 0.3s;
+}
+
+#accounting-link:hover {
+    background-color: #dbe7dc; /* Daha koyu yeşil */
+    transform: scale(1.05); /* Hover sırasında büyüme efekti */
+}
+
+#accounting-link:active {
+    background-color: #217dbb; /* Tıklama sırasında daha koyu yeşil */
 }
