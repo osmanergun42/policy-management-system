@@ -4,7 +4,78 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Giriş Yap</title>
-    <link rel="stylesheet" href="sifre.css"> <!-- CSS dosyasını buraya ekleyin -->
+    <link rel="stylesheet" href="sifre.css">
+    <style>
+        body {
+            background: url('giris (2).gif') no-repeat center center fixed;
+            background-size: cover;
+        }
+        .login-container {
+            background-color: rgba(255, 255, 255, 0.8); /* Arka planı biraz şeffaf yap */
+            padding: 20px;
+            border-radius: 10px;
+            max-width: 400px;
+            margin: 100px auto;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        /* Modal stil ayarları */
+        .modal {
+            display: none; /* Modal varsayılan olarak gizlenir */
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0,0,0);
+            background-color: rgba(0,0,0,0.4);
+            padding-top: 60px;
+        }
+        .modal-content {
+            background-color: #fefefe;
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 300px;
+            text-align: center;
+            border-radius: 10px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 10px 0;
+            font-size: 16px;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            outline: none;
+            color: #fff;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 5px;
+            box-shadow: 0 9px #999;
+        }
+        .btn:hover {background-color: #3e8e41}
+        .btn:active {
+            background-color: #3e8e41;
+            box-shadow: 0 5px #666;
+            transform: translateY(4px);
+        }
+    </style>
 </head>
 <body>
     <div class="login-container">
@@ -19,10 +90,22 @@
             <button type="submit">Giriş Yap</button>
         </form>
     </div>
+
+    <!-- Başarılı Giriş Modal -->
+    <div id="successModal" class="modal">
+        <div class="modal-content">
+            <span class="close" id="closeModal">&times;</span>
+            <p>Giriş başarılı!</p>
+            <button id="proceedButton" class="btn">Devam Et</button>
+        </div>
+    </div>
     
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const loginForm = document.getElementById("login-form");
+            const successModal = document.getElementById("successModal");
+            const closeModal = document.getElementById("closeModal");
+            const proceedButton = document.getElementById("proceedButton");
 
             loginForm.addEventListener("submit", (event) => {
                 event.preventDefault();
@@ -32,15 +115,31 @@
 
                 // Kullanıcı adı ve şifre doğrulaması
                 if (username === "osmanergun42" && password === "sifre123") {
-                    alert("Giriş başarılı!");
                     // Başarılı giriş sonrası localStorage'a kullanıcıyı kaydet
                     localStorage.setItem("isLoggedIn", "true");
-                    // Başarılı giriş sonrası yönlendirme yapılabilir
-                    window.location.href = "anasayfa.html"; // Ana site sayfanızın dosya adı
+                    // Modalı göster
+                    successModal.style.display = "block";
                 } else {
                     alert("Kullanıcı adı veya şifre hatalı.");
                 }
             });
+
+            // Modal kapatma işlevi
+            closeModal.onclick = function() {
+                successModal.style.display = "none";
+            }
+
+            // Devam Et butonuna tıklandığında yönlendirme
+            proceedButton.onclick = function() {
+                window.location.href = "anasayfa.html"; // Ana site sayfanızın dosya adı
+            }
+
+            // Modal dışında bir yere tıklandığında modalı kapatma
+            window.onclick = function(event) {
+                if (event.target == successModal) {
+                    successModal.style.display = "none";
+                }
+            }
         });
     </script>
 </body>
