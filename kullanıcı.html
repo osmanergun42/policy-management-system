@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giriş Yap</title>
+    <link rel="stylesheet" href="sifre.css"> <!-- CSS dosyasını buraya ekleyin -->
+</head>
+<body>
+    <div class="login-container">
+        <h1>Giriş Yap</h1>
+        <form id="login-form">
+            <label for="username">Kullanıcı Adı:</label>
+            <input type="text" id="username" name="username" required>
+            
+            <label for="password">Şifre:</label>
+            <input type="password" id="password" name="password" required>
+            
+            <button type="submit">Giriş Yap</button>
+        </form>
+    </div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const loginForm = document.getElementById("login-form");
+
+            loginForm.addEventListener("submit", (event) => {
+                event.preventDefault();
+                
+                const username = document.getElementById("username").value;
+                const password = document.getElementById("password").value;
+
+                // Kullanıcı adı ve şifre doğrulaması
+                if (username === "osmanergun42" && password === "sifre123") {
+                    alert("Giriş başarılı!");
+                    // Başarılı giriş sonrası yönlendirme yapılabilir
+                    window.location.href = "index.html"; // Ana site sayfanızın dosya adı
+                } else {
+                    alert("Kullanıcı adı veya şifre hatalı.");
+                }
+            });
+        });
+    </script>
+</body>
+</html>
