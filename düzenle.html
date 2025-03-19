@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Müşterileri Düzenle</title>
+    <link rel="stylesheet" href="düzenle.css">
+</head>
+<body>
+    <h1>Müşterileri Düzenle</h1>
+    
+    <!-- Arama Bölümü -->
+    <div id="search-section">
+        <input type="text" id="search-input" placeholder="Müşteri Adı Ara">
+        <button id="search-btn">Ara</button>
+    </div>
+
+    <table id="customer-table">
+        <thead>
+            <tr>
+                <th>Müşteri Adı</th>
+                <th>Telefon</th>
+                <th>E-posta</th>
+                <th>Adres</th>
+                <th>İşlem</th>
+            </tr>
+        </thead>
+        <tbody id="customer-list-body">
+            <!-- Müşteri listesi burada görüntülenecek -->
+        </tbody>
+    </table>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            let customers = JSON.parse(localStorage.getItem("customers")) || [];
+            const customerListBody = document.getElementById('customer-list-body');
+            const searchInput = document.getElementById('search-input');
+            const searchBtn = document.getElementById('search-btn');
+
+            function renderCustomerList(customersToRender) {
+                customerListBody.innerHTML = customersToRender.map((customer, index) => `
+                    <tr>
+                        <td>${customer.name}</td>
+                        <td>${customer.phone}</td>
+                        <td>${customer.email}</td>
+                        <td>${customer.address}</td>
+                        <td>
+                            <button class="edit-customer-btn" data-index="${index}">Düzenle</button>
+                            <button class="delete-customer-btn" data-index="${index}">Sil</button>
+                        </td>
+                    </tr>
+                `).join('');
+
+                document.querySelectorAll(".edit-customer-btn").forEach(btn => {
+                    btn.addEventListener("click", (e) => {
+                        const customerIndex = e.target.getAttribute("data-index");
+                        const customer = customers[customerIndex];
+                        openEditCustomerModal(customer, customerIndex);
+                    });
+                });
+
+                document.querySelectorAll(".delete-customer-btn").forEach(btn => {
+                    btn.addEventListener("click", (e) => {
+                        const customerIndex = e.target.getAttribute("data-index");
+                        customers.splice(customerIndex, 1);
+                        localStorage.setItem("customers", JSON.stringify(customers));
+                        renderCustomerList(customers);
+                    });
+                });
+            }
+
+            function searchCustomers() {
+                const searchValue = searchInput.value.toLowerCase();
+                const filteredCustomers = customers.filter(customer => 
+                    customer.name.toLowerCase().includes(searchValue)
+                );
+                renderCustomerList(filteredCustomers);
+            }
+
+            searchBtn.addEventListener("click", searchCustomers);
+            searchInput.addEventListener("input", searchCustomers);
+
+            renderCustomerList(customers);
+
+            // Modal elemanlarını al
+            const editCustomerModal = document.getElementById("edit-customer-modal");
+            const closeEditCustomerModal = document.getElementById("close-edit-customer-modal");
+            const editCustomerForm = document.getElementById("edit-customer-form");
+            const editCustomerNameInput = document.getElementById("edit-customer-name");
+            const editCustomerPhoneInput = document.getElementById("edit-customer-phone");
+            const editCustomerEmailInput = document.getElementById("edit-customer-email");
+            const editCustomerAddressInput = document.getElementById("edit-customer-address");
+            const editCustomerExtraInfoInput = document.getElementById("edit-customer-extra-info");
+
+            let currentEditingCustomerIndex = null;
+
+            // Müşteri düzenleme modalını açma işlevi
+            function openEditCustomerModal(customer, index) {
+                currentEditingCustomerIndex = index;
+                editCustomerNameInput.value = customer.name;
+                editCustomerPhoneInput.value = customer.phone;
+                editCustomerEmailInput.value = customer.email;
+                editCustomerAddressInput.value = customer.address;
+                editCustomerExtraInfoInput.value = customer.extraInfo;
+                editCustomerModal.style.display = "flex";
+            }
+
+            // Müşteri düzenleme modalını kapatma işlevi
+            closeEditCustomerModal.addEventListener("click", () => {
+                editCustomerModal.style.display = "none";
+            });
+
+            // Modal dışında tıklama ile modalı kapatma
+            window.addEventListener("click", (event) => {
+                if (event.target === editCustomerModal) {
+                    editCustomerModal.style.display = "none";
+                }
+            });
+
+            // Müşteri düzenleme formu gönderme işlevi
+            editCustomerForm.addEventListener("submit", (event) => {
+                event.preventDefault(); // Formun varsayılan gönderme davranışını durdurma
+
+                const updatedCustomer = {
+                    name: editCustomerNameInput.value,
+                    phone: editCustomerPhoneInput.value,
+                    email: editCustomerEmailInput.value,
+                    address: editCustomerAddressInput.value,
+                    extraInfo: editCustomerExtraInfoInput.value
+                };
+
+                customers[currentEditingCustomerIndex] = updatedCustomer;
+                localStorage.setItem("customers", JSON.stringify(customers));
+                renderCustomerList(customers);
+                editCustomerModal.style.display = "none";
+                alert("Müşteri bilgileri başarıyla güncellendi!");
+            });
+        });
+    </script>
+
+    <!-- Müşteri Düzenleme Modal -->
+    <div id="edit-customer-modal" class="modal">
+        <div class="modal-content">
+            <span id="close-edit-customer-modal" class="close-button">X</span>
+            <h2>Müşteri Bilgilerini Düzenle</h2>
+            <form id="edit-customer-form">
+                <input type="text" id="edit-customer-name" placeholder="Müşteri Adı ve Soyadı" required>
+                <input type="text" id="edit-customer-phone" placeholder="Telefon Numarası">
+                <input type="email" id="edit-customer-email" placeholder="E-posta Adresi">
+                <input type="text" id="edit-customer-address" placeholder="Adres">
+                <textarea id="edit-customer-extra-info" placeholder="Ek Bilgi (Opsiyonel)" rows="4"></textarea>
+                <button type="submit">Kaydet</button>
+            </form>
+            <!-- Geri Butonu -->
+            <button id="back-button-edit-customer" class="back-button">Geri</button>
+        </div>
+    </div>
+</body>
+</html>
