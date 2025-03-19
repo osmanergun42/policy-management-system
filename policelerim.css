@@ -135,3 +135,19 @@ tr:hover {
 #go-to-renewal:hover {
     background-color: #45a049;
 }
+.copy-button {
+    background-color: #3498db;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 14px;
+    position: relative; /* Konumlandırma ekleniyor */
+    top: 553px; /* Üstten 10px boşluk */
+    left: 725px; /* Soldan 10px boşluk */
+}
+
+.copy-button:hover {
+    background-color: #2980b9;
+}
