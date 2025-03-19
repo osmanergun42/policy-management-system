@@ -89,6 +89,7 @@
             const editCustomerPhoneInput = document.getElementById("edit-customer-phone");
             const editCustomerEmailInput = document.getElementById("edit-customer-email");
             const editCustomerAddressInput = document.getElementById("edit-customer-address");
+            const editCustomerTcInput = document.getElementById("customer-tc");
             const editCustomerExtraInfoInput = document.getElementById("edit-customer-extra-info");
 
             let currentEditingCustomerIndex = null;
@@ -100,6 +101,7 @@
                 editCustomerPhoneInput.value = customer.phone;
                 editCustomerEmailInput.value = customer.email;
                 editCustomerAddressInput.value = customer.address;
+                editCustomerTcInput.value = customer.tc;
                 editCustomerExtraInfoInput.value = customer.extraInfo;
                 editCustomerModal.style.display = "flex";
             }
@@ -125,6 +127,7 @@
                     phone: editCustomerPhoneInput.value,
                     email: editCustomerEmailInput.value,
                     address: editCustomerAddressInput.value,
+                    tc: editCustomerTcInput.value,
                     extraInfo: editCustomerExtraInfoInput.value
                 };
 
@@ -147,6 +150,7 @@
                 <input type="text" id="edit-customer-phone" placeholder="Telefon Numarası">
                 <input type="email" id="edit-customer-email" placeholder="E-posta Adresi">
                 <input type="text" id="edit-customer-address" placeholder="Adres">
+                <input type="text" id="customer-tc" placeholder="T.C. Kimlik Numarası">
                 <textarea id="edit-customer-extra-info" placeholder="Ek Bilgi (Opsiyonel)" rows="4"></textarea>
                 <button type="submit">Kaydet</button>
             </form>
