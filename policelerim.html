@@ -26,6 +26,33 @@
         </div>
     </div>
 
+    <div id="policy-summary">
+        <p>Toplam Poliçe Sayısı: <span id="total-policies">0</span></p>
+        <p>Yürürlükte Olan Poliçe Sayısı: <span id="active-policies">0</span></p>
+    </div>
+
+    <div id="renewal-section">
+        <h2 id="renewal-header">Yenilenecek Poliçeler (Bildirim: <span id="renewal-count">0</span>)</h2>
+        <table id="renewal-policy-table" style="display: none;">
+            <thead>
+                <tr>
+                    <th>Müşteri Adı</th>
+                    <th>Poliçe Tipi</th>
+                    <th>Başlangıç Tarihi</th>
+                    <th>Bitiş Tarihi</th>
+                    <th>Prim (TL)</th>
+                    <th>Komisyon (TL)</th>
+                    <th>Plaka</th>
+                    <th>Şirket</th>
+                    <th>Durum</th>
+                </tr>
+            </thead>
+            <tbody id="renewal-policy-list">
+                <!-- Yenilenecek poliçeler burada listelenecek -->
+            </tbody>
+        </table>
+    </div>
+
     <table id="policy-table">
         <thead>
             <tr>
@@ -44,22 +71,29 @@
             <!-- Poliçeler burada listelenecek -->
         </tbody>
     </table>
-    
+
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const policyList = document.getElementById("policy-list");
+            const renewalPolicyList = document.getElementById("renewal-policy-list");
+            const renewalPolicyTable = document.getElementById("renewal-policy-table");
+            const renewalHeader = document.getElementById("renewal-header");
             const filterName = document.getElementById("filter-name");
             const filterLicensePlate = document.getElementById("filter-license-plate");
             const filterStartDate = document.getElementById("filter-start-date");
             const filterEndDate = document.getElementById("filter-end-date");
             const filterButton = document.getElementById("filter-button");
+            const totalPoliciesElement = document.getElementById("total-policies");
+            const activePoliciesElement = document.getElementById("active-policies");
+            const renewalCountElement = document.getElementById("renewal-count");
 
             // Yerel depolamadan poliçe verilerini al
             const policies = JSON.parse(localStorage.getItem("policies")) || {};
 
-            function renderPolicies(filteredPolicies) {
-                policyList.innerHTML = ""; // Önce listeyi temizle
-                filteredPolicies.forEach(policy => {
+            function renderPolicies(filteredPolicies, targetList) {
+                targetList.innerHTML = ""; // Önce listeyi temizle
+                for (let i = 0; i < filteredPolicies.length; i++) {
+                    const policy = filteredPolicies[i];
                     const row = document.createElement("tr");
                     row.innerHTML = `
                         <td>${policy.customerName}</td>
@@ -72,8 +106,8 @@
                         <td>${policy.company}</td>
                         <td>${policy.isCancelled ? "İptal Edildi" : "Aktif"}</td>
                     `;
-                    policyList.appendChild(row);
-                });
+                    targetList.appendChild(row);
+                }
             }
 
             function filterPolicies() {
@@ -82,28 +116,96 @@
                 const startDate = filterStartDate.value ? new Date(filterStartDate.value) : null;
                 const endDate = filterEndDate.value ? new Date(filterEndDate.value) : null;
 
-                const filteredPolicies = Object.keys(policies)
-                    .flatMap(customerName => policies[customerName].map(policy => ({ customerName, ...policy })))
-                    .filter(policy => {
+                const filteredPolicies = [];
+                for (let customerName in policies) {
+                    for (let i = 0; i < policies[customerName].length; i++) {
+                        const policy = policies[customerName][i];
                         const policyStartDate = new Date(policy.startDate);
                         const policyEndDate = new Date(policy.endDate);
-                        return (
+
+                        if (
                             (name === "" || policy.customerName.toLowerCase().includes(name)) &&
                             (licensePlate === "" || policy.licensePlate.toLowerCase().includes(licensePlate)) &&
                             (!startDate || policyStartDate >= startDate) &&
                             (!endDate || policyEndDate <= endDate)
-                        );
-                    });
+                        ) {
+                            filteredPolicies.push({ customerName, ...policy });
+                        }
+                    }
+                }
 
-                renderPolicies(filteredPolicies);
+                renderPolicies(filteredPolicies, policyList);
+            }
+
+            function updatePolicySummary() {
+                let totalPolicies = 0;
+                let activePolicies = 0;
+                const currentDate = new Date();
+                const renewalPolicies = [];
+
+                for (let customerName in policies) {
+                    for (let i = 0; i < policies[customerName].length; i++) {
+                        const policy = policies[customerName][i];
+                        totalPolicies++;
+                        const policyEndDate = new Date(policy.endDate);
+                        if (policyEndDate >= currentDate) {
+                            activePolicies++;
+                        }
+
+                        // Check if policy is within 15 days of renewal
+                        const timeDiff = policyEndDate - currentDate;
+                        const daysToEnd = timeDiff / (1000 * 3600 * 24);
+                        if (daysToEnd <= 15) {
+                            renewalPolicies.push({ customerName, ...policy });
+                        }
+                    }
+                }
+
+                totalPoliciesElement.textContent = totalPolicies;
+                activePoliciesElement.textContent = activePolicies;
+                renewalCountElement.textContent = renewalPolicies.length;
+                renderPolicies(renewalPolicies, renewalPolicyList);
+
+                // Eğer 3 veya daha fazla yenilenecek poliçe varsa bildirim göster
+                if (renewalPolicies.length >= 3) {
+                    showRenewalNotification(renewalPolicies.length);
+                }
+            }
+
+            function showRenewalNotification(count) {
+                if (Notification.permission === "granted") {
+                    const notification = new Notification("Poliçe Yenileme Bildirimi", {
+                        body: `${count} poliçenin yenileme tarihi yaklaşıyor. Detaylar için tıklayın.`,
+                        icon: "notification_icon.png" // Bildirim ikonu ekleyin
+                    });
+                    notification.onclick = () => {
+                        renewalPolicyTable.style.display = "table";
+                        window.scrollTo(0, document.getElementById("renewal-section").offsetTop);
+                    };
+                } else if (Notification.permission !== "denied") {
+                    Notification.requestPermission().then(permission => {
+                        if (permission === "granted") {
+                            showRenewalNotification(count);
+                        }
+                    });
+                }
             }
 
             filterButton.addEventListener("click", filterPolicies);
 
-            // Sayfa yüklendiğinde tüm poliçeleri göster
-            const allPolicies = Object.keys(policies)
-                .flatMap(customerName => policies[customerName].map(policy => ({ customerName, ...policy })));
-            renderPolicies(allPolicies);
+            renewalHeader.addEventListener("click", () => {
+                renewalPolicyTable.style.display = renewalPolicyTable.style.display === "none" ? "table" : "none";
+            });
+
+            // Sayfa yüklendiğinde tüm poliçeleri göster ve özet bilgilerini güncelle
+            const allPolicies = [];
+            for (let customerName in policies) {
+                for (let i = 0; i < policies[customerName].length; i++) {
+                    allPolicies.push({ customerName, ...policies[customerName][i] });
+                }
+            }
+            renderPolicies(allPolicies, policyList);
+            updatePolicySummary();
         });
     </script>
 </body>
