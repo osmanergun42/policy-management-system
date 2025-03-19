@@ -54,17 +54,12 @@ body {
 }
 
 #sidebar nav ul li a#agencies-link {
-    color: white;
-    text-decoration: none;
-    display: block;
-    padding: 10px 20px;
-    font-size: 1.1em;
-    transition: background-color 0.3s ease, transform 0.2s ease; /* Geçiş efektleri eklendi */
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 #sidebar nav ul li a#agencies-link:hover {
     background-color: #34495e;
-    transform: scale(1.05); /* Hover durumunda hafif büyüme efekti */
+    transform: scale(1.05);
 }
 
 #sidebar-search-section {
@@ -578,6 +573,10 @@ table th {
     background-color: #0056b3;
 }
 
+.policy-item {
+    transition: background-color 0.3s;
+}
+
 .policy-item.sari-arka-plan {
     background-color: yellow;
 }
@@ -608,6 +607,7 @@ table th {
     background-color: #1a5c91;
     transform: scale(0.95);
 }
+
 /* Muhasebe butonu stili */
 #accounting-link-wrapper {
     position: absolute;
@@ -622,7 +622,7 @@ table th {
     padding: 10px 20px;
     font-size: 16px;
     color: #fff;
-    background-color: #4CAF50; /* Yeşil renk */
+    background-color: #4CAF50;
     border: none;
     border-radius: 5px;
     text-decoration: none;
@@ -630,10 +630,10 @@ table th {
 }
 
 #accounting-link:hover {
-    background-color: #dbe7dc; /* Daha koyu yeşil */
-    transform: scale(1.05); /* Hover sırasında büyüme efekti */
+    background-color: #45a049;
+    transform: scale(1.05);
 }
 
 #accounting-link:active {
-    background-color: #217dbb; /* Tıklama sırasında daha koyu yeşil */
+    background-color: #3e8e41;
 }
