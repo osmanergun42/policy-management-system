@@ -21,6 +21,10 @@ sidebarNav.appendChild(accountingLink);
 const policiesLink = document.createElement("li");
 policiesLink.innerHTML = '<a href="policelerim.html" id="policies-link">📄 Poliçelerim</a>';
 sidebarNav.appendChild(policiesLink);
+// Müşteriyi Düzenle butonunu ekle
+const editCustomerLink = document.createElement("li");
+editCustomerLink.innerHTML = '<a href="düzenle.html" id="edit-customer-link">✏️ Müşteriyi Düzenle</a>';
+sidebarNav.appendChild(editCustomerLink);
 
     
 
@@ -213,6 +217,7 @@ sidebarNav.appendChild(policiesLink);
             dateRangeModal.style.display = "none";
         });
     });
+    
     // Müşteri Ekleme Modal Geri Butonu
     backButtonAddCustomer.addEventListener("click", () => {
         addCustomerModal.style.display = "none";
@@ -261,6 +266,7 @@ sidebarNav.appendChild(policiesLink);
 
     // Sayfa yüklendiğinde müşteri sayısını güncelle
     updateCustomerCount();
+    
     // Poliçe Ekleme Formu Gönderme Etkinliği
     addPolicyForm.addEventListener("submit", (event) => {
         event.preventDefault(); // Formun varsayılan gönderme davranışını durdurma
@@ -466,6 +472,7 @@ function renderCustomerDetails(customer) {
 
     showSection('customer-list-section'); // Müşteri detaylarını içeren bölümü göster
 }
+
 
 // Bölüm Gösterme Fonksiyonu
 function showSection(sectionId) {
