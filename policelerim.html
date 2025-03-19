@@ -5,6 +5,142 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Poliçelerim</title>
     <link rel="stylesheet" href="policelerim.css">
+    <style>
+        /* Filter section styling */
+        #filter-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        #filter-section label {
+            margin-right: 10px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        #filter-section select,
+        #filter-section button {
+            padding: 10px;
+            margin-right: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        #filter-section select:focus,
+        #filter-section button:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+
+        /* Styling for cancelled policy */
+        .cancelled-policy {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        /* Table styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+
+        th, td {
+            padding: 15px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+
+        .editable {
+            background-color: #e0e0e0; /* Daha modern bir gri ton */
+        }
+
+        /* Modal styling */
+        .modal {
+            display: none; /* Modal varsayılan olarak gizlenir */
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px); /* Daha fazla bulanıklık efekti */
+            transition: opacity 0.3s ease;
+            opacity: 0;
+        }
+
+        .modal-content {
+            background-color: #ffffff;
+            margin: 5% auto;
+            padding: 25px;
+            border: 1px solid #ddd;
+            border-radius: 12px; /* Daha yuvarlak köşeler */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            width: 80%;
+            max-width: 600px;
+            transform: translateY(-50px);
+            transition: transform 0.3s ease, opacity 0.3s ease; /* Daha yumuşak geçişler */
+            opacity: 0;
+        }
+
+        .modal.show {
+            opacity: 1;
+        }
+
+        .modal-content.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .close-button {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-button:hover,
+        .close-button:focus {
+            color: #333;
+            text-decoration: none;
+        }
+
+        .modal-content p {
+            margin: 10px 0;
+            font-size: 16px;
+            line-height: 1.5;
+            color: #555;
+        }
+
+        .modal-content h2 {
+            margin-bottom: 20px;
+            font-size: 24px;
+            color: #3498db;
+        }
+    </style>
 </head>
 <body>
     <div class="header">
@@ -43,6 +179,7 @@
                     <th>Prim (TL)</th>
                     <th>Komisyon (TL)</th>
                     <th>Plaka</th>
+                    <th>Tescil No</th> <!-- Tescil No sütunu eklendi -->
                     <th>Şirket</th>
                     <th>Durum</th>
                 </tr>
@@ -63,6 +200,7 @@
                 <th>Prim (TL)</th>
                 <th>Komisyon (TL)</th>
                 <th>Plaka</th>
+                <th>Tescil No</th> <!-- Tescil No sütunu eklendi -->
                 <th>Şirket</th>
                 <th>Durum</th>
             </tr>
@@ -71,6 +209,25 @@
             <!-- Poliçeler burada listelenecek -->
         </tbody>
     </table>
+
+    <!-- Poliçe Detay Modal -->
+    <div id="policy-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="close-modal">&times;</span>
+            <h2>Poliçe Detayları</h2>
+            <p><strong>Müşteri Adı:</strong> <span id="modal-customer-name"></span></p>
+            <p><strong>Poliçe Tipi:</strong> <span id="modal-policy-type"></span></p>
+            <p><strong>Başlangıç Tarihi:</strong> <span id="modal-start-date"></span></p>
+            <p><strong>Bitiş Tarihi:</strong> <span id="modal-end-date"></span></p>
+            <p><strong>Prim (TL):</strong> <span id="modal-premium"></span></p>
+            <p><strong>Komisyon (TL):</strong> <span id="modal-commission"></span></p>
+            <p><strong>Plaka:</strong> <span id="modal-license-plate"></span></p>
+            <p><strong>Tescil No:</strong> <span id="modal-registration-number"></span></p> <!-- Tescil No eklendi -->
+            <p><strong>Şirket:</strong> <span id="modal-company"></span></p>
+            <p><strong>Durum:</strong> <span id="modal-status"></span></p>
+            <button class="copy-button" id="modal-copy-button">Kopyala</button>
+        </div>
+    </div>
 
     <script>
         document.addEventListener("DOMContentLoaded", () => {
@@ -86,6 +243,10 @@
             const totalPoliciesElement = document.getElementById("total-policies");
             const activePoliciesElement = document.getElementById("active-policies");
             const renewalCountElement = document.getElementById("renewal-count");
+
+            const modal = document.getElementById("policy-modal");
+            const closeModalButton = document.getElementById("close-modal");
+            const modalCopyButton = document.getElementById("modal-copy-button");
 
             // Yerel depolamadan poliçe verilerini al
             const policies = JSON.parse(localStorage.getItem("policies")) || {};
@@ -103,9 +264,11 @@
                         <td>${policy.premium.toFixed(2)} TL</td>
                         <td>${policy.calculatedCommission.toFixed(2)} TL</td>
                         <td>${policy.licensePlate}</td>
+                        <td>${policy.registrationNumber}</td> <!-- Tescil No hücresi eklendi -->
                         <td>${policy.company}</td>
                         <td>${policy.isCancelled ? "İptal Edildi" : "Aktif"}</td>
                     `;
+                    row.addEventListener("click", () => openPolicyModal(policy));
                     targetList.appendChild(row);
                 }
             }
@@ -191,11 +354,77 @@
                 }
             }
 
+            function openPolicyModal(policy) {
+                document.getElementById("modal-customer-name").textContent = policy.customerName;
+                document.getElementById("modal-policy-type").textContent = policy.type;
+                document.getElementById("modal-start-date").textContent = policy.startDate;
+                document.getElementById("modal-end-date").textContent = policy.endDate;
+                document.getElementById("modal-premium").textContent = policy.premium.toFixed(2) + " TL";
+                document.getElementById("modal-commission").textContent = policy.calculatedCommission.toFixed(2) + " TL";
+                document.getElementById("modal-license-plate").textContent = policy.licensePlate;
+                document.getElementById("modal-registration-number").textContent = policy.registrationNumber; // Tescil No eklendi
+                document.getElementById("modal-company").textContent = policy.company;
+                document.getElementById("modal-status").textContent = policy.isCancelled ? "İptal Edildi" : "Aktif";
+                modalCopyButton.onclick = () => copyToClipboard(policy.licensePlate, policy.registrationNumber);
+                modal.style.display = "block";
+                setTimeout(() => {
+                    modal.classList.add("show");
+                    document.querySelector(".modal-content").classList.add("show");
+                }, 10); // Geçiş animasyonunun düzgün çalışması için kısa bir gecikme ekleyin
+            }
+
+            closeModalButton.addEventListener("click", () => {
+                modal.classList.remove("show");
+                document.querySelector(".modal-content").classList.remove("show");
+                setTimeout(() => {
+                    modal.style.display = "none";
+                }, 300); // Geçiş animasyonunun bitmesi için süre verin
+            });
+
+            window.addEventListener("click", (event) => {
+                if (event.target === modal) {
+                    modal.classList.remove("show");
+                    document.querySelector(".modal-content").classList.remove("show");
+                    setTimeout(() => {
+                        modal.style.display = "none";
+                    }, 300); // Geçiş animasyonunun bitmesi için süre verin
+                }
+            });
+
             filterButton.addEventListener("click", filterPolicies);
 
             renewalHeader.addEventListener("click", () => {
                 renewalPolicyTable.style.display = renewalPolicyTable.style.display === "none" ? "table" : "none";
             });
+
+            function copyToClipboard(licensePlate, registrationNumber) {
+                const textToCopy = `Plaka: ${licensePlate}\nTescil Numarası: ${registrationNumber}`;
+                const tempTextarea = document.createElement("textarea");
+                tempTextarea.value = textToCopy;
+                document.body.appendChild(tempTextarea);
+                tempTextarea.select();
+                document.execCommand("copy");
+                document.body.removeChild(tempTextarea);
+                showCopyNotification();
+            }
+
+            function showCopyNotification() {
+                const notification = document.createElement("div");
+                notification.style.position = "fixed";
+                notification.style.bottom = "20px";
+                notification.style.right = "20px";
+                notification.style.padding = "10px 20px";
+                notification.style.backgroundColor = "#4CAF50";
+                notification.style.color = "white";
+                notification.style.borderRadius = "4px";
+                notification.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.2)";
+                notification.textContent = "Araç plakası ve tescil numarası kopyalandı!";
+                document.body.appendChild(notification);
+                
+                setTimeout(() => {
+                    notification.remove();
+                }, 3000);
+            }
 
             // Sayfa yüklendiğinde tüm poliçeleri göster ve özet bilgilerini güncelle
             const allPolicies = [];
