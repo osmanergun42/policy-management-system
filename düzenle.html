@@ -36,7 +36,7 @@
             const searchInput = document.getElementById('search-input');
             const searchBtn = document.getElementById('search-btn');
 
-            function renderCustomerList(customersToRender) {
+            function renderCustomerList(customersToRender, originalCustomers = customers) {
                 customerListBody.innerHTML = customersToRender.map((customer, index) => `
                     <tr>
                         <td>${customer.name}</td>
@@ -44,15 +44,15 @@
                         <td>${customer.email}</td>
                         <td>${customer.address}</td>
                         <td>
-                            <button class="edit-customer-btn" data-index="${index}">Düzenle</button>
-                            <button class="delete-customer-btn" data-index="${index}">Sil</button>
+                            <button class="edit-customer-btn" data-index="${index}" data-original-index="${originalCustomers.indexOf(customer)}">Düzenle</button>
+                            <button class="delete-customer-btn" data-index="${index}" data-original-index="${originalCustomers.indexOf(customer)}">Sil</button>
                         </td>
                     </tr>
                 `).join('');
 
                 document.querySelectorAll(".edit-customer-btn").forEach(btn => {
                     btn.addEventListener("click", (e) => {
-                        const customerIndex = e.target.getAttribute("data-index");
+                        const customerIndex = e.target.getAttribute("data-original-index");
                         const customer = customers[customerIndex];
                         openEditCustomerModal(customer, customerIndex);
                     });
@@ -60,7 +60,7 @@
 
                 document.querySelectorAll(".delete-customer-btn").forEach(btn => {
                     btn.addEventListener("click", (e) => {
-                        const customerIndex = e.target.getAttribute("data-index");
+                        const customerIndex = e.target.getAttribute("data-original-index");
                         customers.splice(customerIndex, 1);
                         localStorage.setItem("customers", JSON.stringify(customers));
                         renderCustomerList(customers);
