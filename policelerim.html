@@ -1,441 +1,635 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
+    <meta http-equiv="Content-Security-Policy" content="connect-src 'self' https://collector.githubapp.com;">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Poliçelerim</title>
-    <link rel="stylesheet" href="policelerim.css">
+    <title>Poliçe Takip Sistemi</title>
+
+    <link rel="stylesheet" href="styles.css">
     <style>
+        
+        
         /* Filter section styling */
         #filter-section {
             margin: 20px 0;
-            padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
             background-color: #f9f9f9;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         #filter-section label {
             margin-right: 10px;
-            font-weight: bold;
-            color: #555;
         }
 
         #filter-section select,
         #filter-section button {
-            padding: 10px;
+            padding: 5px;
             margin-right: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            font-size: 14px;
-            transition: border-color 0.3s;
-        }
-
-        #filter-section select:focus,
-        #filter-section button:focus {
-            border-color: #3498db;
-            outline: none;
         }
 
         /* Styling for cancelled policy */
         .cancelled-policy {
-            background-color: #e74c3c;
-            color: white;
+            background-color: red;
         }
+        img[src="30.png"] {
+    width: 20vw; /* Genişlik, pencere genişliğinin %25'i */
+    height: auto; /* Yükseklik otomatik olarak ayarlanır */
+    border: 2px solid #00bfff; /* DeepSkyBlue kenarlık */
+    border-radius: 8px; /* Köşeleri yuvarlar */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Hafif gölge efekti */
+    margin: 10px; /* Dış boşluk */
+    position: absolute; /* Mutlak konumlandırma */
+    right: 0; /* Sağ kenara yasla */
+    top: 10px; /* Üstten biraz boşluk bırak */
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
 
-        /* Table styling */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            background-color: #fff;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-            overflow: hidden;
-        }
+table, th, td {
+    border: 1px solid black;
+}
 
-        table, th, td {
-            border: 1px solid #ddd;
-        }
+th, td {
+    padding: 10px;
+    text-align: left;
+}
 
-        th, td {
-            padding: 15px;
-            text-align: left;
-        }
+.editable {
+    background-color: #e0e0e0; /* Daha modern bir gri ton */
+}
 
-        th {
-            background-color: #3498db;
-            color: white;
-            font-weight: bold;
-        }
+.modal {
+    display: none; /* Modal varsayılan olarak gizlenir */
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgb(0,0,0);
+    background-color: rgba(0,0,0,0.4);
+    padding-top: 60px;
+}
 
-        .editable {
-            background-color: #e0e0e0; /* Daha modern bir gri ton */
-        }
+.modal-content {
+    background-color: #fefefe;
+    margin: 5% auto;
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%;
+}
 
-        /* Modal styling */
-        .modal {
-            display: none; /* Modal varsayılan olarak gizlenir */
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0, 0, 0, 0.5);
-            backdrop-filter: blur(10px); /* Daha fazla bulanıklık efekti */
-            transition: opacity 0.3s ease;
-            opacity: 0;
-        }
+.close-button {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
 
-        .modal-content {
-            background-color: #ffffff;
-            margin: 5% auto;
-            padding: 25px;
-            border: 1px solid #ddd;
-            border-radius: 12px; /* Daha yuvarlak köşeler */
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            width: 80%;
-            max-width: 600px;
-            transform: translateY(-50px);
-            transition: transform 0.3s ease, opacity 0.3s ease; /* Daha yumuşak geçişler */
-            opacity: 0;
-        }
+.close-button:hover,
+.close-button:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
 
-        .modal.show {
-            opacity: 1;
-        }
+.modal-button {
+    padding: 10px 20px;
+    margin: 10px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
 
-        .modal-content.show {
-            transform: translateY(0);
-            opacity: 1;
-        }
+.confirm-button {
+    background-color: #4CAF50; /* Yeşil renk */
+    color: white;
+}
 
-        .close-button {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-            transition: color 0.3s;
-        }
+.cancel-button {
+    background-color: #f44336; /* Kırmızı renk */
+    color: white;
+}
 
-        .close-button:hover,
-        .close-button:focus {
-            color: #333;
-            text-decoration: none;
-        }
+/* Kazanç ve Ay sütunlarındaki girdiler için özel stil */
+td.gain input, td.month input {
+    background-color: #000000;
+    color: white;
+}
 
-        .modal-content p {
-            margin: 10px 0;
-            font-size: 16px;
-            line-height: 1.5;
-            color: #555;
-        }
-
-        .modal-content h2 {
-            margin-bottom: 20px;
-            font-size: 24px;
-            color: #3498db;
-        }
+td.gain input:focus, td.month input:focus {
+    background-color: #0000FF;
+    color: white;
+}
     </style>
 </head>
 <body>
-    <div class="header">
-        <h1>Poliçelerim</h1>
-        <div id="filters">
-            <label for="filter-name">Ad Soyad:</label>
-            <input type="text" id="filter-name" placeholder="Ad Soyad">
 
-            <label for="filter-license-plate">Plaka:</label>
-            <input type="text" id="filter-license-plate" placeholder="Plaka">
 
-            <label for="filter-start-date">Başlangıç Tarihi:</label>
-            <input type="date" id="filter-start-date">
+    <img src="30.png" alt="logo">
 
-            <label for="filter-end-date">Bitiş Tarihi:</label>
-            <input type="date" id="filter-end-date">
+    <div id="sidebar">
 
-            <button id="filter-button">Filtrele</button>
+        <div class="logo">
+            <h2>Poliçe Takip Sistemi</h2>
+        </div>
+        <nav>
+            <ul>
+                <li><a href="#" id="home-link">Ana Sayfa</a></li>
+                <li><a href="#" id="my-customers-link">Müşterilerim</a></li>
+            </ul>
+        </nav>
+        <div id="sidebar-search-section">
+            <input type="text" id="sidebar-search-input" placeholder="Müşteri Adı veya Plaka Ara">
+            <button id="sidebar-search-btn">Ara</button>
+            <div id="search-suggestions" class="suggestions"></div>
         </div>
     </div>
+    
+     <script>
+        
+        document.addEventListener("DOMContentLoaded", function() {
+            const sidebar = document.getElementById("sidebar");
 
-    <div id="policy-summary">
-        <p>Toplam Poliçe Sayısı: <span id="total-policies">0</span></p>
-        <p>Yürürlükte Olan Poliçe Sayısı: <span id="active-policies">0</span></p>
-    </div>
+            sidebar.addEventListener("wheel", function(event) {
+                event.preventDefault();
+                sidebar.scrollBy({
+                    top: event.deltaY,
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+    
 
-    <div id="renewal-section">
-        <h2 id="renewal-header">Yenilenecek Poliçeler (Bildirim: <span id="renewal-count">0</span>)</h2>
-        <table id="renewal-policy-table" style="display: none;">
-            <thead>
-                <tr>
-                    <th>Müşteri Adı</th>
-                    <th>Poliçe Tipi</th>
-                    <th>Başlangıç Tarihi</th>
-                    <th>Bitiş Tarihi</th>
-                    <th>Prim (TL)</th>
-                    <th>Komisyon (TL)</th>
-                    <th>Plaka</th>
-                    <th>Tescil No</th> <!-- Tescil No sütunu eklendi -->
-                    <th>Şirket</th>
-                    <th>Durum</th>
-                </tr>
-            </thead>
-            <tbody id="renewal-policy-list">
-                <!-- Yenilenecek poliçeler burada listelenecek -->
-            </tbody>
-        </table>
-    </div>
+    <div id="toggle-sidebar-btn">☰</div>
+    
 
-    <table id="policy-table">
-        <thead>
-            <tr>
-                <th>Müşteri Adı</th>
-                <th>Poliçe Tipi</th>
-                <th>Başlangıç Tarihi</th>
-                <th>Bitiş Tarihi</th>
-                <th>Prim (TL)</th>
-                <th>Komisyon (TL)</th>
-                <th>Plaka</th>
-                <th>Tescil No</th> <!-- Tescil No sütunu eklendi -->
-                <th>Şirket</th>
-                <th>Durum</th>
-            </tr>
-        </thead>
-        <tbody id="policy-list">
-            <!-- Poliçeler burada listelenecek -->
-        </tbody>
-    </table>
+    <div class="main-content">
+        <header>
+            <h1 id="main-header">Poliçe Takip Sistemi</h1>
+        </header>
 
-    <!-- Poliçe Detay Modal -->
-    <div id="policy-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-button" id="close-modal">&times;</span>
-            <h2>Poliçe Detayları</h2>
-            <p><strong>Müşteri Adı:</strong> <span id="modal-customer-name"></span></p>
-            <p><strong>Poliçe Tipi:</strong> <span id="modal-policy-type"></span></p>
-            <p><strong>Başlangıç Tarihi:</strong> <span id="modal-start-date"></span></p>
-            <p><strong>Bitiş Tarihi:</strong> <span id="modal-end-date"></span></p>
-            <p><strong>Prim (TL):</strong> <span id="modal-premium"></span></p>
-            <p><strong>Komisyon (TL):</strong> <span id="modal-commission"></span></p>
-            <p><strong>Plaka:</strong> <span id="modal-license-plate"></span></p>
-            <p><strong>Tescil No:</strong> <span id="modal-registration-number"></span></p> <!-- Tescil No eklendi -->
-            <p><strong>Şirket:</strong> <span id="modal-company"></span></p>
-            <p><strong>Durum:</strong> <span id="modal-status"></span></p>
-            <button class="copy-button" id="modal-copy-button">Kopyala</button>
+        <!-- Poliçe Filtreleme Bölümü -->
+        <div id="filter-section">
+            <label for="filter-agency">Dış Acente Filtrele:</label>
+            <select id="filter-agency">
+                <option value="" selected>Hepsi</option>
+                <option value="SNR Sigorta">SNR Sigorta</option>
+                <option value="Enes Sigorta">Enes Sigorta</option>
+                <option value="Enter Sigorta">Enter Sigorta</option>
+                <option value="Saygın Sigorta">Saygın sigorta</option>
+            </select>
+            <button id="filterButton">Filtrele</button>
         </div>
-    </div>
+        <div id="policies-modal" class="modal">
+            <div class="modal-content">
+                <span class="close" id="close-policies-modal">&times;</span>
+                <h2>Poliçelerim</h2>
+                <div id="policy-filter-section">
+                    <input type="text" id="filter-name" placeholder="İsim ile filtrele">
+                    <input type="text" id="filter-plate" placeholder="Plaka ile filtrele">
+                    <input type="date" id="filter-start-date">
+                    <button id="apply-filter">Filtrele</button>
+                </div>
+                <table id="policies-table">
+                    <thead>
+                        <tr>
+                            <th>Müşteri Adı</th>
+                            <th>Poliçe Tipi</th>
+                            <th>Başlangıç Tarihi</th>
+                            <th>Bitiş Tarihi</th>
+                            <th>Prim (TL)</th>
+                            <th>Komisyon (TL)</th>
+                            <th>Plaka</th>
+                            <th>Şirket</th>
+                            <th>İptal Durumu</th>
+                        </tr>
+                    </thead>
+                    <tbody id="policies-list">
+                        <!-- Poliçeler buraya eklenecek -->
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
 
+        <!-- Özet Bölümü -->
+        <div id="summary-section">
+            <h2>Özet</h2>
+            <p>Toplam Müşteriler: <span id="total-customers">0</span></p>
+            <p>Toplam Yaşayan Poliçe: <span id="active-policies">0</span></p>
+            <p>Toplam Poliçe: <span id="total-policies">0</span></p>
+        </div>
+        
+        
+
+        <!-- Geri Butonu -->
+        <button id="back-button" class="back-button" style="display: none;">Geri</button>
+
+        <!-- Müşterilerim Bölümü -->
+        <div id="customer-list-section" style="display: none;">
+            <header>
+                <h1>Müşterilerim</h1>
+                <button id="open-add-customer-modal" class="add-button">Müşteri Ekle</button>
+            </header>
+            <table id="customer-table">
+                <thead>
+                    <tr>
+                        <th>Müşteri Adı</th>
+                        <th>Telefon</th>
+                        <th>E-posta</th>
+                        <th>Adres</th>
+                        <th>İşlem</th>
+                    </tr>
+                </thead>
+                <tbody id="customer-list-body"> 
+                    <!-- Müşteri listesi burada görüntülenecek -->
+                    <!-- Diğer müşteriler burada görüntülenecek -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Müşteri Ekleme Modal -->
+        <div id="add-customer-modal" class="modal">
+            <div class="modal-content">
+                <span id="close-add-customer-modal" class="close-button">X</span>
+                <h2>Yeni Müşteri Ekle</h2>
+                <form id="add-customer-form">
+                    <input type="text" id="customer-name" placeholder="Müşteri Adı ve Soyadı" required>
+                    <input type="text" id="customer-phone" placeholder="Telefon Numarası" >
+                    <input type="email" id="customer-email" placeholder="E-posta Adresi">
+                    <input type="text" id="customer-address" placeholder="Adres">
+                    <textarea id="customer-extra-info" placeholder="Ek Bilgi (Opsiyonel)" rows="4"></textarea>
+                    <button type="submit">Müşteri Ekle</button>
+                </form>
+                <!-- Geri Butonu -->
+                <button id="back-button-add-customer" class="back-button">Geri</button>
+            </div>
+        </div>
+        
+
+        <button id="exportButton">İndir</button>
+        <div id="date-range-modal" style="display: none;">
+            <!-- Modal İçeriği -->
+            <button id="close-date-range-modal">Kapat</button>
+            <form id="date-range-form">
+                <input type="date" id="export-start-date" required>
+                <input type="date" id="export-end-date" required>
+                <button type="submit">Verileri Aktar</button>
+            </form>
+        </div>
+        
+
+        <!-- Poliçe Ekleme Modal -->
+        <div id="add-policy-modal" class="modal">
+            <div class="modal-content">
+                <span id="close-add-policy-modal" class="close-button">X</span>
+                <h2>Poliçe Ekle</h2>
+                <form id="add-policy-form">
+                    <input type="text" id="policy-type" placeholder="Poliçe Tipi" required>
+                    <input type="date" id="start-date" required>
+                    <input type="date" id="end-date" required>
+                    <input type="number" id="premium" placeholder="Prim Miktarı (TL)" min="0" required>
+                    <input type="number" id="commission-rate" placeholder="Komisyon Oranı (%)" min="0" max="100" required>
+                    <input type="text" id="calculated-commission" placeholder="Hesaplanan Komisyon (TL)" readonly>
+                    <input type="text" id="policy-number" placeholder="Poliçe Numarası" required>
+                    <input type="text" id="license-plate" placeholder="Plaka" required>
+                    <input type="text" id="registration-number" placeholder="Tescil Numarası" required>
+                    <select id="company-dropdown" required>
+                        <option value="" disabled selected>Şirket Seçin</option>
+                        <option value="Ak Sigorta">Ak Sigorta</option>
+                        <option value="Unico Sigorta">Unico Sigorta</option>
+                        <option value="Anadolu">Anadolu</option>
+                        <option value="Koru">Koru</option>
+                        <option value="Corpus">Corpus</option>
+                        <option value="Ankara">Ankara</option>
+                        <option value="Hepiyi">Hepiyi</option>
+                        <option value="Doğa">Doğa</option>
+                        <option value="Şeker">Şeker</option>
+                        <option value="Bereket">Bereket</option>
+                        <option value="Ray">Ray</option>
+                        <option value="Sompo">Sompo</option>
+                        <option value="Türkiye">Türkiye</option>
+                        <option value="AXA">AXA</option>
+                        <option value="Allianz">Allianz</option>
+                        <option value="HDI">HDI</option>
+                        <option value="Neova">Neova</option>
+                        <option value="Quick Sigorta">Quick Sigorta</option>
+                    </select>
+                    <select id="policy-owner" required>
+                        <option value="" disabled selected>Kimin Müşterisi?</option>
+                        <option value="SNR Sigorta">SNR Sigorta</option>
+                        <option value="Enes Sigorta">Enes Sigorta</option>
+                        <option value="Saygın Sigorta">Saygın Sigorta</option>
+                        <option value="Başakçı">Başakçı</option>
+                        <option value="Terlemez Sigorta">Terlemez Sigorta</option>
+                        <option value="Ergün Sigorta">Ergün Sigorta</option> <!-- Enter yerine buraya eklendi -->
+                    </select>
+                    
+                    <select id="external-agency" required>
+                        <option value="" disabled selected>Dış Acente Seçin</option>
+                        <option value="SNR Sigorta">SNR Sigorta</option>
+                        <option value="Enes Sigorta">Enes Sigorta</option>
+                        <option value="Enter Sigorta">Enter Sigorta</option>
+                        <option value="Saygın Sigorta">Saygın sigorta</option>
+                        <option value="Başakçı">Başakçı</option>
+                        <option value="Terlemez Sigorta">Terlemez Sigorta</option>
+                    </select>
+                    <!-- Cancellation toggle -->
+                    <label for="cancel-policy">İptal:</label>
+                    <input type="checkbox" id="cancel-policy">
+                    <button type="submit">Poliçe Ekle</button>
+                </form>
+                <!-- Geri Butonu -->
+                <button id="back-button-add-policy" class="back-button">Geri</button>
+            </div>
+        </div>
+
+        <div id="add-policy-section" style="display: none;">
+            <h2 id="policy-customer-name"></h2>
+            <button id="open-add-policy-modal">Poliçe Ekle</button>
+        </div>
+
+        <!-- Poliçe Düzenleme Modal -->
+        <div id="edit-policy-modal" class="modal">
+            <div class="modal-content">
+                <span id="close-edit-policy-modal" class="close-button">X</span>
+                <h2>Poliçe Detaylarını Düzenle</h2>
+                <form id="edit-policy-form">
+                    <input type="text" id="edit-policy-type" placeholder="Poliçe Tipi" required>
+                    <input type="date" id="edit-start-date" required>
+                    <input type="date" id="edit-end-date" required>
+                    <input type="number" id="edit-premium" placeholder="Prim Miktarı (TL)" min="0" required>
+                    <input type="number" id="edit-commission-rate" placeholder="Komisyon Oranı (%)" min="0" max="100" required>
+                    <input type="text" id="edit-calculated-commission" placeholder="Hesaplanan Komisyon (TL)" readonly>
+                    <input type="text" id="edit-license-plate" placeholder="Plaka" required>
+                    <input type="text" id="edit-registration-number" placeholder="Tescil Numarası" required>
+                    <button type="submit">Güncelle</button>
+                </form>
+            </div>
+        </div>
+        
+
+        <!-- Arama Sonuçları Modal -->
+        <div id="search-results-modal" class="modal">
+            <div class="modal-content">
+                <span id="close-search-results-modal" class="close-button">X</span>
+                <h2>Arama Sonuçları</h2>
+                <div id="search-results"></div>
+            </div>
+        </div>
+
+        <!-- Kayıtlı Poliçeler Modal -->
+        <div id="policies-modal" class="modal">
+            <div class="modal-content">
+                <span id="close-policies-modal" class="close-button">X</span>
+                <h2>Kayıtlı Poliçeler</h2>
+                <div id="policies-list"></div>
+            </div>
+        </div>
+
+       
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+    <script src="app.js"></script>
     <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const policyList = document.getElementById("policy-list");
-            const renewalPolicyList = document.getElementById("renewal-policy-list");
-            const renewalPolicyTable = document.getElementById("renewal-policy-table");
-            const renewalHeader = document.getElementById("renewal-header");
-            const filterName = document.getElementById("filter-name");
-            const filterLicensePlate = document.getElementById("filter-license-plate");
-            const filterStartDate = document.getElementById("filter-start-date");
-            const filterEndDate = document.getElementById("filter-end-date");
-            const filterButton = document.getElementById("filter-button");
-            const totalPoliciesElement = document.getElementById("total-policies");
-            const activePoliciesElement = document.getElementById("active-policies");
-            const renewalCountElement = document.getElementById("renewal-count");
+        document.addEventListener('DOMContentLoaded', (event) => {
+            const editableElements = document.querySelectorAll('.editable');
+            
+            editableElements.forEach(cell => {
+                cell.addEventListener('dblclick', function() {
+                    cell.contentEditable = true;
+                    cell.focus();
+                });
 
-            const modal = document.getElementById("policy-modal");
-            const closeModalButton = document.getElementById("close-modal");
-            const modalCopyButton = document.getElementById("modal-copy-button");
+                cell.addEventListener('blur', function() {
+                    cell.contentEditable = false;
+                    openChangeWarningModal(cell);
+                });
+            });
 
-            // Yerel depolamadan poliçe verilerini al
-            const policies = JSON.parse(localStorage.getItem("policies")) || {};
+            const changeWarningModal = document.getElementById('change-warning-modal');
+            const confirmChangeButton = document.getElementById('confirm-change');
+            const cancelChangeButton = document.getElementById('cancel-change');
+            const closeChangeWarningModalButton = document.getElementById('close-change-warning-modal');
 
-            function renderPolicies(filteredPolicies, targetList) {
-                targetList.innerHTML = ""; // Önce listeyi temizle
-                for (let i = 0; i < filteredPolicies.length; i++) {
-                    const policy = filteredPolicies[i];
+            function openChangeWarningModal(cell) {
+                changeWarningModal.style.display = 'block';
+
+                confirmChangeButton.onclick = function() {
+                    // Değişiklikleri kaydet
+                    // Buraya, değişiklikleri kaydetmek için gerekli kodları ekleyebilirsiniz.
+                    console.log('Değişiklik kaydedildi:', cell.innerText);
+                    changeWarningModal.style.display = 'none';
+                };
+
+                cancelChangeButton.onclick = function() {
+                    changeWarningModal.style.display = 'none';
+                };
+
+                closeChangeWarningModalButton.onclick = function() {
+                    changeWarningModal.style.display = 'none';
+                };
+            }
+        });
+    </script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const myPoliciesLink = document.getElementById("my-policies-link");
+    
+        if (!myPoliciesLink) {
+            console.error("Poliçelerim butonu bulunamadı!");
+            return;
+        }
+    
+        myPoliciesLink.addEventListener("click", (event) => {
+            event.preventDefault(); // Sayfanın yenilenmesini engelle
+            showSection("policies-section"); // Poliçelerim sayfasını göster
+            renderPolicyList(); // Poliçeleri listele
+        });
+    
+        function renderPolicyList() {
+            const policiesListContainer = document.getElementById("policies-list");
+            const policies = JSON.parse(localStorage.getItem("policies")) || {}; // LocalStorage'dan poliçeleri al
+    
+            if (!policiesListContainer) {
+                console.error("policies-list ID'li eleman bulunamadı!");
+                return;
+            }
+    
+            policiesListContainer.innerHTML = ""; // Önce listeyi temizle
+    
+            let foundPolicies = false; // Poliçe olup olmadığını kontrol etmek için
+    
+            Object.keys(policies).forEach(customerName => {
+                policies[customerName].forEach(policy => {
+                    foundPolicies = true;
                     const row = document.createElement("tr");
                     row.innerHTML = `
-                        <td>${policy.customerName}</td>
+                        <td>${customerName}</td>
                         <td>${policy.type}</td>
                         <td>${policy.startDate}</td>
                         <td>${policy.endDate}</td>
                         <td>${policy.premium.toFixed(2)} TL</td>
                         <td>${policy.calculatedCommission.toFixed(2)} TL</td>
                         <td>${policy.licensePlate}</td>
-                        <td>${policy.registrationNumber}</td> <!-- Tescil No hücresi eklendi -->
                         <td>${policy.company}</td>
                         <td>${policy.isCancelled ? "İptal Edildi" : "Aktif"}</td>
                     `;
-                    row.addEventListener("click", () => openPolicyModal(policy));
-                    targetList.appendChild(row);
-                }
-            }
-
-            function filterPolicies() {
-                const name = filterName.value.toLowerCase();
-                const licensePlate = filterLicensePlate.value.toLowerCase();
-                const startDate = filterStartDate.value ? new Date(filterStartDate.value) : null;
-                const endDate = filterEndDate.value ? new Date(filterEndDate.value) : null;
-
-                const filteredPolicies = [];
-                for (let customerName in policies) {
-                    for (let i = 0; i < policies[customerName].length; i++) {
-                        const policy = policies[customerName][i];
-                        const policyStartDate = new Date(policy.startDate);
-                        const policyEndDate = new Date(policy.endDate);
-
-                        if (
-                            (name === "" || policy.customerName.toLowerCase().includes(name)) &&
-                            (licensePlate === "" || policy.licensePlate.toLowerCase().includes(licensePlate)) &&
-                            (!startDate || policyStartDate >= startDate) &&
-                            (!endDate || policyEndDate <= endDate)
-                        ) {
-                            filteredPolicies.push({ customerName, ...policy });
-                        }
-                    }
-                }
-
-                renderPolicies(filteredPolicies, policyList);
-            }
-
-            function updatePolicySummary() {
-                let totalPolicies = 0;
-                let activePolicies = 0;
-                const currentDate = new Date();
-                const renewalPolicies = [];
-
-                for (let customerName in policies) {
-                    for (let i = 0; i < policies[customerName].length; i++) {
-                        const policy = policies[customerName][i];
-                        totalPolicies++;
-                        const policyEndDate = new Date(policy.endDate);
-                        if (policyEndDate >= currentDate) {
-                            activePolicies++;
-                        }
-
-                        // Check if policy is within 15 days of renewal
-                        const timeDiff = policyEndDate - currentDate;
-                        const daysToEnd = timeDiff / (1000 * 3600 * 24);
-                        if (daysToEnd <= 15) {
-                            renewalPolicies.push({ customerName, ...policy });
-                        }
-                    }
-                }
-
-                totalPoliciesElement.textContent = totalPolicies;
-                activePoliciesElement.textContent = activePolicies;
-                renewalCountElement.textContent = renewalPolicies.length;
-                renderPolicies(renewalPolicies, renewalPolicyList);
-
-                // Eğer 3 veya daha fazla yenilenecek poliçe varsa bildirim göster
-                if (renewalPolicies.length >= 3) {
-                    showRenewalNotification(renewalPolicies.length);
-                }
-            }
-
-            function showRenewalNotification(count) {
-                if (Notification.permission === "granted") {
-                    const notification = new Notification("Poliçe Yenileme Bildirimi", {
-                        body: `${count} poliçenin yenileme tarihi yaklaşıyor. Detaylar için tıklayın.`,
-                        icon: "notification_icon.png" // Bildirim ikonu ekleyin
-                    });
-                    notification.onclick = () => {
-                        renewalPolicyTable.style.display = "table";
-                        window.scrollTo(0, document.getElementById("renewal-section").offsetTop);
-                    };
-                } else if (Notification.permission !== "denied") {
-                    Notification.requestPermission().then(permission => {
-                        if (permission === "granted") {
-                            showRenewalNotification(count);
-                        }
-                    });
-                }
-            }
-
-            function openPolicyModal(policy) {
-                document.getElementById("modal-customer-name").textContent = policy.customerName;
-                document.getElementById("modal-policy-type").textContent = policy.type;
-                document.getElementById("modal-start-date").textContent = policy.startDate;
-                document.getElementById("modal-end-date").textContent = policy.endDate;
-                document.getElementById("modal-premium").textContent = policy.premium.toFixed(2) + " TL";
-                document.getElementById("modal-commission").textContent = policy.calculatedCommission.toFixed(2) + " TL";
-                document.getElementById("modal-license-plate").textContent = policy.licensePlate;
-                document.getElementById("modal-registration-number").textContent = policy.registrationNumber; // Tescil No eklendi
-                document.getElementById("modal-company").textContent = policy.company;
-                document.getElementById("modal-status").textContent = policy.isCancelled ? "İptal Edildi" : "Aktif";
-                modalCopyButton.onclick = () => copyToClipboard(policy.licensePlate, policy.registrationNumber);
-                modal.style.display = "block";
-                setTimeout(() => {
-                    modal.classList.add("show");
-                    document.querySelector(".modal-content").classList.add("show");
-                }, 10); // Geçiş animasyonunun düzgün çalışması için kısa bir gecikme ekleyin
-            }
-
-            closeModalButton.addEventListener("click", () => {
-                modal.classList.remove("show");
-                document.querySelector(".modal-content").classList.remove("show");
-                setTimeout(() => {
-                    modal.style.display = "none";
-                }, 300); // Geçiş animasyonunun bitmesi için süre verin
+                    policiesListContainer.appendChild(row);
+                });
             });
-
-            window.addEventListener("click", (event) => {
-                if (event.target === modal) {
-                    modal.classList.remove("show");
-                    document.querySelector(".modal-content").classList.remove("show");
-                    setTimeout(() => {
-                        modal.style.display = "none";
-                    }, 300); // Geçiş animasyonunun bitmesi için süre verin
-                }
+    
+            if (!foundPolicies) {
+                policiesListContainer.innerHTML = `<tr><td colspan="9" style="text-align: center;">Kayıtlı poliçe bulunamadı.</td></tr>`;
+            }
+        }
+    
+        function showSection(sectionId) {
+            const sections = document.querySelectorAll('.main-content > div');
+            sections.forEach((section) => {
+                section.style.display = 'none';
             });
-
-            filterButton.addEventListener("click", filterPolicies);
-
-            renewalHeader.addEventListener("click", () => {
-                renewalPolicyTable.style.display = renewalPolicyTable.style.display === "none" ? "table" : "none";
-            });
-
-            function copyToClipboard(licensePlate, registrationNumber) {
-                const textToCopy = `Plaka: ${licensePlate}\nTescil Numarası: ${registrationNumber}`;
-                const tempTextarea = document.createElement("textarea");
-                tempTextarea.value = textToCopy;
-                document.body.appendChild(tempTextarea);
-                tempTextarea.select();
-                document.execCommand("copy");
-                document.body.removeChild(tempTextarea);
-                showCopyNotification();
+    
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.style.display = 'block';
+            } else {
+                console.error(`${sectionId} ID'li bölüm bulunamadı.`);
             }
-
-            function showCopyNotification() {
-                const notification = document.createElement("div");
-                notification.style.position = "fixed";
-                notification.style.bottom = "20px";
-                notification.style.right = "20px";
-                notification.style.padding = "10px 20px";
-                notification.style.backgroundColor = "#4CAF50";
-                notification.style.color = "white";
-                notification.style.borderRadius = "4px";
-                notification.style.boxShadow = "0 2px 4px rgba(0, 0, 0, 0.2)";
-                notification.textContent = "Araç plakası ve tescil numarası kopyalandı!";
-                document.body.appendChild(notification);
-                
-                setTimeout(() => {
-                    notification.remove();
-                }, 3000);
-            }
-
-            // Sayfa yüklendiğinde tüm poliçeleri göster ve özet bilgilerini güncelle
-            const allPolicies = [];
-            for (let customerName in policies) {
-                for (let i = 0; i < policies[customerName].length; i++) {
-                    allPolicies.push({ customerName, ...policies[customerName][i] });
-                }
-            }
-            renderPolicies(allPolicies, policyList);
-            updatePolicySummary();
-        });
+        }
+    });
     </script>
+    <!-- Poliçeler Modal -->
+    <div id="policies-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button" id="close-policies-modal">&times;</span>
+            <h2>Kayıtlı Poliçeler</h2>
+            <table id="policies-table">
+                <thead>
+                    <tr>
+                        <th>Müşteri Adı</th>
+                        <th>Poliçe Tipi</th>
+                        <th>Başlangıç Tarihi</th>
+                        <th>Bitiş Tarihi</th>
+                        <th>Prim (TL)</th>
+                        <th>Komisyon (TL)</th>
+                        <th>Plaka</th>
+                        <th>Şirket</th>
+                        <th>Poliçe Durumu</th>
+                    </tr>
+                </thead>
+                <tbody id="policies-list">
+                    <!-- Poliçeler buraya yüklenecek -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+document.addEventListener("DOMContentLoaded", () => {
+    const myPoliciesLink = document.getElementById("my-policies-link");
+    const policiesModal = document.getElementById("policies-modal");
+    const closePoliciesModal = document.getElementById("close-policies-modal");
+    const policiesListContainer = document.getElementById("policies-list");
+
+    // Poliçeler butonuna tıklandığında modalı aç
+    myPoliciesLink.addEventListener("click", (event) => {
+        event.preventDefault();
+        updatePolicyStatus(); // Poliçe durumlarını güncelleme fonksiyonunu çağır
+        renderPolicyList();
+        policiesModal.style.display = "block";
+    });
+
+    // Modal kapatma işlemi
+    closePoliciesModal.addEventListener("click", () => {
+        policiesModal.style.display = "none";
+    });
+
+    window.addEventListener("click", (event) => {
+        if (event.target === policiesModal) {
+            policiesModal.style.display = "none";
+        }
+    });
+
+    // Poliçeleri listeleme fonksiyonu
+    function renderPolicyList() {    
+        const policies = JSON.parse(localStorage.getItem("policies")) || {};
+        policiesListContainer.innerHTML = ""; 
+
+        let foundPolicies = false;
+        Object.keys(policies).forEach(customerName => {
+            policies[customerName].forEach(policy => {
+                foundPolicies = true;
+                const row = document.createElement("tr");
+                row.innerHTML = `
+                    <td>${customerName}</td>
+                    <td>${policy.type}</td>
+                    <td>${policy.startDate}</td>
+                    <td>${policy.endDate}</td>
+                    <td>${policy.premium.toFixed(2)} TL</td>
+                    <td>${policy.calculatedCommission.toFixed(2)} TL</td>
+                    <td>${policy.licensePlate}</td>
+                    <td>${policy.company}</td>
+                    <td>${new Date(policy.endDate) < new Date() ? "Bitmiş" : "Aktif"}</td>
+                `;
+                policiesListContainer.appendChild(row);
+            });
+        });
+
+        if (!foundPolicies) {
+            policiesListContainer.innerHTML = `<tr><td colspan="9" style="text-align: center;">Kayıtlı poliçe bulunamadı.</td></tr>`;
+        }
+    }
+
+    // Poliçeleri güncelleme fonksiyonu
+    function updatePolicyStatus() {
+        const policies = JSON.parse(localStorage.getItem("policies")) || {};
+        const currentDate = new Date();
+
+        Object.keys(policies).forEach(customerName => {
+            policies[customerName].forEach(policy => {
+                const policyEndDate = new Date(policy.endDate);
+                if (policyEndDate < currentDate) {
+                    policy.isCancelled = true;
+                }
+            });
+        });
+
+        // Güncellenmiş poliçeleri localStorage'a kaydet
+        localStorage.setItem("policies", JSON.stringify(policies));
+    }
+});
+    </script>
+    <script>
+        // Silme butonuna tıklandığında çalışacak fonksiyon
+        function deletePolicy(customerName, policyIndex) {
+    const confirmation = confirm("Bu poliçeyi silmek istediğinize emin misiniz?");
+    if (confirmation) {
+        let policies = JSON.parse(localStorage.getItem("policies")) || {};
+        
+        if (policies[customerName]) {
+            policies[customerName].splice(policyIndex, 1);
+            
+            if (policies[customerName].length === 0) {
+                delete policies[customerName];
+            }
+            
+            localStorage.setItem("policies", JSON.stringify(policies));
+            alert("Poliçe başarıyla silindi!");
+            location.reload();
+        }
+    }
+}
+
+    </script>
+    
+    
+        
 </body>
 </html>
