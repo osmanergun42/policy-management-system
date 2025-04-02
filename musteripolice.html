@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Müşteri Poliçeleri</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f7fa;
+      padding: 20px;
+      margin: 0;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      background-color: white;
+      padding: 25px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    .back-button {
+      float: right;
+      margin-top: -10px;
+      padding: 8px 12px;
+      background-color: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .back-button:hover {
+      background-color: #0056b3;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 15px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #007bff;
+      color: white;
+    }
+
+    @media (max-width: 768px) {
+      table, thead, tbody, th, td, tr {
+        display: block;
+      }
+
+      th {
+        position: absolute;
+        top: -9999px;
+        left: -9999px;
+      }
+
+      td {
+        position: relative;
+        padding-left: 50%;
+        border: none;
+        border-bottom: 1px solid #eee;
+      }
+
+      td::before {
+        content: attr(data-label);
+        position: absolute;
+        left: 15px;
+        font-weight: bold;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <a href="musterilerim.html" class="back-button">← Müşterilerim</a>
+    <h1 id="header-title">Müşteri Poliçeleri</h1>
+
+    <input type="text" id="filter-input" placeholder="Poliçe tipi, plaka veya durum ara...">
+
+    <table>
+      <thead>
+        <tr>
+          <th>Poliçe Tipi</th>
+          <th>Başlangıç</th>
+          <th>Bitiş</th>
+          <th>Prim</th>
+          <th>Şirket</th>
+          <th>Plaka</th>
+          <th>Durum</th>
+        </tr>
+      </thead>
+      <tbody id="policy-table-body">
+        <!-- Poliçeler buraya yazılacak -->
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const name = params.get("name");
+      const tableBody = document.getElementById("policy-table-body");
+      const filterInput = document.getElementById("filter-input");
+      const title = document.getElementById("header-title");
+
+      if (!name) {
+        title.textContent = "Geçersiz müşteri.";
+        return;
+      }
+
+      title.textContent = `${name} - Poliçe Listesi`;
+
+      const policies = JSON.parse(localStorage.getItem("policies")) || {};
+      const policyList = policies[name] || [];
+
+      let displayedPolicies = [...policyList];
+
+      function renderTable(data) {
+        tableBody.innerHTML = "";
+
+        if (data.length === 0) {
+          tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center;">Poliçe bulunamadı.</td></tr>`;
+          return;
+        }
+
+        data.forEach(policy => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+            <td data-label="Poliçe Tipi">${policy.type || "-"}</td>
+            <td data-label="Başlangıç">${policy.startDate || "-"}</td>
+            <td data-label="Bitiş">${policy.endDate || "-"}</td>
+            <td data-label="Prim">${policy.premium ? policy.premium.toFixed(2) + " TL" : "-"}</td>
+            <td data-label="Şirket">${policy.company || "-"}</td>
+            <td data-label="Plaka">${policy.licensePlate || "-"}</td>
+            <td data-label="Durum">${policy.isCancelled ? "İptal Edildi" : "Aktif"}</td>
+          `;
+          tableBody.appendChild(row);
+        });
+      }
+
+      filterInput.addEventListener("input", () => {
+        const term = filterInput.value.toLowerCase();
+        const filtered = displayedPolicies.filter(p =>
+          (p.type || "").toLowerCase().includes(term) ||
+          (p.licensePlate || "").toLowerCase().includes(term) ||
+          (p.isCancelled ? "iptal edildi" : "aktif").toLowerCase().includes(term)
+        );
+        renderTable(filtered);
+      });
+
+      renderTable(displayedPolicies);
+    });
+  </script>
+</body>
+</html>

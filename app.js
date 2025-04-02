@@ -21,10 +21,6 @@ sidebarNav.appendChild(accountingLink);
 const policiesLink = document.createElement("li");
 policiesLink.innerHTML = '<a href="policelerim.html" id="policies-link">📄 Poliçelerim</a>';
 sidebarNav.appendChild(policiesLink);
-// Müşteriyi Düzenle butonunu ekle
-const editCustomerLink = document.createElement("li");
-editCustomerLink.innerHTML = '<a href="düzenle.html" id="edit-customer-link">✏️ Müşteriyi Düzenle</a>';
-sidebarNav.appendChild(editCustomerLink);
 
     
 
@@ -217,7 +213,6 @@ sidebarNav.appendChild(editCustomerLink);
             dateRangeModal.style.display = "none";
         });
     });
-    
     // Müşteri Ekleme Modal Geri Butonu
     backButtonAddCustomer.addEventListener("click", () => {
         addCustomerModal.style.display = "none";
@@ -266,12 +261,12 @@ sidebarNav.appendChild(editCustomerLink);
 
     // Sayfa yüklendiğinde müşteri sayısını güncelle
     updateCustomerCount();
-    
     // Poliçe Ekleme Formu Gönderme Etkinliği
     addPolicyForm.addEventListener("submit", (event) => {
         event.preventDefault(); // Formun varsayılan gönderme davranışını durdurma
 
         const customerName = document.getElementById("policy-customer-name").innerText;
+        const policyOwnerDropdown = document.getElementById("customer-owner");
         const newPolicy = {
             type: policyTypeInput.value,
             startDate: startDateInput.value,
@@ -284,8 +279,10 @@ sidebarNav.appendChild(editCustomerLink);
             registrationNumber: registrationNumberInput.value,
             company: companyDropdown.value,
             externalAgency: externalAgencyDropdown.value,
-            isCancelled: cancelPolicyCheckbox.checked // Poliçe iptal durumu
+            policyOwner: policyOwnerDropdown.value, // 👈 BURASI YENİ
+            isCancelled: cancelPolicyCheckbox.checked
         };
+        
 
         if (!policies[customerName]) {
             policies[customerName] = [];
@@ -472,7 +469,6 @@ function renderCustomerDetails(customer) {
 
     showSection('customer-list-section'); // Müşteri detaylarını içeren bölümü göster
 }
-
 
 // Bölüm Gösterme Fonksiyonu
 function showSection(sectionId) {

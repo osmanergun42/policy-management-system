@@ -18,6 +18,7 @@
             <option value="Saygın Sigorta">Saygın Sigorta</option>
             <option value="Başakçı">Başakçı</option>
             <option value="Terlemez Sigorta">Terlemez Sigorta</option>
+            <option value="Ergün Sigorta">Ergün Sigorta</option>
         </select>
     </div>
     <div>
@@ -43,9 +44,14 @@
         <input type="number" id="year-input" placeholder="Yıl Girin" min="2000" max="2100">
     </div>
     <button id="calculate-button">Hesapla</button>
+
     <div>
         <h2>Sonuç:</h2>
-        <p id="result">Seçilen acente için net primin %4'ü: <span id="calculated-commission">0 TL</span></p>
+        <p>Toplam Komisyon: <span id="calculated-commission">0 TL</span></p>
+        <p>Kimin Müşterisi Komisyonu: <span id="customer-comm">0 TL</span></p>
+        <p>Dış Acente Komisyonu: <span id="agency-comm">0 TL</span></p>
+        <p>Ergün Sigorta Komisyonu: <span id="ergun-comm">0 TL</span></p>
+        
         <table id="policy-table">
             <thead>
                 <tr>
@@ -65,7 +71,7 @@
             </tbody>
         </table>
     </div>
-    
+
     <script>
         document.addEventListener("DOMContentLoaded", () => {
             const agenciesDropdown = document.getElementById("agencies-dropdown");
@@ -75,30 +81,43 @@
             const calculateButton = document.getElementById("calculate-button");
             const policyList = document.getElementById("policy-list");
 
-            // Yerel depolamadan poliçe verilerini al
+            const customerComm = document.getElementById("customer-comm");
+            const agencyComm = document.getElementById("agency-comm");
+            const ergunComm = document.getElementById("ergun-comm");
+
             const policies = JSON.parse(localStorage.getItem("policies")) || {};
 
             function calculateCommission(policy) {
-                const agency = policy.externalAgency.toLowerCase();
-                let commissionRate = 0;
+                const premium = policy.premium;
 
-                if (agency.includes("enter sigorta")) {
-                    commissionRate = 0.07;
-                } else if (agency.includes("enes sigorta")) {
-                    commissionRate = 0.04;
-                } else if (agency.includes("başakçı") || agency.includes("terlemez")) {
-                    commissionRate = 0.04;
-                } else if (agency.includes("srn")) {
-                    commissionRate = 0.04;
+                let customerCommission = 0;
+                let externalAgencyCommission = 0;
+                let ergunCommission = 0;
+
+                if (policy.policyOwner === "Ergün Sigorta") {
+                    // Sadece Ergün Sigorta'nın müşterisiyse özel durum
+                    ergunCommission = premium * 0.07;
+                    externalAgencyCommission = policy.externalAgency ? premium * 0.03 : 0;
+                } else {
+                    // Diğer müşteriler
+                    customerCommission = policy.policyOwner ? premium * 0.04 : 0;
+                    externalAgencyCommission = policy.externalAgency ? premium * 0.03 : 0;
+                    ergunCommission = premium * 0.03;
                 }
 
-                return policy.premium * commissionRate;
+                return {
+                    total: customerCommission + externalAgencyCommission + ergunCommission,
+                    customerCommission,
+                    externalAgencyCommission,
+                    ergunCommission
+                };
             }
 
             function renderPolicies(filteredPolicies) {
-                policyList.innerHTML = ""; // Önce listeyi temizle
+                policyList.innerHTML = "";
+
                 filteredPolicies.forEach(policy => {
-                    const commission = calculateCommission(policy);
+                    const commissions = calculateCommission(policy);
                     const row = document.createElement("tr");
                     row.innerHTML = `
                         <td>${policy.customerName}</td>
@@ -106,7 +125,7 @@
                         <td>${policy.startDate}</td>
                         <td>${policy.endDate}</td>
                         <td>${policy.premium.toFixed(2)} TL</td>
-                        <td>${commission.toFixed(2)} TL</td>
+                        <td>${commissions.total.toFixed(2)} TL</td>
                         <td>${policy.licensePlate}</td>
                         <td>${policy.company}</td>
                         <td>${policy.isCancelled ? "İptal Edildi" : "Aktif"}</td>
@@ -127,15 +146,26 @@
 
                 const filteredPolicies = Object.keys(policies)
                     .flatMap(customerName => policies[customerName].map(policy => ({ customerName, ...policy })))
-                    .filter(policy => 
-                        (selectedAgency === "Hepsi" || policy.externalAgency === selectedAgency) &&
+                    .filter(policy =>
+                        policy.externalAgency === selectedAgency &&
                         new Date(policy.startDate).getMonth() + 1 === parseInt(selectedMonth) &&
                         new Date(policy.startDate).getFullYear() === parseInt(selectedYear)
                     );
 
-                const totalNetPremium = filteredPolicies.reduce((total, policy) => total + policy.premium, 0);
-                const commission = (totalNetPremium * 0.04).toFixed(2);
-                resultText.textContent = `${commission} TL`;
+                let totalCustomer = 0, totalAgency = 0, totalErgun = 0, totalCommission = 0;
+
+                filteredPolicies.forEach(policy => {
+                    const c = calculateCommission(policy);
+                    totalCustomer += c.customerCommission;
+                    totalAgency += c.externalAgencyCommission;
+                    totalErgun += c.ergunCommission;
+                    totalCommission += c.total;
+                });
+
+                resultText.textContent = `${totalCommission.toFixed(2)} TL`;
+                customerComm.textContent = `${totalCustomer.toFixed(2)} TL`;
+                agencyComm.textContent = `${totalAgency.toFixed(2)} TL`;
+                ergunComm.textContent = `${totalErgun.toFixed(2)} TL`;
 
                 renderPolicies(filteredPolicies);
             }

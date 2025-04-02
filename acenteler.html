@@ -1,198 +1,193 @@
 <!DOCTYPE html>
 <html lang="tr">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dış Acenteler</title>
-    <link rel="stylesheet" href="acenteler.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dış Acenteler</title>
+  <link rel="stylesheet" href="acenteler.css" />
 </head>
 <body>
-    <div class="header">
-        <h1>Dış Acenteler</h1>
-        <div class="filter-container">
-            <label for="agencies-dropdown">Dış Acenteler:</label>
-            <select id="agencies-dropdown">
-                <option value="" selected>Hepsi</option>
-                <option value="SNR Sigorta">SNR Sigorta</option>
-                <option value="Enes Sigorta">Enes Sigorta</option>
-                <option value="Enter Sigorta">Enter Sigorta</option>
-                <option value="Saygın Sigorta">Saygın Sigorta</option>
-                <option value="Başakçı">Başakçı</option>
-                <option value="Terlemez Sigorta">Terlemez Sigorta</option>
-            </select>
-            
-            <button id="download-button">İndir</button>
-        </div>
+  <div class="header">
+    <h1>Dış Acenteler</h1>
+    <div class="filter-container">
+      <label for="agencies-dropdown">Dış Acenteler:</label>
+      <select id="agencies-dropdown">
+        <option value="" selected>Hepsi</option>
+        <option value="SNR Sigorta">SNR Sigorta</option>
+        <option value="Enes Sigorta">Enes Sigorta</option>
+        <option value="Enter Sigorta">Enter Sigorta</option>
+        <option value="Saygın Sigorta">Saygın Sigorta</option>
+        <option value="Başakçı">Başakçı</option>
+        <option value="Terlemez Sigorta">Terlemez Sigorta</option>
+        <option value="Ergün Sigorta">Ergün Sigorta</option> <!-- ← burası eklendi -->
+      </select>
+      
+      <button id="download-button">İndir</button>
     </div>
-    
-    <table id="policy-table">
-        <thead>
-            <tr>
-                <th>Müşteri Adı</th>
-                <th>Poliçe Tipi</th>
-                <th>Başlangıç Tarihi</th>
-                <th>Bitiş Tarihi</th>
-                <th>Prim (TL)</th>
-                <th>Komisyon (TL)</th>
-                <th>Plaka</th>
-                <th>Şirket</th>
-                <th>Durum</th>
-            </tr>
-        </thead>
-        <tbody id="policy-list">
-            <!-- Poliçeler burada listelenecek -->
-        </tbody>
-    </table>
-    
-    <!-- Modal Pencere -->
-    <div id="date-range-modal" class="modal">
-        <div class="modal-content">
-            <span class="close-button" id="close-modal">&times;</span>
-            <h2>Tarih Aralığı Seçin</h2>
-            <label for="start-date">Başlangıç Tarihi:</label>
-            <input type="date" id="start-date">
-            <label for="end-date">Bitiş Tarihi:</label>
-            <input type="date" id="end-date">
-            <button id="apply-date-range">Uygula</button>
-        </div>
+  </div>
+
+  <table id="policy-table">
+    <thead>
+      <tr>
+        <th>Müşteri Adı</th>
+        <th>Poliçe Tipi</th>
+        <th>Başlangıç Tarihi</th>
+        <th>Bitiş Tarihi</th>
+        <th>Prim (TL)</th>
+        <th>Komisyon (TL)</th>
+        <th>Plaka</th>
+        <th>Şirket</th>
+        <th>Durum</th>
+      </tr>
+    </thead>
+    <tbody id="policy-list"></tbody>
+  </table>
+
+  <!-- Modal -->
+  <div id="date-range-modal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <span class="close-button" id="close-modal">&times;</span>
+      <h2>Tarih Aralığı Seçin</h2>
+      <label for="start-date">Başlangıç Tarihi:</label>
+      <input type="date" id="start-date" />
+      <label for="end-date">Bitiş Tarihi:</label>
+      <input type="date" id="end-date" />
+      <button id="apply-date-range">Uygula</button>
     </div>
+  </div>
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
-    <script>
-        document.addEventListener("DOMContentLoaded", () => {
-            const agenciesDropdown = document.getElementById("agencies-dropdown");
-            const policyList = document.getElementById("policy-list");
-            const downloadButton = document.getElementById("download-button");
-            const dateRangeModal = document.getElementById("date-range-modal");
-            const closeModalButton = document.getElementById("close-modal");
-            const applyDateRangeButton = document.getElementById("apply-date-range");
-            const startDateInput = document.getElementById("start-date");
-            const endDateInput = document.getElementById("end-date");
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.0/xlsx.full.min.js"></script>
+  <script>
+    document.addEventListener("DOMContentLoaded", () => {
+      const agenciesDropdown = document.getElementById("agencies-dropdown");
+      const policyList = document.getElementById("policy-list");
+      const downloadButton = document.getElementById("download-button");
+      const dateRangeModal = document.getElementById("date-range-modal");
+      const closeModalButton = document.getElementById("close-modal");
+      const applyDateRangeButton = document.getElementById("apply-date-range");
+      const startDateInput = document.getElementById("start-date");
+      const endDateInput = document.getElementById("end-date");
 
-            agenciesDropdown.addEventListener("change", function() {
-                const selectedAgency = this.value;
-                renderPolicies(selectedAgency);
-            });
+      agenciesDropdown.addEventListener("change", () => {
+        renderPolicies(agenciesDropdown.value);
+      });
 
-            downloadButton.addEventListener("click", () => {
-                dateRangeModal.style.display = "block";
-            });
+      downloadButton.addEventListener("click", () => {
+        dateRangeModal.style.display = "block";
+      });
 
-            closeModalButton.addEventListener("click", () => {
-                dateRangeModal.style.display = "none";
-            });
+      closeModalButton.addEventListener("click", () => {
+        dateRangeModal.style.display = "none";
+      });
 
-            window.addEventListener("click", (event) => {
-                if (event.target === dateRangeModal) {
-                    dateRangeModal.style.display = "none";
-                }
-            });
+      window.addEventListener("click", (event) => {
+        if (event.target === dateRangeModal) {
+          dateRangeModal.style.display = "none";
+        }
+      });
 
-            applyDateRangeButton.addEventListener("click", () => {
-                const selectedAgency = agenciesDropdown.value;
-                const startDate = new Date(startDateInput.value);
-                const endDate = new Date(endDateInput.value);
+      applyDateRangeButton.addEventListener("click", () => {
+        const agency = agenciesDropdown.value;
+        const startDate = new Date(startDateInput.value);
+        const endDate = new Date(endDateInput.value);
 
-                if (startDate && endDate) {
-                    downloadPolicies(selectedAgency, startDate, endDate);
-                    dateRangeModal.style.display = "none";
-                } else {
-                    alert("Lütfen geçerli bir tarih aralığı girin.");
-                }
-            });
+        if (!startDateInput.value || !endDateInput.value) {
+          alert("Lütfen geçerli bir tarih aralığı girin.");
+          return;
+        }
 
-            function renderPolicies(agency) {
-                const policies = JSON.parse(localStorage.getItem("policies")) || {};
-                console.log('localStorage policies:', policies); // Hata ayıklama için
-                policyList.innerHTML = ""; // Önce listeyi temizle
+        downloadPolicies(agency, startDate, endDate);
+        dateRangeModal.style.display = "none";
+      });
 
-                Object.keys(policies).forEach(customerName => {
-                    policies[customerName].forEach(policy => {
-                        if (agency === "" || policy.externalAgency === agency) {
-                            const row = document.createElement("tr");
-                            row.innerHTML = `
-                                <td>${customerName}</td>
-                                <td>${policy.type}</td>
-                                <td>${policy.startDate}</td>
-                                <td>${policy.endDate}</td>
-                                <td>${policy.premium.toFixed(2)} TL</td>
-                                <td>${policy.calculatedCommission.toFixed(2)} TL</td>
-                                <td>${policy.licensePlate}</td>
-                                <td>${policy.company}</td>
-                                <td>${policy.isCancelled ? "İptal Edildi" : "Aktif"}</td>
-                            `;
-                            policyList.appendChild(row);
-                        }
-                    });
-                });
+      function renderPolicies(agency) {
+        const policies = JSON.parse(localStorage.getItem("policies")) || {};
+        const kiminMap = JSON.parse(localStorage.getItem("kiminMusterisiMap")) || {};
+        const disMap = JSON.parse(localStorage.getItem("disAcenteMap")) || {};
+        const filteredPolicyIds = new Set();
+        let updateNeeded = false;
+
+        if (kiminMap[agency]) {
+          kiminMap[agency].forEach(entry => filteredPolicyIds.add(entry.policyId));
+        }
+        if (disMap[agency]) {
+          disMap[agency].forEach(entry => filteredPolicyIds.add(entry.policyId));
+        }
+
+        policyList.innerHTML = "";
+
+        Object.keys(policies).forEach(customerName => {
+          policies[customerName].forEach(policy => {
+            if (!policy.id) {
+              policy.id = customerName + "_" + policy.startDate + "_" + policy.licensePlate;
+              updateNeeded = true;
             }
 
-            function downloadPolicies(agency, startDate, endDate) {
-                const policies = JSON.parse(localStorage.getItem("policies")) || {};
-                const filteredPolicies = [];
+            const matchByField = policy.policyOwner === agency || policy.externalAgency === agency;
+            const show = agency === "" || filteredPolicyIds.has(policy.id) || matchByField;
 
-                Object.keys(policies).forEach(customerName => {
-                    policies[customerName].forEach(policy => {
-                        const policyStartDate = new Date(policy.startDate);
-                        if ((agency === "" || policy.externalAgency === agency) &&
-                            policyStartDate >= startDate && policyStartDate <= endDate) {
-                            filteredPolicies.push({
-                                "Müşteri Adı": customerName,
-                                "Poliçe Tipi": policy.type,
-                                "Başlangıç Tarihi": policy.startDate,
-                                "Bitiş Tarihi": policy.endDate,
-                                "Prim (TL)": policy.premium.toFixed(2),
-                                "Komisyon (TL)": policy.calculatedCommission.toFixed(2),
-                                "Plaka": policy.licensePlate,
-                                "Şirket": policy.company,
-                                "Durum": policy.isCancelled ? "İptal Edildi" : "Aktif"
-                            });
-                        }
-                    });
-                });
-
-                const ws = XLSX.utils.json_to_sheet(filteredPolicies);
-
-                // Stil ayarları
-                const wsCols = [
-                    { wpx: 150 }, // Müşteri Adı
-                    { wpx: 120 }, // Poliçe Tipi
-                    { wpx: 100 }, // Başlangıç Tarihi
-                    { wpx: 100 }, // Bitiş Tarihi
-                    { wpx: 80 },  // Prim (TL)
-                    { wpx: 80 },  // Komisyon (TL)
-                    { wpx: 100 }, // Plaka
-                    { wpx: 120 }, // Şirket
-                    { wpx: 100 }  // Durum
-                ];
-                ws['!cols'] = wsCols;
-
-                // İptal edilen poliçeler için kırmızı arka plan
-                const range = XLSX.utils.decode_range(ws['!ref']);
-                for (let R = range.s.r + 1; R <= range.e.r; ++R) {
-                    const cell = ws[XLSX.utils.encode_cell({ r: R, c: 8 })]; // Durum sütunu
-                    if (cell && cell.v === "İptal Edildi") {
-                        for (let C = range.s.c; C <= range.e.c; ++C) {
-                            const cellAddress = XLSX.utils.encode_cell({ r: R, c: C });
-                            if (!ws[cellAddress]) ws[cellAddress] = { t: "s", v: "" };
-                            ws[cellAddress].s = {
-                                fill: {
-                                    fgColor: { rgb: "FF0000" }
-                                }
-                            };
-                        }
-                    }
-                }
-
-                const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, "Poliçeler");
-
-                XLSX.writeFile(wb, `${agency || "Hepsi"}_policeler_${startDate.toISOString().split('T')[0]}_${endDate.toISOString().split('T')[0]}.xlsx`);
+            if (show) {
+              const row = document.createElement("tr");
+              row.innerHTML = `
+                <td>${customerName}</td>
+                <td>${policy.type}</td>
+                <td>${policy.startDate}</td>
+                <td>${policy.endDate}</td>
+                <td>${policy.premium.toFixed(2)} TL</td>
+                <td>${policy.calculatedCommission.toFixed(2)} TL</td>
+                <td>${policy.licensePlate}</td>
+                <td>${policy.company}</td>
+                <td>${policy.isCancelled ? "İptal Edildi" : "Aktif"}</td>
+              `;
+              policyList.appendChild(row);
             }
-
-            // Sayfa yüklendiğinde tüm poliçeleri göster
-            renderPolicies("");
+          });
         });
-    </script>
+
+        if (updateNeeded) {
+          localStorage.setItem("policies", JSON.stringify(policies));
+        }
+      }
+
+      function downloadPolicies(agency, startDate, endDate) {
+        const policies = JSON.parse(localStorage.getItem("policies")) || {};
+        const filteredPolicies = [];
+
+        Object.keys(policies).forEach(customerName => {
+          policies[customerName].forEach(policy => {
+            const policyStartDate = new Date(policy.startDate);
+            const matchByField = policy.policyOwner === agency || policy.externalAgency === agency;
+
+            if ((agency === "" || matchByField) && policyStartDate >= startDate && policyStartDate <= endDate) {
+              filteredPolicies.push({
+                "Müşteri Adı": customerName,
+                "Poliçe Tipi": policy.type,
+                "Başlangıç Tarihi": policy.startDate,
+                "Bitiş Tarihi": policy.endDate,
+                "Prim (TL)": policy.premium.toFixed(2),
+                "Komisyon (TL)": policy.calculatedCommission.toFixed(2),
+                "Plaka": policy.licensePlate,
+                "Şirket": policy.company,
+                "Durum": policy.isCancelled ? "İptal Edildi" : "Aktif"
+              });
+            }
+          });
+        });
+
+        if (filteredPolicies.length === 0) {
+          alert("Seçilen kriterlere uygun veri bulunamadı.");
+          return;
+        }
+
+        const ws = XLSX.utils.json_to_sheet(filteredPolicies);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Poliçeler");
+        const fileName = `${agency || "Hepsi"}_policeler_${startDate.toISOString().split("T")[0]}_${endDate.toISOString().split("T")[0]}.xlsx`;
+        XLSX.writeFile(wb, fileName);
+      }
+
+      renderPolicies("");
+    });
+  </script>
 </body>
 </html>

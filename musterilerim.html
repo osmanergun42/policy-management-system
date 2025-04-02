@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Müşterilerim</title>
+  <link rel="stylesheet" href="styles.css" />
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+    }
+
+    th, td {
+      border: 1px solid #ccc;
+      padding: 10px;
+      text-align: left;
+    }
+
+    th {
+      background-color: #f2f2f2;
+    }
+
+    .main-content {
+      padding: 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    .back-button {
+      display: inline-block;
+      margin-top: 10px;
+      padding: 8px 12px;
+      background-color: #007bff;
+      color: white;
+      text-decoration: none;
+      border-radius: 4px;
+    }
+
+    .back-button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="main-content">
+    <header>
+      <h1>Müşterilerim</h1>
+      <a href="anasayfa.html" class="back-button">← Ana Sayfa</a>
+    </header>
+    <input type="text" id="search-input" placeholder="Müşteri Ara..." style="width: 100%; padding: 8px; margin-bottom: 10px;">
+
+
+    <table id="customer-table">
+      <thead>
+        
+        <tr>
+          <th>Ad Soyad</th>
+          <th>Telefon</th>
+          <th>E-Posta</th>
+          <th>Adres</th>
+          <th>Ek Bilgi</th>
+          <th>İşlem</th>
+        </tr>
+      </thead>
+      <tbody id="customer-list-body">
+        <!-- Müşteriler buraya JS ile eklenecek -->
+      </tbody>
+    </table>
+  </div>
+
+  <script src="musterilerim.js"></script>
+</body>
+</html>
